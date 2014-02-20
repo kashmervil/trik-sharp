@@ -6,8 +6,11 @@ open System.Threading
 open System.Collections.Generic
 open System.Reactive.Linq
 
+<<<<<<< HEAD
 printfn "" 
 
+=======
+>>>>>>> 81888b28557c3b5a607e00d5a3c28083e37f186a
 open Extern
 open Config
 open Sensor3d
@@ -17,8 +20,13 @@ let configPathVal = "config.xml"
 let config = Config.Load configPathVal
 
 let path = 
+<<<<<<< HEAD
     if isLinux then config.Sensors.Gyroscope.DeviceFile 
     else @"log.txt"
+=======
+    if isWin then  @"D:\log.txt" 
+    else config.Sensors.Gyroscope.DeviceFile
+>>>>>>> 81888b28557c3b5a607e00d5a3c28083e37f186a
 
 type Gyroscope(rate) =
     let sensor = new Sensor3d(config.Sensors.Gyroscope.Min
@@ -45,7 +53,11 @@ let gyro = new Gyroscope(System.Console.ReadLine() |> Double.Parse)
 
 printfn "gyro created"
 
+<<<<<<< HEAD
 let unsub = gyro.Obs.Select(fun (x, y, z) -> lim100 x).Subscribe(powerMotors.[1]) 
+=======
+let unsub = gyro.Obs.Select((fun (x, y, z) -> lim100 x)).Subscribe(powerMotors.[1]) 
+>>>>>>> 81888b28557c3b5a607e00d5a3c28083e37f186a
 
 printfn "subscripted"
 
