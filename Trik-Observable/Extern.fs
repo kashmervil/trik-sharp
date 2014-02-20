@@ -17,5 +17,5 @@ let init string deviceId forced = I2CLockCall wrap_I2c_init (string, deviceId, f
 let send command data len = I2CLockCall wrap_I2c_SendData (command, data, len)
 let receive = I2CLockCall wrap_I2c_ReceiveData 
 
-let isLinux = (Environment.OSVersion.VersionString = "Microsoft Windows NT 6.2.9200.0")
+let isLinux = not(Environment.OSVersion.VersionString = "Microsoft Windows NT 6.2.9200.0")
 let linux f = if isLinux then f() else ()

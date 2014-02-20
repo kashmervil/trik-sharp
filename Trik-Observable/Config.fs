@@ -5,6 +5,7 @@ open System.Xml
 open FSharp.Data
 open System.Xml.Linq
 open System.Diagnostics
+open Extern
 
 type Config = XmlProvider<"config.xml">
 
@@ -23,3 +24,7 @@ let runInitScript (config:Config.DomainTypes.Config) =
     |> Seq.map (fun s -> s.Trim() )
     |> Seq.filter (not << String.IsNullOrEmpty)
     |> Seq.iter Syscall_system
+
+
+let config = Config.Load "config.xml"
+linux(fun () -> runInitScript(config))

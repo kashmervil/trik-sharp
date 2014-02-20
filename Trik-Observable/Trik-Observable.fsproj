@@ -63,11 +63,13 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
-    <Compile Include="Config.fs" />
     <Compile Include="Extern.fs" />
+    <Compile Include="Config.fs" />
     <Compile Include="PowerMotor.fs" />
-    <Compile Include="sensor3d.fs" />
+    <Compile Include="Sensor3d.fs" />
     <Compile Include="AnalogSensor.fs" />
+    <Compile Include="LCD.fs" />
+    <Compile Include="Gyroscope.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <PropertyGroup>
