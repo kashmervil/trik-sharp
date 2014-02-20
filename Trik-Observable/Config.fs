@@ -27,4 +27,3 @@ let runInitScript (config:Config.DomainTypes.Config) =
 
 
 let config = Config.Load "config.xml"
-linux(fun () -> runInitScript(config))

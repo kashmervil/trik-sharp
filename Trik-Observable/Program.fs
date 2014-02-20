@@ -17,6 +17,8 @@ open PowerMotor
 
 type GyroInfo = int*int*int
 
+linux(fun () -> runInitScript(config))
+
 let limit l u (x: int) = Math.Min(u, Math.Max (l, x)) 
 let lim1000 = limit -1000 1000
 let powerMotors = 
@@ -29,13 +31,11 @@ let powerMotors =
 printfn "Input"
 
 let gyro = new Gyroscope(System.Console.ReadLine() |> Double.Parse)
-
 printfn "gyro created"
+using (gyro.Obs.Select(fun (x, y, z) -> (lim1000  x) / 10).Subscribe(powerMotors.[3]) ) (fun unsub ->
+    //let unsub = gyro.Obs.Select(fun (x, y, z) -> [| x; y; z; 10 |])  
+    printfn "subscripted"
 
-let unsub = gyro.Obs.Select(fun (x, y, z) -> (/) 10 <| lim1000  x).Subscribe(powerMotors.[1])
-//let unsub = gyro.Obs.Select(fun (x, y, z) -> [| x; y; z; 10 |])  
-printfn "subscripted"
-
-System.Console.ReadKey() |> ignore
-    
+    System.Console.ReadKey() |> ignore
+    )
     

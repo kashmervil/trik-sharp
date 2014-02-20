@@ -5,9 +5,6 @@ open Extern
 open Config
 
 
-let isWin = (Environment.OSVersion.VersionString = "Microsoft Windows NT 6.2.9200.0")
-
-
 type PowerMotor(i2cCommandNumber) =
     let mutable inner = 0
     interface IObserver<int> with
