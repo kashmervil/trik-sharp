@@ -6,7 +6,6 @@ open System.Threading
 open System.Collections.Generic
 open System.Reactive.Linq
 
-open Robot
 open Extern
 open Config
 open Sensor3d
@@ -18,7 +17,7 @@ let config = Config.Load configPathVal
 let isWin = (Environment.OSVersion.VersionString = "Microsoft Windows NT 6.2.9200.0")
 
 let path = 
-    if isWin then  @"C:\Games\log.txt" 
+    if isWin then  @"D:\log.txt" 
     else config.Sensors.Gyroscope.DeviceFile
 
 type Gyroscope(rate) =
@@ -46,7 +45,7 @@ let gyro = new Gyroscope(System.Console.ReadLine() |> Double.Parse)
 
 printfn "gyro created"
 
-let unsub = gyro.Obs.Select(Func<GyroInfo,int>(fun (x, y, z) -> lim100 x) ).Subscribe(powerMotors.[1]) 
+let unsub = gyro.Obs.Select((fun (x, y, z) -> lim100 x)).Subscribe(powerMotors.[1]) 
 
 printfn "subscripted"
 

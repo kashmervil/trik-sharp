@@ -16,7 +16,7 @@ type AnalogSensor(number) =
         (value - analogMin)
     let mutable obs:IObservable<_> = null            
     member this.Start() = 
-        obs <- Observable.Generate(0, Func<_,bool>(fun _ -> true), Func<int,int>(fun x -> x)
-            , Func<int,_>(fun _ -> read()), Func<_,TimeSpan>(fun _ -> System.TimeSpan.FromMilliseconds(1000.0)))
+        obs <- Observable.Generate(0, (fun _ -> true), (fun x -> x)
+            , (fun _ -> read()), (fun _ -> System.TimeSpan.FromMilliseconds(1000.0)))
     member this.Obs = obs
     member this.Range = analogMax - analogMin
