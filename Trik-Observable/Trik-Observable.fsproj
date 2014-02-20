@@ -72,7 +72,6 @@
     <Compile Include="Extern.fs" />
     <Compile Include="PowerMotor.fs" />
     <Compile Include="sensor3d.fs" />
-    <Compile Include="Robot.fs" />
     <Compile Include="AnalogSensor.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>

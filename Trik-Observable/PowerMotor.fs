@@ -10,7 +10,6 @@ let isWin = (Environment.OSVersion.VersionString = "Microsoft Windows NT 6.2.920
 
 type PowerMotor(i2cCommandNumber) =
     let mutable inner = 0
-    //let limit l u (x: int) = Math.Min(u, Math.Max (l, x)) 
     interface IObserver<int> with
         member this.OnNext(data) = 
             if inner > 10 then 
@@ -18,9 +17,7 @@ type PowerMotor(i2cCommandNumber) =
                 printfn "%A" data
             else 
                 inner <- inner + 1
-            if (not isWin) then 
-                Extern.send i2cCommandNumber data 1
-            else () 
+            linux (fun() -> Extern.send i2cCommandNumber data 1)
         member this.OnError(e) = ()
         member this.OnCompleted() = ()
     
