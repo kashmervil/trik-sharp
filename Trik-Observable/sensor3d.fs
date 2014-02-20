@@ -37,12 +37,7 @@ type Sensor3d (min, max, deviceFile, rate) =
         (readFile(), readFile(), readFile(), readFile(), readFile(), readFile(), readFile(), readFile()) |> ignore
         let sw = new Stopwatch()
         sw.Start()
-<<<<<<< HEAD
-        obs <- Observable.Generate(0, Func<_,bool>(fun _ -> true), Func<int,int>(fun x -> x)
-            , Func<int,_>(fun _ -> readFile()), Func<_,TimeSpan>(fun _ -> System.TimeSpan.FromMilliseconds(rate)))
-=======
         obs <- Observable.Generate(0, (fun _ -> true), (fun x -> x)
             , (fun _ -> readFile()), (fun _ -> System.TimeSpan.FromMilliseconds(rate)))
->>>>>>> 81888b28557c3b5a607e00d5a3c28083e37f186a
         printfn "Observable.Generate: %A" sw.Elapsed
     member this.Obs = obs
