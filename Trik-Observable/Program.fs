@@ -7,6 +7,7 @@ open System.Collections.Generic
 open System.Reactive.Linq
 open Gyroscope
 open Config
+open LED
 
 printfn "First appearance" 
 
@@ -29,11 +30,12 @@ let powerMotors =
     |> dict
 
 printfn "Input"
-
+let led = new LED([| 0x14; 0x15; 0x16; 0x17 |])
 let gyro = new Gyroscope(System.Console.ReadLine() |> Double.Parse)
 printfn "gyro created"
-using (gyro.Obs.Select(fun (x, y, z) -> (lim1000  x) / 10).Subscribe(powerMotors.[3]) ) (fun unsub ->
-    //let unsub = gyro.Obs.Select(fun (x, y, z) -> [| x; y; z; 10 |])  
+using (//gyro.Obs.Select(fun (x, y, z) -> (lim1000  x) / 10).Subscribe(powerMotors.[3]) ) (fun unsub ->
+    //let unsub = 
+    gyro.Obs.Select(fun (x, y, z) -> [| (lim1000  x) / 20 - 50; (lim1000  y) / 20 - 50; (lim1000  x) / 20 - 50; 100 |]).Subscribe(led)) (fun unsub ->
     printfn "subscripted"
 
     System.Console.ReadKey() |> ignore

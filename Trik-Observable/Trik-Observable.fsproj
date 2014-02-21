@@ -68,7 +68,7 @@
     <Compile Include="PowerMotor.fs" />
     <Compile Include="Sensor3d.fs" />
     <Compile Include="AnalogSensor.fs" />
-    <Compile Include="LCD.fs" />
+    <Compile Include="LED.fs" />
     <Compile Include="Gyroscope.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>

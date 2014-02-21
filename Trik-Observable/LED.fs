@@ -1,11 +1,11 @@
-﻿module LCD
+﻿module LED
 
 open System
 open Extern
 open Config
 open PowerMotor
 
-type LCD(commandNumbers: int array) =
+type LED(commandNumbers: int array) =
     let mutable inner = 0
     interface IObserver<int array> with
         member this.OnNext(data: int array) = 
