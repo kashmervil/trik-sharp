@@ -74,6 +74,7 @@
     <Compile Include="AnalogSensor.fs" />
     <Compile Include="LED.fs" />
     <Compile Include="Gyroscope.fs" />
+    <Compile Include="Model.fs" />
   </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>

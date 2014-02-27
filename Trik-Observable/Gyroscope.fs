@@ -1,7 +1,7 @@
 ﻿namespace Trik.Observable
 open Trik
 
-type Gyroscope(config:Config.Config.DomainTypes.Config) =
+type Gyroscope(config:Config.Schema.DomainTypes.Config) =
     let sensor = new Sensor3d(min = config.Sensors.Gyroscope.Min,
                               max = config.Sensors.Gyroscope.Max,
                               rate = config.Sensors.Gyroscope.Rate,

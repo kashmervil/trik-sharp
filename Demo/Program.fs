@@ -11,16 +11,8 @@ open Trik.Observable
 type GyroInfo = int*int*int
 [<EntryPoint>]
 let main _ = 
-    let config =  Config.load()
-    Helpers.trikSpecific (fun () -> Config.runInitScript config)
+    let config =  Config.Create "config.xml"
     let inline limit1000 v = Helpers.limit -1000 1000 v
-
-    let powerMotors = 
-        Array.map (fun (m: Config.Config.DomainTypes.Motor) -> 
-                (m.Port, new PowerMotor(Convert.ToInt32(m.I2cCommandNumber, 16) ) )
-            ) 
-            (config.PowerMotors.GetMotors() )
-        |> dict
 
     printfn "Input"
     let led = new LED([| 0x14; 0x15; 0x16; 0x17 |])
