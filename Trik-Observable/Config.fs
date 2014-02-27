@@ -1,29 +1,24 @@
-module Config
+module Trik.Config
 
 open System
 open System.Xml
 open FSharp.Data
 open System.Xml.Linq
 open System.Diagnostics
-open Extern
+open Helpers
 
 type Config = XmlProvider<"config.xml">
 
-let Syscall_system cmd  = 
+let private Syscall_system cmd  = 
     let args = sprintf "-c '%s'" cmd
-    printf "%s" cmd
     let proc = Process.Start("/bin/sh", args)
     proc.WaitForExit()
     if proc.ExitCode  <> 0 then
         printf "Init script failed at '%s'" cmd
-    else ()
-    printfn " Done"
+    else printfn " Done"
 
 let runInitScript (config:Config.DomainTypes.Config) = 
     config.InitScript.Split([| '\n' |])
-    |> Seq.map (fun s -> s.Trim() )
-    |> Seq.filter (not << String.IsNullOrEmpty)
-    |> Seq.iter Syscall_system
-
-
-let config = Config.Load "config.xml"
+    |> Array.iter  (fun s -> if not <| String.IsNullOrWhiteSpace s then Syscall_system s)
+    
+let load () = Config.Load "config.xml"

@@ -1,19 +1,20 @@
-module Sensor3d
-
+namespace Trik.Observable
 open System
 open System.IO
 open System.Reactive.Linq
 open System.Diagnostics
-let event_size = 16
-let ev_abs = 3us
 
-[<AllowNullLiteralAttribute>]
-type Sensor3d (min, max, deviceFile, rate) = 
-   
-    let stream = File.Open(deviceFile, FileMode.Open) 
+
+type Sensor3d (min, max, deviceFilePath, rate:int) = 
+    [<Literal>]
+    let event_size = 16
+    [<Literal>]
+    let ev_abs = 3us
+
+    let stream = File.Open(deviceFilePath, FileMode.Open) 
     let mutable last = Array.create 3 0
     let bytes = Array.create event_size (byte 0)    
-    let readFile() =  
+    let readFile _ =  
         let readCnt = stream.Read(bytes, 0, bytes.Length)
         if readCnt <> event_size then
             failwith "event reading error\n"
@@ -32,12 +33,11 @@ type Sensor3d (min, max, deviceFile, rate) =
             | _ -> ()
             (last.[0], last.[1], last.[2])
 
-    let mutable obs:IObservable<int*int*int> = null            
+    let mutable obs:IObservable<_> = null            
     member this.Start() = 
         (readFile(), readFile(), readFile(), readFile(), readFile(), readFile(), readFile(), readFile()) |> ignore
         let sw = new Stopwatch()
-        sw.Start()
-        obs <- Observable.Generate(0, (fun _ -> true), (fun x -> x)
-            , (fun _ -> readFile()), (fun _ -> System.TimeSpan.FromMilliseconds(rate)))
-        printfn "Observable.Generate: %A" sw.Elapsed
+        sw.Start() 
+        obs <- Observable.Generate(readFile(), Trik.Helpers.konst true, readFile, id, Trik.Helpers.konst <| System.TimeSpan.FromMilliseconds (float rate))
+//        printfn "Observable.Generate: %A" sw.Elapsed
     member this.Obs = obs

@@ -1,20 +1,13 @@
-﻿module LED
+﻿namespace Trik.Observable
 
 open System
-open Extern
-open Config
-open PowerMotor
+open Trik
 
-type LED(commandNumbers: int array) =
+type LED(commandNumbers: int[]) =
     let mutable inner = 0
     interface IObserver<int array> with
-        member this.OnNext(data: int array) = 
-            if inner > 10 then 
-                inner <- 0
-                printfn "%A" data
-            else 
-                inner <- inner + 1
-            Array.iter2 (fun x v -> linux (fun() -> Extern.send x v 1)) commandNumbers data
+        member this.OnNext(data: int[]) = 
+            data |> Array.iter2 (fun x v -> Helpers.I2C.send x v 1) commandNumbers 
         member this.OnError(e) = ()
         member this.OnCompleted() = ()
     

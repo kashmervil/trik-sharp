@@ -1,10 +1,6 @@
-﻿module PowerMotor
+﻿namespace Trik.Observable
 
 open System
-open Extern
-open Config
-
-
 type PowerMotor(i2cCommandNumber) =
     let mutable inner = 0
     interface IObserver<int> with
@@ -14,8 +10,8 @@ type PowerMotor(i2cCommandNumber) =
                 printfn "%A" data
             else 
                 inner <- inner + 1
-            linux (fun() -> Extern.send i2cCommandNumber data 1)
-        member this.OnError(e) = ()
-        member this.OnCompleted() = ()
+            Trik.Helpers.trikSpecific (fun() -> Trik.Helpers.I2C.send i2cCommandNumber data 1)
+        member this.OnError e = ()
+        member this.OnCompleted () = ()
     
     
