@@ -6,11 +6,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>B3C7B4ED-EAD9-4044-B37B-5F5660BD6A14</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
     <RootNamespace>Trik_Observable</RootNamespace>
     <AssemblyName>Trik.Observable</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <Name>Trik-Observable</Name>
+    <Name>Trik.Observable</Name>
     <ProductVersion>12.0.0</ProductVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -20,7 +20,7 @@
     <Tailcalls>true</Tailcalls>
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <WarningLevel>3</WarningLevel>
+    <WarningLevel>5</WarningLevel>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DocumentationFile>bin\Debug\Trik.Observable.XML</DocumentationFile>
     <Prefer32Bit>true</Prefer32Bit>
@@ -31,7 +31,7 @@
     <Tailcalls>true</Tailcalls>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
-    <WarningLevel>3</WarningLevel>
+    <WarningLevel>5</WarningLevel>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DocumentationFile>bin\Release\Trik_Observable.XML</DocumentationFile>
     <Prefer32Bit>true</Prefer32Bit>
@@ -67,14 +67,13 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
-    <Compile Include="Extern.fs" />
+    <Compile Include="Helpers.fs" />
     <Compile Include="Config.fs" />
     <Compile Include="PowerMotor.fs" />
     <Compile Include="Sensor3d.fs" />
     <Compile Include="AnalogSensor.fs" />
     <Compile Include="LED.fs" />
     <Compile Include="Gyroscope.fs" />
-    <Compile Include="Program.fs" />
   </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>
