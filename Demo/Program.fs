@@ -26,7 +26,8 @@ let main _ =
     let led = new LED([| 0x14; 0x15; 0x16; 0x17 |])
     let gyro = new Gyroscope(config)
     printfn "gyro created"
-    use s = gyro.Obs.Select(fun (x, y, z) -> [| (limit1000  x) / 20 - 50; (limit1000  y) / 20 - 50; (limit1000  x) / 20 - 50; 100 |]).Subscribe(led)
+    //use s = gyro.Obs.Select(fun (x, y, z) -> [| (limit1000  x) / 20 - 50; (limit1000  y) / 20 - 50; (limit1000  x) / 20 - 50; 100 |]).Subscribe(led)
+    use s = gyro.Obs.Select(fun (x,y,z) -> limit1000 x).Subscribe(powerMotors.[1])
     printfn "subscribed"
     System.Console.ReadKey() |> ignore
     0
