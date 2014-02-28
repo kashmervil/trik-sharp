@@ -23,4 +23,4 @@ let internal Create (path:string) =
     let config = Provider.Load path
     config.InitScript.Split([| '\n' |]) 
     |> Array.iter  (fun s -> if not <| String.IsNullOrWhiteSpace s then Syscall_system s)
-    
+    config

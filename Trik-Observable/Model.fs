@@ -9,7 +9,10 @@ type Model (config:Config.Schema.Config) =
             ) 
             (config.PowerMotors.GetMotors() )
         |> dict
-    member x.Motors = powerMotors
+    member val Motors = powerMotors
     member val Gyro = new Trik.Observable.Gyroscope(config)
+    member val Accel = new Trik.Observable.Accelerometer(config)
+    static member Create(path:string) = new Model(Config.Create path)
+
     
 
