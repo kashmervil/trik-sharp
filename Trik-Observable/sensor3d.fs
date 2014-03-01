@@ -3,6 +3,7 @@ open System
 open System.IO
 open System.Reactive.Linq
 open System.Diagnostics
+open Trik.Helpers
 
 
 type Sensor3d (min, max, deviceFilePath, rate:int) = 
@@ -11,7 +12,7 @@ type Sensor3d (min, max, deviceFilePath, rate:int) =
     [<Literal>]
     let ev_abs = 3us
 
-    let stream = File.Open(deviceFilePath, FileMode.Open) 
+    let stream = File.Open(deviceFilePath, FileMode.Open, FileAccess.Read, FileShare.Read) 
     let mutable last = Array.create 3 0
     let bytes = Array.create event_size (byte 0)    
     let readFile _ =  
@@ -31,13 +32,7 @@ type Sensor3d (min, max, deviceFilePath, rate:int) =
                 | 2us -> (last.[2] <- evValue)
                 | _ -> ()
             | _ -> ()
-            (last.[0], last.[1], last.[2])
-
-    let mutable obs:IObservable<_> = null            
-    member this.Start() = 
-        (readFile(), readFile(), readFile(), readFile(), readFile(), readFile(), readFile(), readFile()) |> ignore
-        let sw = new Stopwatch()
-        sw.Start() 
-        obs <- Observable.Generate(readFile(), Trik.Helpers.konst true, readFile, id, Trik.Helpers.konst <| System.TimeSpan.FromMilliseconds (float rate))
-//        printfn "Observable.Generate: %A" sw.Elapsed
-    member this.Obs = obs
+            (limit min max last.[0], limit min max last.[1], limit min max last.[2])
+        
+    member val Observable = Observable.Generate(readFile(), Trik.Helpers.konst true, readFile, id, 
+                                                Trik.Helpers.konst <| System.TimeSpan.FromMilliseconds (float rate))

@@ -3,7 +3,7 @@ open Trik
 open System
 
 open System
-type Servomotor(servo:Config.Provider.DomainTypes.Motor2, types: Config.Provider.DomainTypes.MotorTypes) =
+type Servomotor(servo:Config.Provider.DomainTypes.ServoMotor, types: Config.Provider.DomainTypes.ServoMotorTypes) =
     
     do using (new IO.StreamWriter(servo.PeriodFile)) <| fun f -> f.Write(servo.Period)
     let servoType = types.DefaultServo //TODO:!
