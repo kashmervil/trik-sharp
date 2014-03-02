@@ -73,6 +73,7 @@
     <Compile Include="LedStripe.fs" />
     <Compile Include="Gyroscope.fs" />
     <Compile Include="Accelerometer.fs" />
+    <Compile Include="Buttons.fs" />
     <Compile Include="Model.fs" />
     <Content Include="config.xml" />
   </ItemGroup>

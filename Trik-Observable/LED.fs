@@ -11,17 +11,25 @@ type Led(conf:Config.Provider.DomainTypes.Led) =
     let off = Text.Encoding.ASCII.GetBytes(string conf.Off)
     let green = IO.File.OpenWrite(conf.Green)
     let red = IO.File.OpenWrite(conf.Red)
-    interface IObserver<LedColor> with
-        member this.OnNext(c) = 
-            let inline ifFlag f = (if c.HasFlag f then on else off), 0, 1
-            green.Write(ifFlag LedColor.Green); green.Flush()
-            red.Write(ifFlag LedColor.Red); red.Flush()
+    
+    let setTo (c:LedColor)  =
+        let inline ifFlag f = (if c.HasFlag f then on else off), 0, 1
+        green.Write(ifFlag LedColor.Green); green.Flush()
+        red.Write(ifFlag LedColor.Red); red.Flush()
+    do setTo LedColor.Off
+    
+    member x.SetColor c = setTo c
 
-        member this.OnError(e) = ()
-        member this.OnCompleted() = ()
+    interface IObserver<LedColor> with
+        member this.OnNext(c) = setTo c 
+        member this.OnError(e) = setTo LedColor.Off
+        member this.OnCompleted() = setTo LedColor.Off
 
     interface IDisposable with
-        member x.Dispose() = (green:>IDisposable).Dispose(); (red:>IDisposable).Dispose()
+        member x.Dispose() = 
+            setTo LedColor.Off 
+            (green:>IDisposable).Dispose()
+            (red:>IDisposable).Dispose()
     
 
     

@@ -14,8 +14,8 @@ type Servomotor(servo:Config.Provider.DomainTypes.ServoMotor, types: Config.Prov
     let period = servo.Period
     
     let fd = new IO.StreamWriter(servo.DeviceFile)
-    interface IObserver<int option> with
-        member this.OnNext(command) = 
+    
+    member x.SetPower command = 
             match command with 
                 | None -> off 
                 | Some x -> let v = Helpers.limit -100 100 x 
@@ -23,11 +23,16 @@ type Servomotor(servo:Config.Provider.DomainTypes.ServoMotor, types: Config.Prov
                             let duty = (zero + range * v / 100) 
                             duty
             |> fd.Write
+    
+    interface IObserver<int option> with
+        member this.OnNext(command) = this.SetPower command
             
-        member this.OnError e = ()
-        member this.OnCompleted () = ()
+        member this.OnError e = this.SetPower None
+        member this.OnCompleted () = this.SetPower None
 
     interface IDisposable with
-        member x.Dispose() = (fd:>IDisposable).Dispose()
+        member x.Dispose() =
+            x.SetPower None
+            (fd:>IDisposable).Dispose()
     
     
