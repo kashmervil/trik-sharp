@@ -36,7 +36,7 @@ let main _ =
     
     
 
-    let distance = model.AnalogSensor.["JA1"].Observable |> lpf (fun buf -> int <| buf.Average()) 
+    //let distance = model.AnalogSensor.["JA1"].Observable |> lpf (fun buf -> buf.Average()) 
     //use h = distance.Skip(10).Subscribe(fun x -> printfn "%d" x)
 
 

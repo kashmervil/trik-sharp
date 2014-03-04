@@ -45,5 +45,10 @@ let inline limit l u (x:int) = Math.Min(u, Math.Max (l, x))
 
 [<Measure>]
 type ms
-
 let inline milliseconds x = LanguagePrimitives.Int32WithMeasure<ms> x
+
+[<Measure>]
+type percent
+let inline percent min max v = 
+    let v' = limit min max v
+    LanguagePrimitives.Int32WithMeasure<percent>(100 * (v - min)/(max - min))
