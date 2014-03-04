@@ -3,14 +3,14 @@ open System
 open System.IO
 open System.Reactive.Linq
 open System.Diagnostics
-open Trik.Helpers
 open Trik
+open Trik.Helpers
 
-type Button (config:Config.Provider.DomainTypes.Keys) = 
+type Button (deviceFilePath) = 
     [<Literal>]
     let event_size = 16
     
-    let stream = File.Open(config.DeviceFile, FileMode.Open, FileAccess.Read, FileShare.Read) 
+    let stream = File.Open(deviceFilePath, FileMode.Open, FileAccess.Read, FileShare.Read) 
     let mutable last = Array.create 3 0
     let bytes = Array.create event_size (byte 0)    
     let rec readFile _ =  
@@ -26,5 +26,5 @@ type Button (config:Config.Provider.DomainTypes.Keys) =
             then evValue
             else readFile 0
         
-    member val Observable = Observable.Generate(readFile 0, (fun _ -> true), (fun x -> readFile x), fun x -> x)
+    member val Observable = Observable.Generate(readFile 0, Func<_,_> (konst true), Func<_,_> readFile , Func<_,_> id)
      

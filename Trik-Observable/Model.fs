@@ -15,11 +15,15 @@ type Model (config:Config.Schema.Config) =
     
     member val AnalogSensor= 
         config.AnalogSensors.GetAnalogSensors() 
-        |> Array.map (fun s -> (s.Port, new AnalogSensor(s)) )
+        |> Array.map (fun s -> (s.Port, new AnalogSensor(s.I2cCommandNumber, s.Rate)) )
         |> dict
 
-    member val Gyro = new Trik.Observable.Gyroscope(config.DigitalSensors.Gyroscope)
-    member val Accel = new Trik.Observable.Accelerometer(config.DigitalSensors.Accelerometer)
+    member val Gyro = 
+                let c = config.DigitalSensors.Gyroscope 
+                new Trik.Observable.Gyroscope(c.Min, c.Max, c.DeviceFile, Helpers.milliseconds c.Rate)
+    member val Accel =
+                let c =  config.DigitalSensors.Accelerometer
+                new Trik.Observable.Accelerometer(c.Min, c.Max, c.DeviceFile, Helpers.milliseconds c.Rate)
     member val Led = new Trik.Observable.Led(config.Led)
 
     static member Create(path:string) = new Model(Config.Create path)

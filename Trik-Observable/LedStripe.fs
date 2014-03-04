@@ -17,7 +17,7 @@ type LedStripe(rc,gc,bc, gnd) =
             g.SetPower -g'
             b.SetPower -b'
 
-        member this.OnError(e) = ()
+        member this.OnError(e) = foreach (fun x -> (x:>IObserver<_>).OnError(e))
         member this.OnCompleted() = foreach (fun x -> (x:>IObserver<_>).OnCompleted())
     interface IDisposable with
         member x.Dispose() = foreach (fun x -> (x:>IDisposable).Dispose())
