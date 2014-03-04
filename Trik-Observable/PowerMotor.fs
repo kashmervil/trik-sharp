@@ -1,17 +1,13 @@
 ﻿namespace Trik.Observable
-
 open System
+open Trik.Helpers
 type PowerMotor(i2cCommandNumber) =
-    let mutable inner = 0
+    member x.SetPower p = Trik.Helpers.trikSpecific (fun() -> I2C.send i2cCommandNumber (limit -100 100 p) 1)
     interface IObserver<int> with
-        member this.OnNext(data) = 
-            if inner > 10 then 
-                inner <- 0
-                printfn "%A" data
-            else 
-                inner <- inner + 1
-            Trik.Helpers.trikSpecific (fun() -> Trik.Helpers.I2C.send i2cCommandNumber data 1)
-        member this.OnError e = ()
-        member this.OnCompleted () = ()
+        member x.OnNext(data) = x.SetPower data
+        member x.OnError e = x.SetPower 0
+        member x.OnCompleted () = x.SetPower 0
+    interface IDisposable with
+        member x.Dispose() = x.SetPower 0
     
     
