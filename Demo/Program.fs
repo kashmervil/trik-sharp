@@ -12,9 +12,18 @@ open Trik.Observable
 
 let lpf (avg:IList<'a>->'a) (o:IObservable<_>) = o.Buffer(5).Select(avg)
 
-let avg3 (buf:IList<_>) = 
-        let (x',y',z') = buf.Aggregate(fun (x,y,z) (x',y', z') -> (x + x', y + y', z+ z'))
-        x'/buf.Count, y'/buf.Count, z'/buf.Count  
+let avg3 (buf:IList<int<prcnt>*int<prcnt>*int<prcnt>>) = 
+        let x,y,z = buf.[0]
+        let mutable x' = x
+        let mutable y' = y
+        let mutable z' = z
+        for i = 1 to buf.Count do
+            let x,y,z = buf.[i]
+            x' <- x' + x
+            y' <- y' + y
+            z' <- z' + z
+        done
+        x'/buf.Count, y'/buf.Count, z'/buf.Count
         
 let log s = printfn "%s" s
 
@@ -46,7 +55,7 @@ let main _ =
     
     use h = accel.Select(trafficLight).Subscribe(model.Led)
     
-    let accelAlpha5 = accel.Select(fun (_,y,z) -> 5.0*200.0/Math.PI*Math.Atan2(float z, float y) |> int |> Some )
+    let accelAlpha5 = accel.Select(fun (_,y,z) -> let a = int <| 5.0*200.0/Math.PI*Math.Atan2(float z, float y) in Some (a*1<prcnt>))
 
     use h = accelAlpha5.Subscribe(fun x -> printfn "%A" x)
 

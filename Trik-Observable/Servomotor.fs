@@ -15,16 +15,16 @@ type Servomotor(servo:Config.Provider.DomainTypes.ServoMotor, types: Config.Prov
     
     let fd = new IO.StreamWriter(servo.DeviceFile)
     
-    member x.SetPower command = 
-            match command with 
+    member x.SetPower power = 
+            match power with 
                 | None -> off 
-                | Some x -> let v = Helpers.limit -100 100 x 
-                            let range = if v < 0 then zero - min else max - zero                            
-                            let duty = (zero + range * v / 100) 
+                | Some (x:int<prcnt>) ->  
+                            let range = if x < 0<prcnt> then zero - min else max - zero                            
+                            let duty = (zero + range * x / 100<prcnt>) 
                             duty
             |> fd.Write
     
-    interface IObserver<int option> with
+    interface IObserver<int<prcnt> option> with
         member this.OnNext(command) = this.SetPower command
             
         member this.OnError e = this.SetPower None

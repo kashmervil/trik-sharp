@@ -9,9 +9,9 @@ type LedStripe(rc,gc,bc, gnd) =
     let b = new PowerMotor(bc)
     let gnd = new PowerMotor(gnd)
     let foreach f = f r; f g; f b; f gnd
-    do gnd.SetPower 100
+    do gnd.SetPower 100<prcnt>
 
-    interface IObserver<int*int*int> with
+    interface IObserver<int<prcnt>*int<prcnt>*int<prcnt>> with
         member this.OnNext((r',g',b')) = 
             r.SetPower -r'
             g.SetPower -g'

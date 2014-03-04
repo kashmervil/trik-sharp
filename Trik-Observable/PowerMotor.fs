@@ -1,13 +1,14 @@
 ﻿namespace Trik.Observable
 open System
-open Trik.Helpers
+open Trik
 type PowerMotor(i2cCommandNumber) =
-    member x.SetPower p = Trik.Helpers.trikSpecific (fun() -> I2C.send i2cCommandNumber (limit -100 100 p) 1)
-    interface IObserver<int> with
+    member x.SetPower (p:int<prcnt>) = Helpers.trikSpecific (fun() -> Helpers.I2C.send i2cCommandNumber (int p) 1)
+    member x.PowerOff() = x.SetPower 0<prcnt>
+    interface IObserver<int<prcnt>> with
         member x.OnNext(data) = x.SetPower data
-        member x.OnError e = x.SetPower 0
-        member x.OnCompleted () = x.SetPower 0
+        member x.OnError e = x.PowerOff()
+        member x.OnCompleted () = x.PowerOff()
     interface IDisposable with
-        member x.Dispose() = x.SetPower 0
+        member x.Dispose() = x.PowerOff()
     
     

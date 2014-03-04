@@ -3,6 +3,7 @@ open System
 open System.IO
 open System.Reactive.Linq
 open System.Diagnostics
+open Trik
 open Trik.Helpers
 
 
@@ -25,7 +26,7 @@ type Sensor3d (min, max, deviceFilePath, rate:int<ms>) =
             let evValue = BitConverter.ToInt32(bytes, 12)
             //printfn "evType: %A" evType
             if evType = ev_abs && evCode < 3us then 
-                last.[int evCode] <- limit min max evValue 
+                last.[int evCode] <- percent min max evValue 
             (last.[0], last.[1], last.[2])
         
     member val Observable = Observable.Generate(readFile(), konst true, readFile, id, 
