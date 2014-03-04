@@ -19,8 +19,7 @@ let avg3 (buf:IList<_>) =
 let log s = printfn "%s" s
 
 [<EntryPoint>]
-let main _ = 
-    
+let main _ =     
     log "Started"
     let model =  Model.Create "config.xml"
     log "Loaded"
