@@ -13,9 +13,9 @@ type Led(conf:Config.Provider.DomainTypes.Led) =
     let red = IO.File.OpenWrite(conf.Red)
     
     let setTo (c:LedColor)  =
-        let inline ifFlag f = (if c.HasFlag f then on else off), 0, 1
-        green.Write(ifFlag LedColor.Green); green.Flush()
-        red.Write(ifFlag LedColor.Red); red.Flush()
+        let inline ifFlag f = if c.HasFlag f then on else off
+        green.Write(ifFlag LedColor.Green, 0, 1); green.Flush()
+        red.Write(ifFlag LedColor.Red, 0, 1); red.Flush()
     do setTo LedColor.Off
     
     member x.SetColor c = setTo c

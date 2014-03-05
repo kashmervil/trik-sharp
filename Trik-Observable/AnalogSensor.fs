@@ -6,6 +6,6 @@ open Trik
 
 type AnalogSensor(register, rate) = 
     let read _ = Helpers.I2C.receive register |> Helpers.percent 0 1024 
-    member this.Observable = Observable.Generate(read(), Helpers.konst true, read, id, Helpers.konst <| System.TimeSpan.FromMilliseconds (float rate))
+    member val Observable = Observable.Generate(read(), Helpers.konst true, read, id, Helpers.konst <| System.TimeSpan.FromMilliseconds (float rate))
 
     
