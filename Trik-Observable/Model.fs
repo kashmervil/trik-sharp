@@ -24,7 +24,7 @@ type Model (config:Config.Schema.Config) =
     member val Accel =
                 let c =  config.DigitalSensors.Accelerometer
                 new Trik.Observable.Accelerometer(c.Min, c.Max, c.DeviceFile, Helpers.milliseconds c.Rate)
-    member val Led = new Trik.Observable.Led(config.Led)
+    member val Led = new Trik.Observable.Led("/sys/class/leds/")
 
     static member Create(path:string) = new Model(Config.Create path)
 
