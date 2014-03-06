@@ -120,7 +120,7 @@
   <digitalSensors>
     <digitalSensor port="JD1" deviceFile="/sys/devices/platform/da850_trik/sensor_d1" defaultType="lightSensor" />
     <digitalSensor port="JD2" deviceFile="/sys/devices/platform/da850_trik/sensor_d2" defaultType="lightSensor" />
-    <accelerometer rate="50" min="-32767" max="32767" deviceFile="/dev/input/by-path/platform-i2c_davinci.1-event" />
+    <accelerometer rate="50" min="-32767" max="32767" deviceFile="/dev/input/event1" />
     <gyroscope rate="50" min="-32767" max="32767" deviceFile="/dev/input/by-path/platform-spi_davinci.1-event" />
   </digitalSensors>
 

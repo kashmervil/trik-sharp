@@ -20,7 +20,7 @@ type Model (config:Config.Schema.Config) =
 
     member val Gyro = 
                 let c = config.DigitalSensors.Gyroscope 
-                new Trik.Observable.Gyroscope(c.Min, c.Max, c.DeviceFile, Helpers.milliseconds c.Rate)
+                new Trik.Observable.Gyroscope(c.Min, c.Max, c.DeviceFile, c.Rate)
     member val Accel =
                 let c =  config.DigitalSensors.Accelerometer
                 new Trik.Observable.Accelerometer(c.Min, c.Max, c.DeviceFile, Helpers.milliseconds c.Rate)

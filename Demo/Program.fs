@@ -39,7 +39,7 @@ let main _ =
     let distance = model.AnalogSensor.["JA1"].Observable |> lpf (fun buf -> int <| buf.Average()) 
     //use h = distance.Skip(10).Subscribe(fun x -> printfn "%d" x)
 
-
+    (*
     let trafficLight ((x, y, z) as arg) =
         if x < z then LedColor.Red 
         elif  x < y  then LedColor.Orange 
@@ -51,10 +51,10 @@ let main _ =
 
     use h = accelAlpha5.Subscribe(fun x -> printfn "%A" x)
 
-    use h = accelAlpha5.Subscribe(arm)         
+    use h = accelAlpha5.Subscribe(arm) *)        
     
     log "Ready"
-    
+    model.AnalogSensor.["JA1"].Observable.Subscribe(printfn "%A") |> ignore
     //System.Threading.Thread.Sleep(60*1000)
     System.Console.ReadKey() |> ignore
    

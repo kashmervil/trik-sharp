@@ -34,9 +34,9 @@ let I2CLockCall f args : 'T =
 
 module I2C = 
     let inline init string deviceId forced = I2CLockCall wrap_I2c_init (string, deviceId, forced)
-    let inline send command data len = //I2CLockCall wrap_I2c_SendData (command, data, len)
-        Syscall_shell <| sprintf "i2cset -y 2 0x48 %d %d" command data  
-    let inline receive command = 0 //I2CLockCall wrap_I2c_ReceiveData command
+    let inline send command data len = I2CLockCall wrap_I2c_SendData (command, data, len)  
+    let inline receive (command: string) = 
+        I2CLockCall wrap_I2c_ReceiveData  (int command)
 
 let inline konst c _ = c
 

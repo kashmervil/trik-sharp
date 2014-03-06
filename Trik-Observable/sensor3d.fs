@@ -30,6 +30,6 @@ type Sensor3d (min, max, deviceFilePath, rate:int<ms>) =
         
     member val Observable = Observable.Generate(readFile(), konst true, readFile, id, 
                                                 Trik.Helpers.konst <| System.TimeSpan.FromMilliseconds (float rate))
-
+    member x.Read() = readFile()
     interface IDisposable with
         member x.Dispose() = stream.Dispose()
