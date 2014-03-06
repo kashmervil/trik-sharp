@@ -6,11 +6,11 @@ open Trik
 [<Flags>]
 type LedColor = Green = 1 | Red = 2 | Orange = 3 | Off = 0
 
-type Led(conf:Config.Provider.DomainTypes.Led) =
-    let on = Text.Encoding.ASCII.GetBytes(string conf.On)
-    let off = Text.Encoding.ASCII.GetBytes(string conf.Off)
-    let green = IO.File.OpenWrite(conf.Green)
-    let red = IO.File.OpenWrite(conf.Red)
+type Led(path: string) =
+    let on = [| byte 49|]
+    let off =[| byte 48|]
+    let green = IO.File.OpenWrite(path + "/led_green/brightness")
+    let red = IO.File.OpenWrite(path + "led_red/brightness")
     
     let setTo (c:LedColor)  =
         let inline ifFlag f = (if c.HasFlag f then on else off), 0, 1
