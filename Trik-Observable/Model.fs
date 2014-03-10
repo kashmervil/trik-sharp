@@ -1,6 +1,7 @@
 ﻿namespace Trik
 open System
 open Trik.Observable
+open Trik
 
 type Model (config:Config.Schema.Config) = 
     member val Motor = 
@@ -25,6 +26,8 @@ type Model (config:Config.Schema.Config) =
                 let c =  config.DigitalSensors.Accelerometer
                 new Trik.Observable.Accelerometer(c.Min, c.Max, c.DeviceFile, Helpers.milliseconds c.Rate)
     member val Led = new Trik.Observable.Led(config.Led)
+
+    member val Pad = new Trik.PadServer(4444)
 
     static member Create(path:string) = new Model(Config.Create path)
 
