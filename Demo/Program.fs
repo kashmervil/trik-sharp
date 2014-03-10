@@ -66,7 +66,11 @@ let main _ =
     // Actuators/Observers
     let leds = new LedStripe(0x14, 0x15, 0x16, 0x17)
 
-    //let arm = model.Servo.["JE1"] 
+    let arm = model.Servo.["JE1"] 
+    printfn "Servo"
+    arm.SetPower 70
+    Thread.Sleep(300)
+    //arm.SetPower 0
     //let hand =  model.Servo.["JE2"]
 
         
@@ -74,7 +78,7 @@ let main _ =
     //let accel = model.Accel.ToObservable |> lpf avg3
     //let gyro = model.Gyro.ToObservable |> lpf avg3
     
-    model.Pad.Start()
+    //model.Pad.Start()
     let pad = model.Pad.Observable
     let srv = pad.Subscribe(printfn "%A")
 
@@ -90,8 +94,8 @@ let main _ =
         //|> Observable.scan (fun acc src -> if Math.Abs(acc - src) < eps then acc else src) Int32.MinValue
         |> distinctUntilChanged
         
-    use h = clear.Subscribe model.Led  
-    clear.Add <| printfn "%A"
+    //use h = clear.Subscribe model.Led  
+    //clear.Add <| printfn "%A"
     //|> Observable.add(fun x -> () )
     //let distance = model.AnalogSensor.["JA1"].Observable |> lpf (fun buf -> int <| buf.Average()) 
     //use h = distance.Skip(10).Subscribe(fun x -> printfn "%d" x)
