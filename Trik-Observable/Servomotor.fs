@@ -31,7 +31,7 @@ type Servomotor(servoPath: string, kind: ServoMotor.Kind) =
     
     interface IObserver<int> with
         member this.OnNext(command) = 
-            if (lastCommand - command) > 2
+            if Math.Abs(lastCommand - command) > 100
             then lastCommand <- command; this.SetPower command
             
         member this.OnError e = this.SetPower kind.stop
