@@ -85,7 +85,7 @@ let main _ =
     let eps = 10; 
 
     let clear =
-        model.AnalogSensor.["JA1"].Observable
+        model.AnalogSensor.["JA1"].ToObservable()
         |> Observable.map(fun x -> 
             //printfn "%A" x
             if x >= 20 then LedColor.Red else LedColor.Off
