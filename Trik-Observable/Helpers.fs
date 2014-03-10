@@ -3,6 +3,12 @@
 open System
 open System.Runtime.InteropServices
 
+[<Measure>]
+type ms
+[<Measure>]
+type permil
+
+
 let private I2CLockObj = new Object()
 
 [<DllImport("libconWrap.so.1.0.0", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)>]
@@ -35,15 +41,14 @@ let I2CLockCall f args : 'T =
 module I2C = 
     let inline init string deviceId forced = I2CLockCall wrap_I2c_init (string, deviceId, forced)
     let inline send command data len = I2CLockCall wrap_I2c_SendData (command, data, len)  
-    let inline receive (command: string) = 
-        I2CLockCall wrap_I2c_ReceiveData  (int command)
+    let inline receive (command: string) = I2CLockCall wrap_I2c_ReceiveData  (int command)
 
 let inline konst c _ = c
 
-//TODO: do not use int, rewrite with ^T
-let inline limit l u (x:int) = Math.Min(u, Math.Max (l, x))  
+let inline limit l u x = if u < x then u elif l > x then l else x  
 
-[<Measure>]
-type ms
+let inline milliseconds x = 1<ms>*x
 
-let inline milliseconds x = LanguagePrimitives.Int32WithMeasure<ms> x
+let inline permil min max v = 
+    let v' = limit min max v
+    100<permil> * (v' - min)/(max - min)

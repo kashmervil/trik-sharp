@@ -1,9 +1,8 @@
-﻿namespace Trik.Observable
+﻿namespace Trik
 open System
 open System.IO
 open System.Reactive.Linq
 open System.Diagnostics
-open Trik
 open Trik.Helpers
 
 type Button (deviceFilePath) = 

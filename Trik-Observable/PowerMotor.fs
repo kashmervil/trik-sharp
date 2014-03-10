@@ -1,6 +1,8 @@
-﻿namespace Trik.Observable
+﻿namespace Trik
+
 open System
 open Trik.Helpers
+
 type PowerMotor(i2cCommandNumber) =
     member x.SetPower p = Trik.Helpers.trikSpecific (fun() -> I2C.send i2cCommandNumber (limit -100 100 p) 1)
     interface IObserver<int> with

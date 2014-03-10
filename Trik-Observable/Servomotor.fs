@@ -1,38 +1,42 @@
-﻿namespace Trik.Observable
-open Trik
-open System
+﻿namespace Trik
 
 open System
-type Servomotor(servo:Config.Provider.DomainTypes.ServoMotor, types: Config.Provider.DomainTypes.ServoMotorTypes) =
+module ServoMotor =
+    type Kind = {
+        min: int 
+        max: int
+        zero: int
+        stop: int
+        period:int
+        }
+    let Servo1 = {stop = 0; zero = 15000000; min = 0; max = 0; period = 20000000} 
+    let Servo2 = {Servo1 with stop =1}
+
+type Servomotor(servoPath: string, kind: ServoMotor.Kind) =
     
-    do using (new IO.StreamWriter(servo.PeriodFile)) <| fun f -> f.Write(servo.Period)
-    let servoType = types.DefaultServo //TODO:!
-    let off = servoType.Stop
-    let zero = servoType.Zero
-    let min = servoType.Min
-    let max = servoType.Max
-    let period = servo.Period
+    do using (new IO.StreamWriter(servoPath + "/period_ns")) <| fun f -> f.Write(kind.period)
     
-    let fd = new IO.StreamWriter(servo.DeviceFile)
+    let mutable lastCommand = 0
+    let fd = new IO.StreamWriter(servoPath + "/duty_ns")
     
     member x.SetPower command = 
-            match command with 
-                | None -> off 
-                | Some x -> let v = Helpers.limit -100 100 x 
-                            let range = if v < 0 then zero - min else max - zero                            
-                            let duty = (zero + range * v / 100) 
-                            duty
+            let v = Helpers.limit -100 100 command 
+            let range = if v < 0 then kind.zero - kind.min else kind.max - kind.zero                            
+            let duty = (kind.zero + range * v / 100) 
+            duty
             |> fd.Write
     
-    interface IObserver<int option> with
-        member this.OnNext(command) = this.SetPower command
+    interface IObserver<int> with
+        member this.OnNext(command) = 
+            if (lastCommand - command) > 2
+            then lastCommand <- command; this.SetPower command
             
-        member this.OnError e = this.SetPower None
-        member this.OnCompleted () = this.SetPower None
+        member this.OnError e = this.SetPower kind.stop
+        member this.OnCompleted () = this.SetPower kind.stop
 
     interface IDisposable with
         member x.Dispose() =
-            x.SetPower None
+            x.SetPower kind.stop
             (fd:>IDisposable).Dispose()
     
     

@@ -8,7 +8,7 @@ open System.Reactive.Linq
 open System.Reactive.Joins
 open System.Linq
 open Trik
-open Trik.Observable
+
 
 let lpf (avg:IList<'a>->'a) (o:IObservable<_>) = o.Buffer(5).Select(avg)
 
@@ -27,12 +27,12 @@ let main _ =
     
     // Actuators/Observers
     let leds = new LedStripe(0x14, 0x15, 0x16, 0x17)
-    let arm = model.Servo.["JE1"] 
-    let hand =  model.Servo.["JE2"]
+    //let arm = model.Servo.["JE1"] 
+    //let hand =  model.Servo.["JE2"]
         
     // Sensors/Observables
-    let accel = model.Accel.Observable |> lpf avg3
-    let gyro = model.Gyro.Observable |> lpf avg3
+    //let accel = model.Accel.ToObservable |> lpf avg3
+    //let gyro = model.Gyro.ToObservable |> lpf avg3
     
     
 

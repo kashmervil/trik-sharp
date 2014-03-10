@@ -1,4 +1,4 @@
-﻿namespace Trik.Observable
+﻿namespace Trik
 
 open System
 open Trik
