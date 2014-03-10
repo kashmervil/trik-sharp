@@ -25,6 +25,8 @@ type Model (config:Config.Schema.Config) =
                 new Trik.Accelerometer(c.Min, c.Max, c.DeviceFile, Helpers.milliseconds c.Rate)
     member val Led = new Trik.Led("/sys/class/leds/")
 
+    member val Pad = new Trik.PadServer(4444)
+
     static member Create(path:string) = new Model(Config.Create path)
 
     interface IDisposable with
