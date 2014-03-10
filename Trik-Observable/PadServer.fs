@@ -25,7 +25,7 @@ type PadServer(?port) =
     let server = async {
         let listener = new TcpListener(IPAddress.Any, padPortVal)
         listener.Start()
-        printfn "Listening on %d..." padPortVal
+        printfn "Listening  now on %d..." padPortVal
         let rec loop() = async {
             let client = listener.AcceptTcpClient()
             let rec clientLoop() = async {
@@ -33,15 +33,15 @@ type PadServer(?port) =
                     let buf = Array.create client.ReceiveBufferSize <| byte 0
                     let count = client.GetStream().Read(buf, 0, buf.Length) 
                     Encoding.ASCII.GetString(buf, 0, count)   
-                let sempty s = (s = null || s = "")
-                request.Split([| '\n' |]) |> Array.filter (not << sempty) |> Array.iter (fun req -> 
+                let notSEmpty (s:string) = (s.Length > 0)
+                request.Split([| '\n' |]) |> Array.filter (notSEmpty) |> Array.iter (fun req -> 
                     obsNext <| 
-                        match req.Split([| ' ' |]) |> Array.toList |> List.filter (not << sempty) with
+                        match req.Split([| ' ' |]) |> Array.toList |> List.filter (notSEmpty) with
                         | ["wheel"; x ] -> PadEvent.Wheel(Int32.Parse(x) )
                         | ["pad"; n; "up"] -> PadEvent.Pad(Int32.Parse(n), None )
                         | ["pad"; n; x; y] -> PadEvent.Pad(Int32.Parse(n), Some (Int32.Parse(x), Int32.Parse(y) ) )
                         | ["btn"; n; "down"] -> PadEvent.Button(Int32.Parse(n) )
-                        | _ -> failwithf "error in request %A" req)
+                        | _ -> failwithf "error in request %A Len: %d" req req.Length)
                 return! clientLoop() 
             }
             Async.Start(clientLoop() )
