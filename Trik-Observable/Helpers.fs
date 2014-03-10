@@ -51,4 +51,4 @@ let inline milliseconds x = 1<ms>*x
 
 let inline permil min max v = 
     let v' = limit min max v
-    100<permil> * (v' - min)/(max - min)
+    (1000<permil> * (v' - min))/(max - min)

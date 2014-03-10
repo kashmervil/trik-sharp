@@ -19,10 +19,10 @@ type Model (config:Config.Schema.Config) =
 
     member val Gyro = 
                 let c = config.DigitalSensors.Gyroscope 
-                new Trik.Gyroscope(c.Min, c.Max, c.DeviceFile, c.Rate)
+                new Trik.Gyroscope(c.Min, c.Max, c.DeviceFile)
     member val Accel =
                 let c =  config.DigitalSensors.Accelerometer
-                new Trik.Accelerometer(c.Min, c.Max, c.DeviceFile, Helpers.milliseconds c.Rate)
+                new Trik.Accelerometer(c.Min, c.Max, c.DeviceFile)
     member val Led = new Trik.Led("/sys/class/leds/")
 
     static member Create(path:string) = new Model(Config.Create path)

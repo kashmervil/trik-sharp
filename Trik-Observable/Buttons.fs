@@ -25,5 +25,5 @@ type Button (deviceFilePath) =
             then evValue
             else readFile 0
         
-    member val Observable = Observable.Generate(readFile 0, Func<_,_> (konst true), Func<_,_> readFile , Func<_,_> id)
+    member val ToObservable = Observable.Generate(readFile 0, Func<_,_> (konst true), Func<_,_> readFile , Func<_,_> id)
      

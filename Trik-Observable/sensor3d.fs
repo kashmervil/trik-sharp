@@ -31,7 +31,7 @@ type Sensor3d (min, max, deviceFilePath) =
         
     member x.ToObservable(refreshRate: System.TimeSpan) = Observable.Generate(readFile(), konst true, readFile, id
                                                            , Trik.Helpers.konst refreshRate)
-    member x.ToObservable() = x.ToObservable(System.TimeSpan.FromMilliseconds(50.))
+    member x.ToObservable() = x.ToObservable(System.TimeSpan.FromMilliseconds 50.)
     
     member x.Read() = readFile()
     interface IDisposable with
