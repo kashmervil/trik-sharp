@@ -9,7 +9,6 @@ open System.Reactive.Joins
 open System.Linq
 open Trik
 
-open Trik.Observable
 open Microsoft.FSharp.Control
 open System.Threading
 
