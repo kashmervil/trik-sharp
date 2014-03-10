@@ -8,11 +8,12 @@
     <ProjectGuid>8c089c86-79de-42df-bc81-a13ee42e671c</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>Demo</RootNamespace>
-    <AssemblyName>Demo</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <AssemblyName>Demo_fs</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFSharpCoreVersion>4.3.1.0</TargetFSharpCoreVersion>
-    <Name>Demo</Name>
+    <Name>Demo_fs</Name>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
