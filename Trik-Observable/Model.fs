@@ -2,7 +2,9 @@
 open System
 open Trik.ServoMotor
 
-type Model (config:Config.Schema.Config) = 
+type Model ((*config:Config.Schema.Config*)) = 
+    //do printfn "Creating of model"
+    do Helpers.Syscall_shell "i2cset -y 2 0x48 0x10 0x1000 w; i2cset -y 2 0x48 0x11 0x1000 w; i2cset -y 2 0x48 0x12 0x1000 w; i2cset -y 2 0x48 0x13 0x1000 w"
     member val Motor = 
         [| 
           ("JM1", 0x14)
@@ -13,7 +15,7 @@ type Model (config:Config.Schema.Config) =
         |> Array.map (fun (port, cnum)  ->  (port, new PowerMotor(cnum)))             
         |> dict
          
-    member val Servo = 
+    member x.Servo = 
         [| 
           ("JE1", "/sys/class/pwm/ehrpwm.1:1", 
             { stop = 0; zero = 1500000; min = 1200000; max = 1800000; period = 20000000 } )
@@ -23,7 +25,7 @@ type Model (config:Config.Schema.Config) =
         |> Array.map (fun (port, path, kind) ->  ( port, new Servomotor(path, kind)))             
         |> dict
     
-    member val AnalogSensor= 
+    member x.AnalogSensor= 
         [| 
           ("JA1", 0x25 )
           ("JA2", 0x24 )
@@ -35,17 +37,18 @@ type Model (config:Config.Schema.Config) =
         |> Array.map (fun (port, cnum) -> (port, new AnalogSensor(cnum)))
         |> dict
 
-    member val Gyro = 
-                let c = config.DigitalSensors.Gyroscope 
-                new Trik.Gyroscope(c.Min, c.Max, c.DeviceFile)
-    member val Accel =
-                let c =  config.DigitalSensors.Accelerometer
-                new Trik.Accelerometer(c.Min, c.Max, c.DeviceFile)
-    member val Led = new Trik.Led("/sys/class/leds/")
+    member x.Gyro = 
+                //let c = config.DigitalSensors.Gyroscope 
+                new Trik.Gyroscope(-32767, 32767, "/dev/input/by-path/platform-spi_davinci.1-event")//c.Min, c.Max, c.DeviceFile)
+    member x.Accel =
+                //let c =  config.DigitalSensors.Accelerometer
+                new Trik.Accelerometer(-32767, 32767, "/dev/input/event1")//c.Min, c.Max, c.DeviceFile)
 
-    member val Pad = new Trik.PadServer(4444)
+    member x.Led = new Trik.Led("/sys/class/leds/")
 
-    static member Create(path:string) = new Model(Config.Create path)
+    member x.Pad = new Trik.PadServer(4444)
+
+    //static member Create(path:string) = new Model(Config.Create path)
 
     interface IDisposable with
         member x.Dispose() = () // no-no-no...

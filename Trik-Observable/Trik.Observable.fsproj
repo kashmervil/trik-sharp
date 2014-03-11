@@ -64,7 +64,6 @@
     <None Include="App.config" />
     <None Include="packages.config" />
     <Compile Include="Helpers.fs" />
-    <Compile Include="Config.fs" />
     <Compile Include="Servomotor.fs" />
     <Compile Include="PowerMotor.fs" />
     <Compile Include="Sensor3d.fs" />
@@ -101,9 +100,6 @@
     </Reference>
     <Reference Include="System.Reactive.PlatformServices">
       <HintPath>..\packages\Rx-PlatformServices.2.2.3\lib\net40\System.Reactive.PlatformServices.dll</HintPath>
-    </Reference>
-    <Reference Include="FSharp.Data">
-      <HintPath>..\packages\FSharp.Data.1.1.10\lib\net40\FSharp.Data.dll</HintPath>
     </Reference>
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
