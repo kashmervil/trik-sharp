@@ -11,13 +11,15 @@ module ServoMotor =
         }
     let Servo1 = {stop = 0; zero = 1500000; min = 1200000; max = 1800000; period = 20000000} 
     let Servo2 = {Servo1 with stop =1}
+    let observerEps = 100
+
+
 
 type Servomotor(servoPath: string, kind: ServoMotor.Kind) =
     do Helpers.Syscall_shell <| "echo 1 > " + servoPath + "/request"
     do Helpers.Syscall_shell <| "echo 1 > " + servoPath + "/run"
     do using (new IO.StreamWriter(servoPath + "/period_ns") ) <| fun f -> f.Write(kind.period)    
     let fd = new IO.StreamWriter(servoPath + "/duty_ns")
-
     let mutable lastCommand = 0
     member x.SetPower command = 
             let v = Helpers.limit -100 100 command 
@@ -30,7 +32,7 @@ type Servomotor(servoPath: string, kind: ServoMotor.Kind) =
     
     interface IObserver<int> with
         member this.OnNext(command) = 
-            if Math.Abs(lastCommand - command) > 100
+            if Math.Abs(lastCommand - command) > ServoMotor.observerEps
             then lastCommand <- command; this.SetPower command
             
         member this.OnError e = this.SetPower kind.stop

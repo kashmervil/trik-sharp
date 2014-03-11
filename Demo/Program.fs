@@ -20,41 +20,6 @@ let avg3 (buf:IList<_>) =
         
 let log s = printfn "%s" s
 
-let observableGenerate (init: 'T) (iter: 'T -> 'T) (res: 'T -> 'R) (timeSelector: 'T -> int)= 
-    let subscriptions = ref (new HashSet< IObserver<'T> >())
-    let thisLock = new Object()
-    let stored = ref init
-    let next(obs) = 
-        (!subscriptions) |> Seq.iter (fun x ->  x.OnNext(obs) ) 
-    let obs = 
-        { new IObservable<'T> with
-            member this.Subscribe(obs) =               
-                lock thisLock (fun () ->
-                    (!subscriptions).Add(obs) |> ignore
-                    )
-                { new IDisposable with 
-                    member this.Dispose() = 
-                        lock thisLock (fun () -> 
-                            (!subscriptions).Remove(obs))  |> ignore } }
-    let milis = timeSelector(!stored);
-
-    let rec loop() = async {
-        next(!stored)
-        stored := iter (!stored)
-        Thread.Sleep( milis )
-        return! loop()
-    }
-    Async.Start <| loop()
-    obs
-
-let distinctUntilChanged (sq: IObservable<'T>) : IObservable<'T> = 
-    let prev = ref (None : 'T option)
-    Observable.filter (fun x -> 
-        match !prev with 
-        | Some y when x = y -> false 
-        | _ -> prev := Some(x); true            
-        ) sq
-
 [<EntryPoint>]
 let main _ = 
 

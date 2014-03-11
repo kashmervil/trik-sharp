@@ -43,7 +43,7 @@ let I2CLockCall f args : 'T =
 module I2C = 
     let inline init string deviceId forced = I2CLockCall wrap_I2c_init (string, deviceId, forced)
     let inline send command data len = I2CLockCall wrap_I2c_SendData (command, data, len)  
-    let inline receive (command: string) = I2CLockCall wrap_I2c_ReceiveData  (int command)
+    let inline receive (command: int) = I2CLockCall wrap_I2c_ReceiveData command
 
 let inline konst c _ = c
 
@@ -54,3 +54,41 @@ let inline milliseconds x = 1<ms>*x
 let inline permil min max v = 
     let v' = limit min max v
     (1000<permil> * (v' - min))/(max - min)
+
+
+(* TODO (not delete)
+let observableGenerate (init: 'T) (iter: 'T -> 'T) (res: 'T -> 'R) (timeSelector: 'T -> int)= 
+    let subscriptions = ref (new HashSet< IObserver<'T> >())
+    let thisLock = new Object()
+    let stored = ref init
+    let next(obs) = 
+        (!subscriptions) |> Seq.iter (fun x ->  x.OnNext(obs) ) 
+    let obs = 
+        { new IObservable<'T> with
+            member this.Subscribe(obs) =               
+                lock thisLock (fun () ->
+                    (!subscriptions).Add(obs) |> ignore
+                    )
+                { new IDisposable with 
+                    member this.Dispose() = 
+                        lock thisLock (fun () -> 
+                            (!subscriptions).Remove(obs))  |> ignore } }
+    let milis = timeSelector(!stored);
+
+    let rec loop() = async {
+        next(!stored)
+        stored := iter (!stored)
+        Thread.Sleep( milis )
+        return! loop()
+    }
+    Async.Start <| loop()
+    obs
+
+let distinctUntilChanged (sq: IObservable<'T>) : IObservable<'T> = 
+    let prev = ref (None : 'T option)
+    Observable.filter (fun x -> 
+        match !prev with 
+        | Some y when x = y -> false 
+        | _ -> prev := Some(x); true            
+        ) sq
+        *)
