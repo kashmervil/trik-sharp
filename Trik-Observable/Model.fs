@@ -4,8 +4,13 @@ open Trik.ServoMotor
 
 type Model (config:Config.Schema.Config) = 
     member val Motor = 
-        config.PowerMotors.GetPowerMotors() 
-        |> Array.map (fun m ->  (m.Port, new PowerMotor(int m.I2cCommandNumber)))             
+        [| 
+          ("JM1", 0x14)
+          ("JM2", 0x15)
+          ("M1", 0x16)
+          ("JM3", 0x17)
+         |]
+        |> Array.map (fun (port, cnum)  ->  (port, new PowerMotor(cnum)))             
         |> dict
          
     member val Servo = 
@@ -20,12 +25,12 @@ type Model (config:Config.Schema.Config) =
     
     member val AnalogSensor= 
         [| 
-          ("JA1", "0x25" )
-          ("JA2", "0x24" )
-          ("JA3", "0x23" )
-          ("JA4", "0x22" )
-          ("JA5", "0x21" )
-          ("JA6", "0x20" )
+          ("JA1", 0x25 )
+          ("JA2", 0x24 )
+          ("JA3", 0x23 )
+          ("JA4", 0x22 )
+          ("JA5", 0x21 )
+          ("JA6", 0x20 )
         |]
         |> Array.map (fun (port, cnum) -> (port, new AnalogSensor(cnum)))
         |> dict
