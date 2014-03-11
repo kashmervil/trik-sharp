@@ -84,7 +84,7 @@ let main _ =
 
     let eps = 10; 
 
-    let clear =
+    (*let clear =
         model.AnalogSensor.["JA1"].ToObservable()
         |> Observable.map(fun x -> 
             //printfn "%A" x
@@ -92,7 +92,7 @@ let main _ =
             ||| if x <= 50 then LedColor.Green else LedColor.Off
             )
         //|> Observable.scan (fun acc src -> if Math.Abs(acc - src) < eps then acc else src) Int32.MinValue
-        |> distinctUntilChanged
+        |> distinctUntilChanged*)
         
     //use h = clear.Subscribe model.Led  
     //clear.Add <| printfn "%A"
@@ -111,8 +111,8 @@ let main _ =
 
     use h = accelAlpha5.Subscribe(arm) *)        
     
-    log "Ready"
-    model.AnalogSensor.["JA1"].ToObservable().Subscribe(printfn "%A") |> ignore
+    log "Ready (any key to finish)"
+    //model.AnalogSensor.["JA1"].ToObservable().Subscribe(printfn "%A") |> ignore
     //System.Threading.Thread.Sleep(60*1000)
 
     System.Console.ReadKey() |> ignore

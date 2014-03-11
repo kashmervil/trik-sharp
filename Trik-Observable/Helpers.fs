@@ -27,6 +27,7 @@ let Syscall_shell cmd  =
     let args = sprintf "-c '%s'" cmd
     trikSpecific <| fun () ->
         let proc = System.Diagnostics.Process.Start("/bin/sh", args)
+        printfn "Syscall: %A" cmd
         proc.WaitForExit()
         proc.ExitCode |> ignore
         //if proc.ExitCode  <> 0 then
