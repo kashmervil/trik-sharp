@@ -4,7 +4,11 @@ open Trik.ServoMotor
 
 type Model ((*config:Config.Schema.Config*)) = 
     //do printfn "Creating of model"
-    do Helpers.Syscall_shell "i2cset -y 2 0x48 0x10 0x1000 w; i2cset -y 2 0x48 0x11 0x1000 w; i2cset -y 2 0x48 0x12 0x1000 w; i2cset -y 2 0x48 0x13 0x1000 w"
+    do Helpers.I2C.send 0x10 0x1000 2
+    do Helpers.I2C.send 0x11 0x1000 2
+    do Helpers.I2C.send 0x12 0x1000 2
+    do Helpers.I2C.send 0x13 0x1000 2
+    //Helpers.Syscall_shell "i2cset -y 2 0x48 0x10 0x1000 w; i2cset -y 2 0x48 0x11 0x1000 w; i2cset -y 2 0x48 0x12 0x1000 w; i2cset -y 2 0x48 0x13 0x1000 w"
     member val Motor = 
         [| 
           ("JM1", 0x14)

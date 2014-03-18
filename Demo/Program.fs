@@ -24,8 +24,8 @@ let main _ =
     log "Loaded"
 
     let rawToDist x = match x with 
-                      | _ when x > 60 -> Near
-                      | _ when x > 35 -> Middle
+                      | _ when x > 80 -> Near
+                      | _ when x > 30 -> Middle
                       | _ -> Far
 
     let distToSpeed x = match x with
@@ -33,21 +33,20 @@ let main _ =
                         | Middle -> 0
                         | Far -> 100
 
-    let rightWheel = model.Motor.["JM1"]
-    let leftWheel = model.Motor.["JM2"]
+    use rightWheel = model.Motor.["JM1"]
+    use leftWheel = model.Motor.["JM2"]
     let frontSensor = model.AnalogSensor.["JA1"].ToObservable().Select(rawToDist)
-    let motorActions = frontSensor.Select(fun x ->  printfn "%A" x;
+    let motorActions = frontSensor.Select(fun x -> // printfn "%A" x;
                                                       distToSpeed x).DistinctUntilChanged()
 
-    let r_disp = motorActions.Subscribe(rightWheel)
-    let l_disp = motorActions.Subscribe(leftWheel)
+    use r_disp = motorActions.Select(fun x -> -x).Subscribe(rightWheel)
+    use l_disp = motorActions.Subscribe(leftWheel)
     //let gyro_dis = model.Gyro.ToObservable().Subscribe(fun x -> printfn "%A" x)
     log "Ready (any key to finish)"
    
-    //System.Console.ReadKey() |> ignore
-    //l_disp.Dispose()
-    //r_disp.Dispose()
-    //System.Console.ReadKey() |> ignore
+    System.Console.ReadKey() |> ignore
+    eprintfn "%A" <| l_disp.GetType().Name
+    System.Console.ReadKey() |> ignore
 
 
     0

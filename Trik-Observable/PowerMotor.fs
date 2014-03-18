@@ -12,7 +12,7 @@ type PowerMotor(i2cCommandNumber) =
         member x.OnCompleted () = x.SetPower 0
     interface IDisposable with
         member x.Dispose() = 
-            printfn "Disposing"
+            eprintfn "Disposing"
             x.SetPower 0
     
     
