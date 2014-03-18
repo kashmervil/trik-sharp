@@ -4,7 +4,7 @@ open System
 open Trik
 
 type LedStripe(rc,gc,bc, gnd) =
-    let i2cCommandNumbers = [|rc; gc; bc; gnd|];
+    let i2cCommandNumbers = [|rc; gc; bc|];
     do Helpers.I2C.send -100 gnd 1
 
     member x.SetPower ((r,g,b): int*int*int) = 
