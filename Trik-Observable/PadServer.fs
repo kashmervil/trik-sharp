@@ -25,21 +25,20 @@ type PadServer(?port) =
 
     let mutable working = false
     let mutable request_accumulator = ""
-
+    let messageBuf = Array.create 1024 <| byte 0
     let handleRequst (req:String) = 
-        match req.TrimEnd([| '\r' |]).Split([| ' ' |]) |> Array.filter (fun s -> s.Length > 0) with
+        match req.Split([| ' ' |]) with
         | [| "wheel"; x |] -> PadEvent.Wheel(Int32.Parse(x) ) |> obsNext 
         | [| "pad"; n; "up" |] -> PadEvent.Pad(Int32.Parse(n), None ) |> obsNext 
         | [| "pad"; n; x; y |] -> PadEvent.Pad(Int32.Parse(n), Some (Int32.Parse(x), Int32.Parse(y) ) ) |> obsNext 
         | [| "btn"; n; "down" |] -> PadEvent.Button(Int32.Parse(n) ) |> obsNext 
         | _ -> printfn "PadServer unresolved: %A" req
     let getMessage (client:TcpClient) = 
-        let buf = Array.create 1024 <| byte 0
         let mutable msg = ""
         let mutable isDone = false
         while not isDone do 
-            let count = client.GetStream().Read(buf, 0, buf.Length)
-            msg <- msg + Encoding.ASCII.GetString(buf, 0, count)   
+            let count = client.GetStream().Read(messageBuf, 0, messageBuf.Length)
+            msg <- msg + Encoding.ASCII.GetString(messageBuf, 0, count)   
             if count = 0 || msg.IndexOf('\n') >= 0 then isDone <- true else ()
         msg.TrimEnd [| '\r'; '\n' |] 
     let rec clientLoop(client: TcpClient) = async {
