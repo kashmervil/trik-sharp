@@ -26,11 +26,12 @@ type Servomotor(servoPath: string, kind: ServoMotor.Kind) =
     member x.SetPower command = 
             let v = Helpers.limit -100 100 command 
             let range = if v < 0 then kind.zero - kind.min else kind.max - kind.zero                            
-            let duty = (kind.zero + range * v / 100) 
-            
+            let duty = (kind.zero + range * v / 100)     
             fd.Write(duty);
             fd.Flush()
-            
+    member x.Zero() = 
+            fd.Write(0)
+            fd.Flush()        
     
     interface IObserver<int> with
         member this.OnNext(command) = 
@@ -42,7 +43,7 @@ type Servomotor(servoPath: string, kind: ServoMotor.Kind) =
 
     interface IDisposable with
         member x.Dispose() =
-            x.SetPower kind.stop
+            x.Zero()
             Helpers.Syscall_shell <| "echo 0 > " + servoPath + "/run"
             Helpers.Syscall_shell <| "echo 0 > " + servoPath + "/request"
             (fd:>IDisposable).Dispose()
