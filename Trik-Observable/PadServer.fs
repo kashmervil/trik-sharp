@@ -32,16 +32,16 @@ type PadServer(?port) =
         | [| "pad"; n; "up" |] -> PadEvent.Pad(Int32.Parse(n), None ) |> obsNext 
         | [| "pad"; n; x; y |] -> PadEvent.Pad(Int32.Parse(n), Some (Int32.Parse(x), Int32.Parse(y) ) ) |> obsNext 
         | [| "btn"; n; "down" |] -> PadEvent.Button(Int32.Parse(n) ) |> obsNext 
-        | _ -> ()
+        | _ -> printfn "PadServer unresolved: %A" req
     let getMessage (client:TcpClient) = 
         let buf = Array.create 1024 <| byte 0
         let mutable msg = ""
         let mutable isDone = false
         while not isDone do 
             let count = client.GetStream().Read(buf, 0, buf.Length)
-            if count = 0 then isDone <- true 
-            else msg <- msg + Encoding.ASCII.GetString(buf, 0, count)   
-        msg
+            msg <- msg + Encoding.ASCII.GetString(buf, 0, count)   
+            if count = 0 || msg.IndexOf('\n') >= 0 then isDone <- true else ()
+        msg.TrimEnd [| '\r'; '\n' |] 
     let rec clientLoop(client: TcpClient) = async {
         let isDone = ref false
         while not !isDone do 
