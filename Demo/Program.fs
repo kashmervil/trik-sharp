@@ -5,29 +5,25 @@ open System.Collections.Generic
 open System.Reactive.Linq
 open Trik
 
-
-let lpf (avg:IList<'a>->'a) (o:IObservable<_>) = o.Buffer(5).Select(avg)
-
-//let avg3 (buf:IList<_>) = 
-//        let (x',y',z') = buf.Aggregate(fun (x,y,z) (x',y', z') -> (x + x', y + y', z+ z'))
-//        x'/buf.Count, y'/buf.Count, z'/buf.Count 
-let log s = printfn "%s" s
-
 type Distance =  Far | Middle | Near
 
-[<EntryPoint>]
-let main _ = 
+let log s = printfn s
 
-    log "Started"
-    Helpers.I2C.init "/dev/i2c-2" 0x48 1
-    let model = new Model()
-    log "Loaded"
+let testPad (model:Model) = 
+    //use servo1 = model.Servo.["JE2"]
+    //use servo2 = model.Servo.["JE1"]
+    use pad = model.Pad
+    use dbtn = pad.Buttons.Subscribe (fun num ->  printfn "%A" num)
+    use disp = pad.Pads.Subscribe (fun (num, coord) ->  printfn "%A %A" num coord )
 
+    log "Ready (any key to finish)"
+    System.Console.ReadKey() |> ignore
+   
+let testMain (model:Model) = 
     let rawToDist x = match x with 
                       | _ when x > 80 -> Near
                       | _ when x > 30 -> Middle
                       | _ -> Far
-
     let distToSpeed x = match x with
                         | Near -> -100
                         | Middle -> 0
@@ -43,10 +39,19 @@ let main _ =
     use l_disp = motorActions.Subscribe(leftWheel)
     //let gyro_dis = model.Gyro.ToObservable().Subscribe(fun x -> printfn "%A" x)
     log "Ready (any key to finish)"
-   
-    System.Console.ReadKey() |> ignore
-    eprintfn "%A" <| l_disp.GetType().Name
     System.Console.ReadKey() |> ignore
 
-
+[<EntryPoint>]
+let main _ = 
+    log "Started"
+    Helpers.I2C.init "/dev/i2c-2" 0x48 1
+    use model = new Model(ServoConfig = [| 
+                              ("JE1", "/sys/class/pwm/ehrpwm.1:1", 
+                                { stop = 0; zero = 1310000; min = 1200000; max = 1400000; period = 20000000 } )
+                              ("JE2", "/sys/class/pwm/ehrpwm.1:0", 
+                                { stop = 0; zero = 1550000; min = 800000; max = 2250000; period = 20000000 } )
+                             |])
+    log "Loaded"
+    testPad model
+    //testMain(model)
     0
