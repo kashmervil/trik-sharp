@@ -22,46 +22,43 @@ type PadServer(?port) =
         { new IDisposable with 
             member this.Dispose() = () } )
     let obsNext (x:PadEvent) = observers |> Seq.iter (fun obs -> obs.OnNext(x) ) 
+
     let mutable working = false
     let mutable request_accumulator = ""
-    let notSEmpty (s:string) = (s.Length > 0)
+
     let handleRequst (req:String) = 
-        match req.TrimEnd([| '\r' |]).Split([| ' ' |]) |> Array.toList |> List.filter (fun s -> s.Length > 0) with
-        | ["wheel"; x ] -> PadEvent.Wheel(Int32.Parse(x) ) |> obsNext 
-        | ["pad"; n; "up"] -> PadEvent.Pad(Int32.Parse(n), None ) |> obsNext 
-        | ["pad"; n; x; y] -> PadEvent.Pad(Int32.Parse(n), Some (Int32.Parse(x), Int32.Parse(y) ) ) |> obsNext 
-        | ["btn"; n; "down"] -> PadEvent.Button(Int32.Parse(n) ) |> obsNext 
+        match req.TrimEnd([| '\r' |]).Split([| ' ' |]) |> Array.filter (fun s -> s.Length > 0) with
+        | [| "wheel"; x |] -> PadEvent.Wheel(Int32.Parse(x) ) |> obsNext 
+        | [| "pad"; n; "up" |] -> PadEvent.Pad(Int32.Parse(n), None ) |> obsNext 
+        | [| "pad"; n; x; y |] -> PadEvent.Pad(Int32.Parse(n), Some (Int32.Parse(x), Int32.Parse(y) ) ) |> obsNext 
+        | [| "btn"; n; "down" |] -> PadEvent.Button(Int32.Parse(n) ) |> obsNext 
         | _ -> ()
+    let rec clientLoop(client: TcpClient) = async {
+        let isDone = ref false
+        while not !isDone do 
+            if not client.Connected then isDone := true
+            else 
+                let buf = Array.create client.ReceiveBufferSize <| byte 0
+                let count = client.GetStream().Read(buf, 0, buf.Length) 
+                let part = Encoding.ASCII.GetString(buf, 0, count)   
+                request_accumulator <- request_accumulator + part
+                if String.exists ( (=) '\n') request_accumulator then
+                    let lines = request_accumulator.Split([| '\n' |])
+                    request_accumulator <- lines.[lines.Length - 1]
+                    lines 
+                    |> Array.toSeq 
+                    |> Seq.take (lines.Length - 1) 
+                    |> Seq.filter (fun s -> s.Length > 0)
+                    |> Seq.iter handleRequst
+                else ()
+    }
     let server = async {
         let listener = new TcpListener(IPAddress.Any, padPortVal)
         listener.Start()
         printfn "Listening  now on %d..." padPortVal
         let rec loop() = async {
             let client = listener.AcceptTcpClient()
-            if not working then 
-                ()
-            else 
-                let rec clientLoop() = async {
-                    let isDone = ref false
-                    while true do 
-                        if not client.Connected then isDone := true
-                        else 
-                            let buf = Array.create client.ReceiveBufferSize <| byte 0
-                            let count = client.GetStream().Read(buf, 0, buf.Length) 
-                            let part = Encoding.ASCII.GetString(buf, 0, count)   
-                            request_accumulator <- request_accumulator + part
-                            if String.exists ( (=) '\n') request_accumulator then
-                                let lines = request_accumulator.Split([| '\n' |])
-                                request_accumulator <- lines.[lines.Length - 1]
-                                lines 
-                                |> Array.toSeq 
-                                |> Seq.take (lines.Length - 1) 
-                                |> Seq.filter (notSEmpty) 
-                                |> Seq.iter handleRequst
-                            else 
-                                ()
-                }
-                Async.Start(clientLoop() )
+            if not working then () else Async.Start(clientLoop client)
             return! loop() 
         }
         Async.Start(loop() )
