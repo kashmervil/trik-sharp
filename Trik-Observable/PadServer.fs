@@ -33,24 +33,20 @@ type PadServer(?port) =
         | [| "pad"; n; x; y |] -> PadEvent.Pad(Int32.Parse(n), Some (Int32.Parse(x), Int32.Parse(y) ) ) |> obsNext 
         | [| "btn"; n; "down" |] -> PadEvent.Button(Int32.Parse(n) ) |> obsNext 
         | _ -> ()
+    let getMessage (client:TcpClient) = 
+        let buf = Array.create 1024 <| byte 0
+        let mutable msg = ""
+        let mutable isDone = false
+        while not isDone do 
+            let count = client.GetStream().Read(buf, 0, buf.Length)
+            if count = 0 then isDone <- true 
+            else msg <- msg + Encoding.ASCII.GetString(buf, 0, count)   
+        msg
     let rec clientLoop(client: TcpClient) = async {
         let isDone = ref false
         while not !isDone do 
             if not client.Connected then isDone := true
-            else 
-                let buf = Array.create client.ReceiveBufferSize <| byte 0
-                let count = client.GetStream().Read(buf, 0, buf.Length) 
-                let part = Encoding.ASCII.GetString(buf, 0, count)   
-                request_accumulator <- request_accumulator + part
-                if String.exists ( (=) '\n') request_accumulator then
-                    let lines = request_accumulator.Split([| '\n' |])
-                    request_accumulator <- lines.[lines.Length - 1]
-                    lines 
-                    |> Array.toSeq 
-                    |> Seq.take (lines.Length - 1) 
-                    |> Seq.filter (fun s -> s.Length > 0)
-                    |> Seq.iter handleRequst
-                else ()
+            else client |> getMessage |> handleRequst 
     }
     let server = async {
         let listener = new TcpListener(IPAddress.Any, padPortVal)
