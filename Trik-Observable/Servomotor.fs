@@ -16,7 +16,10 @@ module ServoMotor =
 
 
 type Servomotor(servoPath: string, kind: ServoMotor.Kind) =
-    do Helpers.Syscall_shell <| "echo 1 > " + servoPath + "/request; echo 1 > " + servoPath + "/run"
+    do    "echo 0 > " + servoPath + "/request; "
+        + "echo 1 > " + servoPath + "/request; "
+        + "echo 1 > " + servoPath + "/run"
+        |> Helpers.Syscall_shell
     do using (new IO.StreamWriter(servoPath + "/period_ns") ) <| fun f -> f.Write(kind.period)    
     let fd = new IO.StreamWriter(servoPath + "/duty_ns")
     let mutable lastCommand = 0
