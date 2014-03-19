@@ -2,6 +2,7 @@
 
 open System
 open System.Runtime.InteropServices
+open System.Reactive.Linq
 
 [<Measure>]
 type ms
@@ -55,7 +56,51 @@ let inline permil min max v =
     let v' = limit min max v
     (1000<permil> * (v' - min))/(max - min)
 
+let defaultRefreshRate = 50.0
 
+type AbstractSensor<'T>() = 
+    [<DefaultValueAttribute>]
+    val mutable Read: (unit -> 'T)
+    member x.ToObservable(refreshRate: System.TimeSpan) = 
+        let rd = x.Read
+        Observable.Generate( (), konst true, id, x.Read, konst refreshRate)
+    member x.ToObservable() = x.ToObservable(System.TimeSpan.FromMilliseconds defaultRefreshRate)
+
+(*
+[<AbstractClassAttribute>]
+type UnivSensor1<'T>() = 
+    abstract member Read: (unit -> 'T)
+    member x.ToObservable(refreshRate: System.TimeSpan) = 
+        let rd = x.Read
+        Observable.Generate( (), konst true, id, x.Read, konst refreshRate)
+    member x.ToObservable() = x.ToObservable(System.TimeSpan.FromMilliseconds defaultRefreshRate)
+    *)
+
+(*
+type Sens3d (min, max, deviceFilePath)  = 
+    inherit UnivSensor1<int*int*int>()
+    [<Literal>]
+    let event_size = 16
+    [<Literal>]
+    let ev_abs = 3us
+
+    let stream = IO.File.Open(deviceFilePath, IO.FileMode.Open, IO.FileAccess.Read, IO.FileShare.Read) 
+    let mutable last = Array.zeroCreate 3
+    let bytes = Array.zeroCreate event_size     
+
+    let rd() = 
+        let readCnt = stream.Read(bytes, 0, bytes.Length)
+        if readCnt <> event_size then
+            failwith "event reading error\n"
+        else
+            let evType = BitConverter.ToUInt16(bytes, 8)
+            let evCode = BitConverter.ToUInt16(bytes, 10)
+            let evValue = BitConverter.ToInt32(bytes, 12)
+            //printfn "evType: %A" evType
+            if evType = ev_abs && evCode < 3us then 
+                last.[int evCode] <- limit min max evValue 
+            (last.[0], last.[1], last.[2])
+    override x.Read() = () *)
 (* TODO (not delete)
 let observableGenerate (init: 'T) (iter: 'T -> 'T) (res: 'T -> 'R) (timeSelector: 'T -> int)= 
     let subscriptions = ref (new HashSet< IObserver<'T> >())
