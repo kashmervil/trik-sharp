@@ -58,18 +58,25 @@ let inline permil min max v =
 
 let defaultRefreshRate = 50.0
 
-type AbstractSensor<'T>() = 
-    [<DefaultValueAttribute>]
-    val mutable Read: (unit -> 'T)
+type PollingSensor<'T>(read) = 
+    member x.Read() = read()
     member x.ToObservable(refreshRate: System.TimeSpan) = 
-        let rd = x.Read
-        Observable.Generate( (), konst true, id, x.Read, konst refreshRate)
+        Observable.Generate( (), konst true, id, read, konst refreshRate)
     member x.ToObservable() = x.ToObservable(System.TimeSpan.FromMilliseconds defaultRefreshRate)
+
+type FifoSensor<'T>(parse) = 
+    
+
+type AbstractSensor<'T>(read) = 
+    member x.Read() = read()
+    member x.ToObservable(refreshRate: System.TimeSpan) = 
+        Observable.Generate( (), konst true, id, read, konst refreshRate)
+    member x.ToObservable() = x.ToObservable(System.TimeSpan.FromMilliseconds defaultRefreshRate)
+
 
 (*
 [<AbstractClassAttribute>]
 type UnivSensor1<'T>() = 
-    abstract member Read: (unit -> 'T)
     member x.ToObservable(refreshRate: System.TimeSpan) = 
         let rd = x.Read
         Observable.Generate( (), konst true, id, x.Read, konst refreshRate)
