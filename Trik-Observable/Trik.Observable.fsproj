@@ -13,6 +13,7 @@
     <Name>Trik.Observable</Name>
     <ProductVersion>12.0.0</ProductVersion>
     <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
+    <UseMSBuildEngine>False</UseMSBuildEngine>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
