@@ -3,6 +3,8 @@
 open System
 open System.Runtime.InteropServices
 open System.Reactive.Linq
+open System.Collections.Generic
+open System.IO
 
 [<Measure>]
 type ms
@@ -58,14 +60,39 @@ let inline permil min max v =
 
 let defaultRefreshRate = 50.0
 
-type PollingSensor<'T>(read) = 
-    member x.Read() = read()
+type PollingSensor<'T>() = 
+    [<DefaultValueAttribute>]
+    val mutable ReadFunc: (unit -> 'T)
+    member x.Read() = x.ReadFunc()
     member x.ToObservable(refreshRate: System.TimeSpan) = 
-        Observable.Generate( (), konst true, id, read, konst refreshRate)
+        let rd = x.Read
+        Observable.Generate( (), konst true, id, x.Read, konst refreshRate)
     member x.ToObservable() = x.ToObservable(System.TimeSpan.FromMilliseconds defaultRefreshRate)
 
-type FifoSensor<'T>(parse) = 
-    
+type FifoSensor<'T>(stream: FileStream, dataSize, bufSize) as sens = 
+    let observers = new HashSet<IObserver<'T> >()
+    let obs = Observable.Create(fun observer -> 
+        observers.Add(observer) |> ignore; 
+        { new IDisposable with 
+            member this.Dispose() = observers.Remove(observer) |> ignore} )
+    let obsNext (x: 'T) = observers |> Seq.iter (fun obs -> obs.OnNext(x) ) 
+    let bytes = Array.zeroCreate bufSize
+    let rec readingLoop() = async {
+        let readCnt = stream.Read(bytes, 0, bytes.Length)
+        let blocks = readCnt / dataSize
+        let offset = ref 0
+        for i = 1 to blocks do 
+            obsNext <| sens.ParseFunc bytes !offset 
+            offset := !offset + dataSize
+        return! readingLoop()
+    }
+    do Async.Start (readingLoop() )
+    [<DefaultValue>]
+    val mutable ParseFunc: (byte[] -> int -> 'T)
+    member x.ToObservable() = obs
+    interface IDisposable with
+        member x.Dispose() = stream.Dispose()
+    //member x.Read() = x.ReadFunc()
 
 type AbstractSensor<'T>(read) = 
     member x.Read() = read()
