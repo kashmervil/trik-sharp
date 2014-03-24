@@ -72,26 +72,31 @@ type PollingSensor<'T>() =
 type FifoSensor<'T>(stream: FileStream, dataSize, bufSize) as sens = 
     let observers = new HashSet<IObserver<'T> >()
     let obs = Observable.Create(fun observer -> 
-        observers.Add(observer) |> ignore; 
+        lock observers <| fun () -> observers.Add(observer) |> ignore 
         { new IDisposable with 
-            member this.Dispose() = observers.Remove(observer) |> ignore} )
-    let obsNext (x: 'T) = observers |> Seq.iter (fun obs -> obs.OnNext(x) ) 
+            member this.Dispose() = lock observers <| fun () -> observers.Remove(observer) |> ignore } )
+    let obsNext (x: 'T) = lock observers <| fun () -> observers |> Seq.iter (fun obs -> obs.OnNext(x) ) 
     let bytes = Array.zeroCreate bufSize
+    let mutable disposed = false
     let rec readingLoop() = async {
-        let readCnt = stream.Read(bytes, 0, bytes.Length)
-        let blocks = readCnt / dataSize
-        let offset = ref 0
-        for i = 1 to blocks do 
-            obsNext <| sens.ParseFunc bytes !offset 
-            offset := !offset + dataSize
-        return! readingLoop()
+        if not disposed then 
+            let readCnt = stream.Read(bytes, 0, bytes.Length)
+            let blocks = readCnt / dataSize
+            let offset = ref 0
+            for i = 1 to blocks do 
+                obsNext <| sens.ParseFunc bytes !offset 
+                offset := !offset + dataSize
+            return! readingLoop()
+        else ()
     }
     do Async.Start (readingLoop() )
     [<DefaultValue>]
     val mutable ParseFunc: (byte[] -> int -> 'T)
     member x.ToObservable() = obs
     interface IDisposable with
-        member x.Dispose() = stream.Dispose()
+        member x.Dispose() = 
+            disposed <- true
+            stream.Dispose()
     //member x.Read() = x.ReadFunc()
 
 type AbstractSensor<'T>(read) = 
