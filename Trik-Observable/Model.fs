@@ -112,9 +112,17 @@ type Model () =
 
     interface IDisposable with
         member x.Dispose() = 
+            match gyro with None -> () | Some(x) -> (x :> IDisposable).Dispose()
+            match accel with None -> () | Some(x) -> (x :> IDisposable).Dispose()
+            match led with None -> () | Some(x) -> (x :> IDisposable).Dispose()
+            match pad with None -> () | Some(x) -> (x :> IDisposable).Dispose()
             match motor with 
             | None -> ()
-            | Some(motor) -> motor |> Seq.iter (fun x -> (x.Value :> IDisposable).Dispose() )
-            
-    
+            | Some(sq) -> sq |> Seq.iter (fun x -> (x.Value :> IDisposable).Dispose() )
+            match servo with 
+            | None -> ()
+            | Some(sq) -> sq |> Seq.iter (fun x -> (x.Value :> IDisposable).Dispose() )
+            match analogSensor with 
+            | None -> ()
+            | Some(sq) -> sq |> Seq.iter (fun x -> (x.Value :> IDisposable).Dispose() )
 
