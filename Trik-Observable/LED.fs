@@ -11,7 +11,7 @@ type Led(deviceFilePath: string) =
     let on = [| byte 49|]
     let off =[| byte 48|]
     let green = IO.File.OpenWrite(deviceFilePath + "/led_green/brightness")
-    let red = IO.File.OpenWrite(deviceFilePath + "led_red/brightness")
+    let red = IO.File.OpenWrite(deviceFilePath + "/led_red/brightness")
     
     let setTo (c:LedColor)  =
         let inline ifFlag f = (if c.HasFlag f then on else off), 0, 1
