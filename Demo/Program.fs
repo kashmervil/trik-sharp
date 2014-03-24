@@ -53,6 +53,17 @@ let testMain (model:Model) =
     log "Ready (any key to finish)"
     System.Console.ReadKey() |> ignore
 
+let testSensors (model:Model) = 
+    use gyro = model.Gyro
+    let a = ref 0
+    use unsub = 
+        gyro.ToObservable() 
+        |> Observable.subscribe(fun (x: int array) -> 
+        a := (!a + 1) % 5; if !a = 0 then printfn "%A" x.[2] else () )
+    
+    log "Ready (any key to finish)"
+    System.Console.ReadKey() |> ignore
+
 [<EntryPoint>]
 let main _ = 
     log "Started"
@@ -64,6 +75,7 @@ let main _ =
                                 { stop = 0; zero = 1550000; min =  800000; max = 2250000; period = 20000000 } )
                              |])
     log "Loaded"
+    testSensors model
     testPad model
-    //testMain(model)
+    //testMain model
     0
