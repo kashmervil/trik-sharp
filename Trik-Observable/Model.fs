@@ -3,7 +3,9 @@ open System
 open Trik.ServoMotor
 
 type Model () = 
-    //do printfn "Creating of model"
+    //do printfn "Creating of model"\
+    //Helpers.Syscall_shell
+    do IO.File.WriteAllText("/sys/class/gpio/gpio62/value", "1")
     do Helpers.I2C.send 0x10 0x1000 2
     do Helpers.I2C.send 0x11 0x1000 2
     do Helpers.I2C.send 0x12 0x1000 2

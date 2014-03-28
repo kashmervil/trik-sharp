@@ -10,10 +10,10 @@ type Distance =  Far | Middle | Near
 let log s = printfn s
 
 let testPad (model:Model) = 
-    use servo1 = model.Servo.["JE2"]
-    use servo2 = model.Servo.["JE1"]
+    let servo1 = model.Servo.["JE2"]
+    let servo2 = model.Servo.["JE1"]
     let prX1, prY1, prX2, prY2 = ref -1, ref -1, ref -1, ref -1
-    use pad = model.Pad
+    let pad = model.Pad
     use dbtn = pad.Buttons.Subscribe (fun num ->  printfn "%A" num)
     use disp = pad.Pads.Subscribe ( fun (num, coord) ->  
         //printfn "%A %A" num coord 
@@ -41,8 +41,8 @@ let testMain (model:Model) =
                         | Middle -> 0
                         | Far -> 100
 
-    use rightWheel = model.Motor.["JM1"]
-    use leftWheel = model.Motor.["JM2"]
+    let rightWheel = model.Motor.["JM1"]
+    let leftWheel = model.Motor.["JM2"]
     let frontSensor = model.AnalogSensor.["JA1"].ToObservable().Select(rawToDist)
     let motorActions = frontSensor.Select(fun x -> // printfn "%A" x;
                                                       distToSpeed x).DistinctUntilChanged()
@@ -54,7 +54,7 @@ let testMain (model:Model) =
     System.Console.ReadKey() |> ignore
 
 let testSensors (model:Model) = 
-    use gyro = model.Gyro
+    let gyro = model.Gyro
     let a = ref 0
     use unsub = 
         gyro.ToObservable() 
@@ -75,7 +75,8 @@ let main _ =
                                 { stop = 0; zero = 1550000; min =  800000; max = 2250000; period = 20000000 } )
                              |])
     log "Loaded"
-    testSensors model
-    testPad model
+    //testSensors model
+    //testPad model
     //testMain model
+    Linetracer.run(model)
     0
