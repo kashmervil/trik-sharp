@@ -43,7 +43,7 @@ type LogFifo(path) = //, _lineTargetDataParsed, _lineColorDataParsed) =
     let mutable loopDone = false
     let buf = Array.zeroCreate max_fifo_input_size
     let lineTargetDataParsed = new Event<int*int*int>()
-    lineTargetDataParsed.Publish.
+    let lineColorDataParsed = new Event<int*int*int*int*int*int>()
     let rec loop() = 
         while not loopDone do
             let cnt = fd.Read(buf, 0, max_fifo_input_size)
@@ -70,13 +70,13 @@ type LogFifo(path) = //, _lineTargetDataParsed, _lineColorDataParsed) =
                         let _val   = Helpers.fastInt32Parse logStruct.[5]
                         let valTol = Helpers.fastInt32Parse logStruct.[6]
                         wasHsv <- true
-                        //lineColorDataParsed hue hueTol sat satTol _val valTol
+                        lineColorDataParsed.Trigger(hue, hueTol, sat, satTol, _val, valTol)
                     else ()
                     i <- i - 1
         loop()
     do Async.Start <| async { loop() } 
     member x.LineTargetDataParsed = lineTargetDataParsed.Publish
-
+    member x.LineColorDataParsed = lineColorDataParsed.Publish
 
 type CmdFifo(path:string) = 
     let fd = new IO.StreamWriter(path, AutoFlush = true)
@@ -121,5 +121,6 @@ type MotorControler (motor: Trik.PowerMotor, enc: Encoder) =
 let run (model:Model) = 
     let log_fifo = new LogFifo(logFifoPath)
     let cmd_fifo = new CmdFifo(cmdFifoPath)
-    cmd_fifo.Write("detect")
+    cmd_fifo.Detect <| fun ->
+    )
     ()
