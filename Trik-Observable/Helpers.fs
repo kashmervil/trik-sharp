@@ -24,8 +24,6 @@ let private I2CLockObj = new Object()
 let isLinux = not <| Environment.OSVersion.VersionString.StartsWith "Microsoft"
 let inline trikSpecific f = if isLinux then f () else ()
 
-
-
 let Syscall_shell cmd  = 
     let args = sprintf "-c '%s'" cmd
     trikSpecific <| fun () ->
@@ -36,8 +34,6 @@ let Syscall_shell cmd  =
         //if proc.ExitCode  <> 0 then
         //    printf "Init script failed '%s'" cmd
 
-
-
 let I2CLockCall f args : 'T = 
         if isLinux then lock I2CLockObj <| fun () -> f args
         else Unchecked.defaultof<'T>
@@ -47,6 +43,15 @@ module I2C =
     let inline init string deviceId forced = I2CLockCall wrap_I2c_init (string, deviceId, forced)
     let inline send command data len = I2CLockCall wrap_I2c_SendData (command, data, len)  
     let inline receive (command: int) = I2CLockCall wrap_I2c_ReceiveData command
+
+let fastInt32Parse (s:string) = 
+    let mutable n = 0
+    let start = if s.Chars 0 |> Char.IsDigit then 0 else 1
+    let sign = if s.Chars 0 = '-' then -1 else 1
+    let zero = int '0'
+    for i = start to s.Length - 1 do 
+        n <- n * 10 + int (s.Chars i) - zero
+    sign * n
 
 let inline konst c _ = c
 
@@ -78,27 +83,28 @@ type FifoSensor<'T>(stream: FileStream, dataSize, bufSize) as sens =
     let obsNext (x: 'T) = lock observers <| fun () -> observers |> Seq.iter (fun obs -> obs.OnNext(x) ) 
     let bytes = Array.zeroCreate bufSize
     let mutable disposed = false
-    let rec readingLoop() = async {
+    let mutable offset = 0
+    let rec readingLoop() =
         if not disposed then 
             let readCnt = stream.Read(bytes, 0, bytes.Length)
             let blocks = readCnt / dataSize
-            let offset = ref 0
+            offset <- 0
             for i = 1 to blocks do 
-                obsNext <| sens.ParseFunc bytes !offset 
-                offset := !offset + dataSize
-            return! readingLoop()
-        else ()
-    }
-    do Async.Start (readingLoop() )
+                match sens.ParseFunc bytes offset with 
+                | Some x -> obsNext x
+                | None -> ()
+                offset <- offset + dataSize
+            readingLoop()
+    do Async.Start <| async { readingLoop() }
     [<DefaultValue>]
-    val mutable ParseFunc: (byte[] -> int -> 'T)
+    val mutable ParseFunc: (byte[] -> int -> 'T option)
     member x.ToObservable() = obs
     interface IDisposable with
         member x.Dispose() = 
             disposed <- true
             stream.Dispose()
     //member x.Read() = x.ReadFunc()
-
+(*
 type AbstractSensor<'T>(read) = 
     member x.Read() = read()
     member x.ToObservable(refreshRate: System.TimeSpan) = 
@@ -106,7 +112,7 @@ type AbstractSensor<'T>(read) =
     member x.ToObservable() = x.ToObservable(System.TimeSpan.FromMilliseconds defaultRefreshRate)
 
 
-(*
+
 [<AbstractClassAttribute>]
 type UnivSensor1<'T>() = 
     member x.ToObservable(refreshRate: System.TimeSpan) = 
