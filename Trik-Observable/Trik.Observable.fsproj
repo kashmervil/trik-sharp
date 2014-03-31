@@ -62,12 +62,13 @@
   </PropertyGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="packages.config" />
     <Compile Include="Helpers.fs" />
+    <None Include="packages.config" />
     <Compile Include="Servomotor.fs" />
     <Compile Include="PowerMotor.fs" />
     <Compile Include="Sensor3d.fs" />
     <Compile Include="AnalogSensor.fs" />
+    <Compile Include="Encoder.fs" />
     <Compile Include="LED.fs" />
     <Compile Include="LedStripe.fs" />
     <Compile Include="PadServer.fs" />
