@@ -2,14 +2,10 @@
 open System
 open Trik.ServoMotor
 
-type Model () = 
+type Model () as model = 
     //do printfn "Creating of model"\
     //Helpers.Syscall_shell
-    do IO.File.WriteAllText("/sys/class/gpio/gpio62/value", "1")
-    do Helpers.I2C.send 0x10 0x1000 2
-    do Helpers.I2C.send 0x11 0x1000 2
-    do Helpers.I2C.send 0x12 0x1000 2
-    do Helpers.I2C.send 0x13 0x1000 2
+    
     //Helpers.Syscall_shell "i2cset -y 2 0x48 0x10 0x1000 w; i2cset -y 2 0x48 0x11 0x1000 w; i2cset -y 2 0x48 0x12 0x1000 w; i2cset -y 2 0x48 0x13 0x1000 w"
     
     let mutable gyro = None
@@ -18,6 +14,11 @@ type Model () =
     let mutable pad = None
     let mutable motor = None
     let mutable servo = None
+    let mutable encoder = lazy (
+        model.EncoderConfig 
+        |> Array.map (fun (port, cnum) -> (port, new Encoder(cnum)))
+        |> dict
+    )
     let mutable analogSensor = None
 
     member val ServoConfig = 
@@ -26,6 +27,12 @@ type Model () =
             { stop = 0; zero = 1450000; min = 1200000; max = 1800000; period = 20000000 } )
           ("JE2", "/sys/class/pwm/ehrpwm.1:0", 
             { stop = 0; zero = 1450000; min = 1200000; max = 1800000; period = 20000000 } )
+         |] with get, set
+    member val EncoderConfig =
+        [| 
+          ("JB2", 0x31)
+          ("JB4", 0x32)
+          ("JB3", 0x33)
          |] with get, set
     member val MotorConfig = 
         [| 
@@ -42,11 +49,16 @@ type Model () =
           ("JA4", 0x22 )
           ("JA5", 0x21 )
           ("JA6", 0x20 )
-        |]
+        |] with get, set
     member x.Motor
         with get() = 
             match motor with 
             | None -> 
+                IO.File.WriteAllText("/sys/class/gpio/gpio62/value", "1")
+                Helpers.I2C.send 0x10 0x1000 2
+                Helpers.I2C.send 0x11 0x1000 2
+                Helpers.I2C.send 0x12 0x1000 2
+                Helpers.I2C.send 0x13 0x1000 2
                 motor <- 
                     x.MotorConfig
                     |> Array.map (fun (port, cnum)  -> (port, new PowerMotor(cnum)))             
@@ -79,6 +91,9 @@ type Model () =
                     |> Some
                 analogSensor.Value
             | Some(x) -> x
+    
+    member x.Encoder
+        with get() = encoder.Force()
 
     member x.Gyro
         with get() = 
