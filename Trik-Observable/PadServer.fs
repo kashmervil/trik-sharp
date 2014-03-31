@@ -17,12 +17,16 @@ type PadEvent =
 type PadServer(?port) =
     let padPortVal = defaultArg port 4444
     let observers = new HashSet<IObserver<PadEvent> >()
+    (*
     let obs = Observable.Create(fun observer -> 
         observers.Add(observer) |> ignore; 
         { new IDisposable with 
             member this.Dispose() = () } )
     let obsNext (x:PadEvent) = observers |> Seq.iter (fun obs -> obs.OnNext(x) ) 
-
+    *)
+    let obs_src = new Event<PadEvent>()
+    let obs = obs_src.Publish
+    let obsNext = obs_src.Trigger
     let mutable working = false
     let mutable request_accumulator = ""
     let messageBuf = Array.create 1024 <| byte 0
