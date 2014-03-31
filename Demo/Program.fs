@@ -78,5 +78,6 @@ let main _ =
     //testSensors model
     //testPad model
     //testMain model
-    Linetracer.run(model)
+    let lt = Linetracer.Linetracer(model)
+    lt.Run()
     0

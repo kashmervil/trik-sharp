@@ -44,6 +44,17 @@ module I2C =
     let inline send command data len = I2CLockCall wrap_I2c_SendData (command, data, len)  
     let inline receive (command: int) = I2CLockCall wrap_I2c_ReceiveData command
 
+let loadIniConf path = 
+    IO.File.ReadAllLines (path)
+        |> Seq.choose(fun s -> 
+            if s.Length > 0 then 
+                let parts = 
+                    s.Split ([| '=' |], StringSplitOptions.RemoveEmptyEntries) 
+                    |> Array.map(fun s -> s.Trim([| ' '; '\r' |]) )
+                Some(parts.[0], parts.[1]) 
+            else None)
+        |> dict
+
 let fastInt32Parse (s:string) = 
     let mutable n = 0
     let start = if s.Chars 0 |> Char.IsDigit then 0 else 1
@@ -52,6 +63,13 @@ let fastInt32Parse (s:string) =
     for i = start to s.Length - 1 do 
         n <- n * 10 + int (s.Chars i) - zero
     sign * n
+(*
+let ss = [ for i in -100000 .. 3000000 -> i.ToString() ]
+let sw = new System.Diagnostics.Stopwatch()
+sw.Start()
+ss |> Seq.iter (fun s ->  fastInt32Parse (s) |> ignore )
+sw.Elapsed
+*)
 
 let inline konst c _ = c
 
