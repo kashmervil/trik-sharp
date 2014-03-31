@@ -79,7 +79,7 @@ type LogFifo(path:string) = //, _lineTargetDataParsed, _lineColorDataParsed) =
             i <- i - 1
     let rec loop() = 
         let ln = sr.ReadLine()
-        eprintfn "%s" ln
+        //eprintfn "%s" ln
         checkLines [| ln |] 0
         //printfn "LogFifoLoop"
         (*let cnt = fd.Read(buf, 0, max_fifo_input_size)
@@ -105,36 +105,26 @@ type LogFifo(path:string) = //, _lineTargetDataParsed, _lineColorDataParsed) =
     member x.LineTargetDataParsed = lineTargetDataParsed.Publish
     member x.LineColorDataParsed = lineColorDataParsed.Publish
 
-type CmdFifo(path:string) = 
+type CmdFifo(path:string) as self = 
     let fd = new IO.FileStream(path, FileMode.Truncate)
-    let mutable dh = null
-    let mutable th = null
+    let mutable h = null
+    let detectTimer = new System.Timers.Timer(200.0, Enabled = false)
+    do detectTimer.Elapsed.Add(fun _ -> self.Write("detect") )
     member x.Write(cmd:string) = 
         let buf = Text.Encoding.ASCII.GetBytes(cmd + "\n")
         fd.Write(buf, 0, buf.Length)
         fd.Flush()
     member x.Detect (logFifo:LogFifo) f = 
         //f(246, 134, 9, 9, 31, 31)
-        f(223, 111, 18, 18, 9, 9)
-
-        //th <- new Handler<_>(fun _ _ -> () )
-        //let tm = new System.Timers.Timer(500)
-        (*
+        //f(223, 111, 18, 18, 9, 9)
         h <- new Handler<_> (fun _ a -> 
-            eprintfn "x.Detect Handler"
             logFifo.LineColorDataParsed.RemoveHandler h
+            detectTimer.Stop()
+            eprintfn "x.Detect Handler"
             f a )
         logFifo.LineColorDataParsed.AddHandler(h)
         x.Write("detect")
-        x.Write("detect")
-        x.Write("detect")
-        x.Write("detect")
-        x.Write("detect")
-        x.Write("detect")
-        x.Write("detect")
-        x.Write("detect")
-        x.Write("detect")
-        *)
+        detectTimer.Start()
         eprintfn "x.Detect"
 
 
