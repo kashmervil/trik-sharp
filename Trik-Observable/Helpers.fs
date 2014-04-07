@@ -6,6 +6,9 @@ open System.Reactive.Linq
 open System.Collections.Generic
 open System.IO
 
+let GlobalStopwatch = new Diagnostics.Stopwatch()
+GlobalStopwatch.Start()
+
 [<Measure>]
 type ms
 [<Measure>]
@@ -200,3 +203,19 @@ let distinctUntilChanged (sq: IObservable<'T>) : IObservable<'T> =
         | _ -> prev := Some(x); true            
         ) sq
         *)
+
+let fn() = 
+    let src = [| 
+        [| 1; 2; 3; 1; 2; 3; 4; 5 |] 
+        [| 2; 10; 11; 12; 13; 14; 15; 16 |] 
+        [| 3; 15; 25; 26; 30; 42; 44; 49 |] 
+        [| 4; 18; 19; 70; 80; 90; 100; 110 |] 
+        [| 5; 19; 20; 15; 20; 25; 30; 35 |] 
+        [| 6; 25; 26; 45; 50; 55; 60; 70 |] 
+        [| 7; 26; 28; 25; 35; 75; 95; 100 |] 
+        [| 10; 30; 31; 36; 38; 40; 50; 60 |] 
+    |]
+    for i = 0 to 7 do 
+        let m = Array.min src.[i]
+        for j = 0 to 7 do src.
+    ()
