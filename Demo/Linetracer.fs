@@ -5,6 +5,7 @@ open System
 open System.IO
 open System.Collections
 open System.Diagnostics
+open System.Threading
 
 let logFifoPath = @"/tmp/dsp-detector.out.fifo"
 let cmdFifoPath = @"/tmp/dsp-detector.in.fifo"
@@ -17,41 +18,13 @@ let DK = -0.009;
 let encC = 1.0 / (334.0 * 34.0); //1 : (num of points of encoder wheel * reductor ratio)
 let max_fifo_input_size = 4000
 
-type MutableBuf<'T> (size) = 
-    let buf = Array.zeroCreate size
-    let mutable l = 0
-    member x.IndexOf b = 
-        let mutable found = -1
-        for i = 0 to l - 1 do 
-            if buf.[i] = b then found <- i
-        found
-    member x.Append (nbuf:byte[], cnt:int) = 
-        for i in 0 .. (cnt - 1) do 
-            buf.[l + i] <- nbuf.[i]
-        l <- l + cnt
-    member x.CopyFrom(from, cnt) = 
-        Array.ConstrainedCopy(from, 0, buf, 0, cnt)
-        l <- cnt
-    member x.Buf = buf
-    member x.Length 
-        with get() = l
-        and set(v) = l <- v
-    override x.ToString() = Text.Encoding.ASCII.GetString(buf, 0, l)
-    
-type LogFifo(path:string) = //, _lineTargetDataParsed, _lineColorDataParsed) = 
-    //let fd = File.Open(path, IO.FileMode.Open, IO.FileAccess.Read, IO.FileShare.Read)
+type LogFifo(path:string) = 
     let sr = new StreamReader(path)
-    //let rest = new MutableBuf<byte> (max_fifo_input_size * 3)
-    //let mutable rest = Array.zeroCreate (max_fifo_input_size * 3), 0
-    //let rest = new Text.StringBuilder ""
+
     let mutable loopDone = false
-    let buf = Array.zeroCreate max_fifo_input_size
     let lineTargetDataParsed = new Event<_>()
     let lineColorDataParsed = new Event<_>()
-    let eol = 
-        let buf = Text.Encoding.ASCII.GetBytes("\n")
-        buf.[0]
-        //byte 10
+
     let checkLines (lines:string[]) last = 
         let mutable i = last
         let mutable wasLoc = false
@@ -81,29 +54,12 @@ type LogFifo(path:string) = //, _lineTargetDataParsed, _lineColorDataParsed) =
         let ln = sr.ReadLine()
         //eprintfn "%s" ln
         checkLines [| ln |] 0
-        //printfn "LogFifoLoop"
-        (*let cnt = fd.Read(buf, 0, max_fifo_input_size)
-        rest.Append(buf, cnt)
-        rest.Append([| eol; eol |], 2)
-        eprintfn "%A %A %A\n" eol cnt rest.Length
-        if rest.IndexOf(eol) <> -1 then
-            let mutable cnt = 0
-            for i = 0 to rest.Length - 1 do 
-                if rest.Buf.[i] = eol then cnt <- cnt + 1 
-            eprintfn "cnt: %d\n" cnt
-            let mutable rest_str = rest.ToString()
-            
-            eprintfn "rest_str: %s\n" rest_str
-
-            let lines = rest_str.Split([| '\n' |], StringSplitOptions.RemoveEmptyEntries)
-            rest_str <- lines.[lines.Length - 1]
-            let rest_str_buf = Text.Encoding.ASCII.GetBytes(rest_str)
-            rest.CopyFrom (rest_str_buf, rest_str.Length)
-            checkLines lines (lines.Length - 2)*)
         if not loopDone then loop() 
     do Async.Start <| async { loop() } 
     member x.LineTargetDataParsed = lineTargetDataParsed.Publish
     member x.LineColorDataParsed = lineColorDataParsed.Publish
+    interface IDisposable with
+        member x.Dispose() = loopDone <- true
 
 type CmdFifo(path:string) as self = 
     let fd = new IO.FileStream(path, FileMode.Truncate)
@@ -115,8 +71,6 @@ type CmdFifo(path:string) as self =
         fd.Write(buf, 0, buf.Length)
         fd.Flush()
     member x.Detect (logFifo:LogFifo) f = 
-        //f(246, 134, 9, 9, 31, 31)
-        //f(223, 111, 18, 18, 9, 9)
         h <- new Handler<_> (fun _ a -> 
             logFifo.LineColorDataParsed.RemoveHandler h
             detectTimer.Stop()
@@ -162,14 +116,17 @@ type MotorControler (motor: Trik.PowerMotor, enc: Encoder, sign) =
         x.ActualSpeed <- x.PowerBase + x.PowerAddition 
         motor.SetPower(sign * x.ActualSpeed)    
 
-type Linetracer (model:Model) = 
+type Linetracer (model: Model) = 
+    let sw = new Stopwatch()
+    do eprintfn "Linetracer ctor"
     let cmd_fifo = new CmdFifo(cmdFifoPath)
     let log_fifo = new LogFifo(logFifoPath)
-    //do eprintfn "stop here"
     //do System.Console.ReadKey |> ignore
+    do sw.Restart()
     let localConfPath = "ltc.ini"
     let conf = Helpers.loadIniConf localConfPath
-
+    let elapsed = sw.ElapsedMilliseconds
+    do eprintfn "Linetracer ctor: config parsed: %A ms" elapsed 
     let min_mass = conf.["min_mass"] |> Helpers.fastInt32Parse
     let power_base = conf.["power_base"] |> Helpers.fastInt32Parse
     let motor_sign = conf.["motor_sign"] |> Helpers.fastInt32Parse
@@ -177,17 +134,27 @@ type Linetracer (model:Model) =
     let div_coefL = conf.["div_coefL"] |> Double.Parse
     let div_coefR = conf.["div_coefR"] |> Double.Parse
     let on_lost_coef = conf.["on_lost_coef"] |> Double.Parse
-    do eprintfn "conf: powbase: %s" conf.["power_base"]
+    let turn_mode_coef = conf.["turn_mode_coef"] |> Helpers.fastInt32Parse
+    let elapsed = sw.ElapsedMilliseconds
+    do eprintfn "Linetracer ctor: config parsed: %A ms" elapsed 
 
     let motorL = new MotorControler(model.Motor.["JM1"], model.Encoder.["JB2"], motor_sign, PowerBase = power_base)
     let motorR = new MotorControler(model.Motor.["JM3"], model.Encoder.["JB3"], motor_sign * -1, PowerBase = power_base)
+    let frontSensor = model.AnalogSensor.["JA2"]
+    do eprintfn "Linetracer ctor: Motor controllers created"
     let mutable last_pow_add = 0
-    let startAutoMode() = 
-        let unsub = 
+    let mutable (stopAutoMode: IDisposable) = null
+    let mutable (frontSensorObs: IDisposable) = null
+    let mutable (sideSensorObs: IDisposable) = null
+    let startAutoMode(stm) = 
+        (*frontSensorObs <- 
+            frontSensor.ToObservable()
+            |> Observable.subscribe (fun x -> if x > 60 then frontSensorObs.Dispose(); stm() ) *)
+        stopAutoMode <-
             log_fifo.LineTargetDataParsed
             //|> Observable.subscribe(fun (x, angle, mass) -> eprintfn "lt: %d %d" x mass )
             //|> Observable.filter(fun (x, angle, mass) -> mass > min_mass )
-            |> Observable.add (fun (x, angle, mass) -> 
+            |> Observable.subscribe (fun (x, angle, mass) -> 
                 if mass = 0 then
                     motorL.PowerAddition <- int <| float(last_pow_add) * div_coefL * on_lost_coef
                     motorR.PowerAddition <- int <| float(-last_pow_add) * div_coefR * on_lost_coef
@@ -198,15 +165,25 @@ type Linetracer (model:Model) =
                 //eprintfn "lt: %d %d" motorL.PowerAddition motorR.PowerAddition
                 motorL.doStep()
                 motorR.doStep()
-                () ) 
-                
-        ()
+                () )      
+    let rec startTurnMode() = 
+        eprintfn "startTurnMode"
+        if stopAutoMode <> null then stopAutoMode.Dispose(); stopAutoMode <- null
+        motorL.PowerAddition <- turn_mode_coef
+        motorR.PowerAddition <- -turn_mode_coef
+        Thread.Sleep 500
+        motorL.PowerAddition <- -turn_mode_coef
+        motorR.PowerAddition <- turn_mode_coef
+        Thread.Sleep 500
+        motorL.PowerAddition <- 0
+        motorR.PowerAddition <- 0
+        startAutoMode(startTurnMode)
     member x.Run() = 
         eprintfn "Linetracer.Run"
         cmd_fifo.Detect log_fifo <| fun (hue, hueTol, sat, satTol, _val, valTol) ->
             //printfn "detected: %d %d " hue hueTol
             printfn "detected"
             cmd_fifo.Write <| sprintf "hsv %d %d %d %d %d %d" hue hueTol sat satTol _val valTol
-            startAutoMode()
+            startAutoMode(startTurnMode)
         eprintfn "Ready (any key to finish)"
         System.Console.ReadKey() |> ignore
