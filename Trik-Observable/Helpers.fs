@@ -95,8 +95,9 @@ type PollingSensor<'T>() =
         Observable.Generate( (), konst true, id, x.Read, konst refreshRate)
     member x.ToObservable() = x.ToObservable(System.TimeSpan.FromMilliseconds defaultRefreshRate)
 
-type FifoSensor<'T>(stream: FileStream, dataSize, bufSize) as sens = 
-    let observers = new HashSet<IObserver<'T> >()
+type FifoSensor<'T>(path: string, dataSize, bufSize) as sens = 
+    let stream = File.Open(path, IO.FileMode.Open, IO.FileAccess.Read, IO.FileShare.Read)
+    let observers = new ResizeArray<IObserver<'T> >()
     let obs = Observable.Create(fun observer -> 
         lock observers <| fun () -> observers.Add(observer) |> ignore 
         { new IDisposable with 
@@ -105,9 +106,9 @@ type FifoSensor<'T>(stream: FileStream, dataSize, bufSize) as sens =
     let bytes = Array.zeroCreate bufSize
     let mutable disposed = false
     let mutable offset = 0
-    let rec readingLoop() =
+    let rec reading() = async {
         if not disposed then 
-            let readCnt = stream.Read(bytes, 0, bytes.Length)
+            let! readCnt = stream.AsyncRead(bytes, 0, bytes.Length)
             let blocks = readCnt / dataSize
             offset <- 0
             for i = 1 to blocks do 
@@ -115,8 +116,9 @@ type FifoSensor<'T>(stream: FileStream, dataSize, bufSize) as sens =
                 | Some x -> obsNext x
                 | None -> ()
                 offset <- offset + dataSize
-            readingLoop()
-    do Async.Start <| async { readingLoop() }
+            return! reading()
+    }
+    do Async.Start <| reading()
     [<DefaultValue>]
     val mutable ParseFunc: (byte[] -> int -> 'T option)
     member x.ToObservable() = obs
@@ -203,19 +205,3 @@ let distinctUntilChanged (sq: IObservable<'T>) : IObservable<'T> =
         | _ -> prev := Some(x); true            
         ) sq
         *)
-
-let fn() = 
-    let src = [| 
-        [| 1; 2; 3; 1; 2; 3; 4; 5 |] 
-        [| 2; 10; 11; 12; 13; 14; 15; 16 |] 
-        [| 3; 15; 25; 26; 30; 42; 44; 49 |] 
-        [| 4; 18; 19; 70; 80; 90; 100; 110 |] 
-        [| 5; 19; 20; 15; 20; 25; 30; 35 |] 
-        [| 6; 25; 26; 45; 50; 55; 60; 70 |] 
-        [| 7; 26; 28; 25; 35; 75; 95; 100 |] 
-        [| 10; 30; 31; 36; 38; 40; 50; 60 |] 
-    |]
-    for i = 0 to 7 do 
-        let m = Array.min src.[i]
-        for j = 0 to 7 do src.
-    ()
