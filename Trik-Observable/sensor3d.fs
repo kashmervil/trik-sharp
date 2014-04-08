@@ -12,7 +12,7 @@ module  Sensor3dHelpers =
     
 
 type Sensor3d (min, max, deviceFilePath) as sens = 
-    inherit Helpers.FifoSensor<int array>(deviceFilePath, 16, 2048)
+    inherit Helpers.FifoSensor<int array>(deviceFilePath, 16, 16)
     [<Literal>]
     let ev_abs = 3us
     let last = Array.zeroCreate 3

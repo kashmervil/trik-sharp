@@ -111,11 +111,12 @@ type FifoSensor<'T>(path: string, dataSize, bufSize) as sens =
             let! readCnt = stream.AsyncRead(bytes, 0, bytes.Length)
             let blocks = readCnt / dataSize
             offset <- 0
-            for i = 1 to blocks do 
-                match sens.ParseFunc bytes offset with 
-                | Some x -> obsNext x
-                | None -> ()
-                offset <- offset + dataSize
+            seq {1 .. blocks} |> 
+                Seq.iter (fun _ -> 
+                    match sens.ParseFunc bytes offset with 
+                    | Some x -> obsNext x
+                    | None -> ()
+                    offset <- offset + dataSize) 
             return! reading()
     }
     do Async.Start <| reading()
