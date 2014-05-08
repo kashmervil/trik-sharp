@@ -75,7 +75,7 @@ let main _ =
                                 { stop = 0; zero = 1550000; min =  800000; max = 2250000; period = 20000000 } )
                              |])
     log "Loaded"
-    //testSensors model
+    testSensors model
     //testPad model
     //testMain model
     let lt = Linetracer.Linetracer(model)

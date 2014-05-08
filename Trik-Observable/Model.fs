@@ -4,9 +4,6 @@ open Trik.ServoMotor
 
 type Model () as model = 
     //do printfn "Creating of model"\
-    //Helpers.Syscall_shell
-    
-    //Helpers.Syscall_shell "i2cset -y 2 0x48 0x10 0x1000 w; i2cset -y 2 0x48 0x11 0x1000 w; i2cset -y 2 0x48 0x12 0x1000 w; i2cset -y 2 0x48 0x13 0x1000 w"
     
     let mutable gyro = None
     let mutable accel = None
@@ -52,8 +49,7 @@ type Model () as model =
         |] with get, set
     member x.Motor
         with get() = 
-            match motor with 
-            | None -> 
+            let motorDefaultInit() = 
                 IO.File.WriteAllText("/sys/class/gpio/gpio62/value", "1")
                 Helpers.I2C.send 0x10 0x1000 2
                 Helpers.I2C.send 0x11 0x1000 2
@@ -64,82 +60,67 @@ type Model () as model =
                     |> Array.map (fun (port, cnum)  -> (port, new PowerMotor(cnum)))             
                     |> dict
                     |> Some
-                motor.Value
-            | Some(x) -> x
+            defaultArg motor (motorDefaultInit(); motor.Value)
+ 
          
     member x.Servo
         with get() = 
-            match servo with 
-            | None -> 
+            let servoDefaultInit() = 
                 servo <- 
                     x.ServoConfig
-                    |> Array.map (fun (port, path, kind) ->  ( port, new Servomotor(path, kind)))             
+                    |> Array.map (fun (port, path, kind) ->  (port, new Servomotor(path, kind)))             
                     |> dict
                     |> Some
-                servo.Value
-            | Some(x) -> x
+            defaultArg servo (servoDefaultInit(); servo.Value)
         
     
     member x.AnalogSensor
         with get() = 
-            match analogSensor with 
-            | None -> 
+            let analogSensorDefaultInit() = 
                 analogSensor <-
                     x.AnalogSensorConfig
                     |> Array.map (fun (port, cnum) -> (port, new AnalogSensor(cnum)))
                     |> dict
                     |> Some
-                analogSensor.Value
-            | Some(x) -> x
+            defaultArg analogSensor (analogSensorDefaultInit(); analogSensor.Value)
     
     member x.Encoder
         with get() = encoder.Force()
 
     member x.Gyro
         with get() = 
-            match gyro with 
-            | None -> 
+            let gyroDefaultInit() =
                 gyro <- Some(new Trik.Gyroscope(-32767, 32767, "/dev/input/by-path/platform-spi_davinci.1-event"))
-                gyro.Value
-            | Some(x) -> x
+            defaultArg gyro (gyroDefaultInit(); gyro.Value)
 
     member x.Accel
         with get() = 
-            match accel with 
-            | None -> 
+            let accelDefaultInit() = 
                 accel <- Some(new Trik.Accelerometer(-32767, 32767, "/dev/input/event1"))
-                accel.Value
-            | Some(x) -> x
+            defaultArg accel (accelDefaultInit(); accel.Value)
         
     member x.Led 
         with get() = 
-            match led with 
-            | None -> 
+            let ledDefaultInit() =
                 led <- Some(new Trik.Led("/sys/class/leds/"))
-                led.Value
-            | Some(x) -> x
-
+            defaultArg led (ledDefaultInit(); led.Value)
+    
     member x.Pad 
         with get() = 
-            match pad with 
-            | None -> 
+            let padDefaultInit() =
                 pad <- Some(new Trik.PadServer(4444))
-                pad.Value
-            | Some(x) -> x
+            defaultArg pad (padDefaultInit(); pad.Value)
 
     interface IDisposable with
         member x.Dispose() = 
-            match gyro with None -> () | Some(x) -> (x :> IDisposable).Dispose()
-            match accel with None -> () | Some(x) -> (x :> IDisposable).Dispose()
-            match led with None -> () | Some(x) -> (x :> IDisposable).Dispose()
-            match pad with None -> () | Some(x) -> (x :> IDisposable).Dispose()
-            match motor with 
-            | None -> ()
-            | Some(sq) -> sq |> Seq.iter (fun x -> (x.Value :> IDisposable).Dispose() )
-            match servo with 
-            | None -> ()
-            | Some(sq) -> sq |> Seq.iter (fun x -> (x.Value :> IDisposable).Dispose() )
-            match analogSensor with 
-            | None -> ()
-            | Some(sq) -> sq |> Seq.iter (fun x -> (x.Value :> IDisposable).Dispose() )
-
+            let inline dispose (device: 'T option when 'T :> IDisposable) = 
+                 device |> Option.iter (fun x -> x.Dispose())
+            let inline disposeMap (devices: Collections.Generic.IDictionary<string, 'T> option when 'T :> IDisposable) = 
+                devices |> Option.iter (Seq.iter (fun x -> x.Value.Dispose()))
+            dispose gyro
+            dispose accel
+            dispose led
+            dispose pad
+            disposeMap motor
+            disposeMap servo
+            disposeMap analogSensor 
