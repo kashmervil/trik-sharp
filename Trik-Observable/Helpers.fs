@@ -66,13 +66,6 @@ let fastInt32Parse (s:string) =
     for i = start to s.Length - 1 do 
         n <- n * 10 + int (s.Chars i) - zero
     sign * n
-(*
-let ss = [ for i in -100000 .. 3000000 -> i.ToString() ]
-let sw = new System.Diagnostics.Stopwatch()
-sw.Start()
-ss |> Seq.iter (fun s ->  fastInt32Parse (s) |> ignore )
-sw.Elapsed
-*)
 
 let inline konst c _ = c
 
@@ -92,7 +85,7 @@ type PollingSensor<'T>() =
     member x.Read() = x.ReadFunc()
     member x.ToObservable(refreshRate: System.TimeSpan) = 
         let rd = x.Read
-        Observable.Generate( (), konst true, id, x.Read, konst refreshRate)
+        Observable.Generate((), konst true, id, x.Read, konst refreshRate)
     member x.ToObservable() = x.ToObservable(System.TimeSpan.FromMilliseconds defaultRefreshRate)
 
 type FifoSensor<'T>(path: string, dataSize, bufSize) as sens = 
@@ -113,9 +106,7 @@ type FifoSensor<'T>(path: string, dataSize, bufSize) as sens =
             offset <- 0
             seq {1 .. blocks} |> 
                 Seq.iter (fun _ -> 
-                    match sens.ParseFunc bytes offset with 
-                    | Some x -> obsNext x
-                    | None -> ()
+                    sens.ParseFunc bytes offset |> Option.iter obsNext
                     offset <- offset + dataSize) 
             return! reading()
     }
