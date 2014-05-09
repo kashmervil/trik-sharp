@@ -49,7 +49,7 @@ type Model () as model =
         |] with get, set
     member x.Motor
         with get() = 
-            let motorDefaultInit() = 
+            let motorInit() = 
                 IO.File.WriteAllText("/sys/class/gpio/gpio62/value", "1")
                 Helpers.I2C.send 0x10 0x1000 2
                 Helpers.I2C.send 0x11 0x1000 2
@@ -60,18 +60,20 @@ type Model () as model =
                     |> Array.map (fun (port, cnum)  -> (port, new PowerMotor(cnum)))             
                     |> dict
                     |> Some
-            defaultArg motor (motorDefaultInit(); motor.Value)
+            if motor.IsNone then motorInit() 
+            motor.Value
  
          
     member x.Servo
         with get() = 
-            let servoDefaultInit() = 
+            let servoInit() = 
                 servo <- 
                     x.ServoConfig
                     |> Array.map (fun (port, path, kind) ->  (port, new Servomotor(path, kind)))             
                     |> dict
                     |> Some
-            defaultArg servo (servoDefaultInit(); servo.Value)
+            if servo.IsNone then servoInit() 
+            servo.Value
         
     
     member x.AnalogSensor
@@ -82,7 +84,8 @@ type Model () as model =
                     |> Array.map (fun (port, cnum) -> (port, new AnalogSensor(cnum)))
                     |> dict
                     |> Some
-            defaultArg analogSensor (analogSensorDefaultInit(); analogSensor.Value)
+            if analogSensor.IsNone then analogSensorDefaultInit()
+            analogSensor.Value
     
     member x.Encoder
         with get() = encoder.Force()
@@ -91,25 +94,29 @@ type Model () as model =
         with get() = 
             let gyroDefaultInit() =
                 gyro <- Some(new Trik.Gyroscope(-32767, 32767, "/dev/input/by-path/platform-spi_davinci.1-event"))
-            defaultArg gyro (gyroDefaultInit(); gyro.Value)
+            if gyro.IsNone then gyroDefaultInit()
+            gyro.Value
 
     member x.Accel
         with get() = 
             let accelDefaultInit() = 
                 accel <- Some(new Trik.Accelerometer(-32767, 32767, "/dev/input/event1"))
-            defaultArg accel (accelDefaultInit(); accel.Value)
+            if accel.IsNone then accelDefaultInit()
+            accel.Value
         
     member x.Led 
         with get() = 
             let ledDefaultInit() =
                 led <- Some(new Trik.Led("/sys/class/leds/"))
-            defaultArg led (ledDefaultInit(); led.Value)
+            if led.IsNone then ledDefaultInit()
+            led.Value
     
     member x.Pad 
         with get() = 
             let padDefaultInit() =
                 pad <- Some(new Trik.PadServer(4444))
-            defaultArg pad (padDefaultInit(); pad.Value)
+            if pad.IsNone then padDefaultInit()
+            pad.Value
 
     interface IDisposable with
         member x.Dispose() = 
