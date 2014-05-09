@@ -17,7 +17,10 @@ type LedStripe(rc,gc,bc, gnd) =
         member x.OnError(e) = x.PowerOff()
         member x.OnCompleted() = x.PowerOff()
     interface IDisposable with 
-        member x.Dispose() = x.PowerOff()
+        member x.Dispose() = 
+            x.PowerOff()
+            Helpers.I2C.send gnd 0 1
+
 
 
 
