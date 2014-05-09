@@ -41,6 +41,7 @@ let I2CLockCall f args : 'T =
         if isLinux then lock I2CLockObj <| fun () -> f args
         else Unchecked.defaultof<'T>
 
+let generate(timespan, func) = Observable.Interval(timespan).Select(fun _ -> func())
 
 module I2C = 
     let inline init string deviceId forced = I2CLockCall wrap_I2c_init (string, deviceId, forced)
@@ -85,7 +86,7 @@ type PollingSensor<'T>() =
     member x.Read() = x.ReadFunc()
     member x.ToObservable(refreshRate: System.TimeSpan) = 
         let rd = x.Read
-        Observable.Generate((), konst true, id, x.Read, konst refreshRate)
+        generate(refreshRate, x.Read)
     member x.ToObservable() = x.ToObservable(System.TimeSpan.FromMilliseconds defaultRefreshRate)
 
 type FifoSensor<'T>(path: string, dataSize, bufSize) as sens = 
