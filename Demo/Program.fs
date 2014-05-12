@@ -41,10 +41,10 @@ let testMain (model:Model) =
                         | Middle -> 0
                         | Far -> 100
 
-    let rightWheel = model.Motor.["JM1"]
-    let leftWheel = model.Motor.["JM2"]
+    let rightWheel = model.Motor.["JM2"]
+    let leftWheel = model.Motor.["JM1"]
     let frontSensor = model.AnalogSensor.["JA1"].ToObservable().Select(rawToDist)
-    let motorActions = frontSensor.Select(fun x -> // printfn "%A" x;
+    let motorActions = frontSensor.Select(fun x ->    printfn "%A" x;
                                                       distToSpeed x).DistinctUntilChanged()
 
     use r_disp = motorActions.Select(fun x -> -x).Subscribe(rightWheel)
@@ -75,9 +75,9 @@ let main _ =
                                 { stop = 0; zero = 1550000; min =  800000; max = 2250000; period = 20000000 } )
                              |])
     log "Loaded"
-    testSensors model
-    //testPad model
-    //testMain model
-    let lt = Linetracer.Linetracer(model)
-    lt.Run()
+    //testSensors model
+    testMain model
+    let button = new Button("/dev/input/event0")   
+    use d = button.ToObservable().Subscribe(printfn "%A") 
+    Console.ReadLine() |> ignore
     0
