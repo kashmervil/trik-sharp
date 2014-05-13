@@ -5,12 +5,6 @@ open System.IO
 open System.Reactive.Linq
 open System.Diagnostics
 
-module  Sensor3dHelpers =
-    let createReader () =
-      let last = ()
-      fun () -> ()
-    
-
 type Sensor3d (min, max, deviceFilePath) as sens = 
     inherit Helpers.FifoSensor<int array>(deviceFilePath, 16, 16)
     [<Literal>]
