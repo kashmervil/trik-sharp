@@ -4,14 +4,12 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>B3C7B4ED-EAD9-4044-B37B-5F5660BD6A14</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>Trik_Observable</RootNamespace>
     <AssemblyName>Trik.Observable</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <Name>Trik.Observable</Name>
-    <ProductVersion>12.0.0</ProductVersion>
     <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
     <UseMSBuildEngine>False</UseMSBuildEngine>
   </PropertyGroup>
@@ -85,9 +83,6 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="FSharp.Core">
-      <HintPath>..\packages\FSharp.Core.3.0.0.2\lib\net40\FSharp.Core.dll</HintPath>
-    </Reference>
     <Reference Include="System.Reactive.Interfaces">
       <HintPath>..\packages\Rx-Interfaces.2.2.2\lib\net40\System.Reactive.Interfaces.dll</HintPath>
     </Reference>
