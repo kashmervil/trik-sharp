@@ -10,6 +10,7 @@ type Model () as model =
     let mutable led = None
     let mutable pad = None
     let mutable motor = None
+    let mutable ledStripe = None
     let mutable servo = None
     let mutable encoder = lazy (
         model.EncoderConfig 
@@ -38,6 +39,8 @@ type Model () as model =
           ("M1", 0x16)
           ("JM3", 0x17)
          |] with get, set
+    member val LedStripeConfig = {red = 0x14; green = 0x15; blue = 0x16; ground = 0x17;}
+         with get, set
     member val AnalogSensorConfig = 
         [| 
           ("JA1", 0x25 )
@@ -110,6 +113,11 @@ type Model () as model =
                 led <- Some(new Trik.Led("/sys/class/leds/"))
             if led.IsNone then ledDefaultInit()
             led.Value
+    member x.LedStripe
+        with get() = 
+            if ledStripe.IsNone then
+                ledStripe <- Some(new Trik.LedStripe(x.LedStripeConfig))
+            ledStripe.Value
     
     member x.Pad 
         with get() = 
