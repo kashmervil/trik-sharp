@@ -16,14 +16,7 @@ type PadEvent =
 
 type PadServer(?port) =
     let padPortVal = defaultArg port 4444
-    let observers = new HashSet<IObserver<PadEvent> >()
-    (*
-    let obs = Observable.Create(fun observer -> 
-        observers.Add(observer) |> ignore; 
-        { new IDisposable with 
-            member this.Dispose() = () } )
-    let obsNext (x:PadEvent) = observers |> Seq.iter (fun obs -> obs.OnNext(x) ) 
-    *)
+
     let obs_src = new Event<PadEvent>()
     let obs = obs_src.Publish
     let obsNext = obs_src.Trigger
@@ -37,19 +30,14 @@ type PadServer(?port) =
         | [| "pad"; n; x; y |] -> PadEvent.Pad(Int32.Parse(n), Some (Int32.Parse(x), Int32.Parse(y) ) ) |> obsNext 
         | [| "btn"; n; "down" |] -> PadEvent.Button(Int32.Parse(n) ) |> obsNext 
         | _ -> printfn "PadServer unresolved: %A" req
-    let getMessage (client:TcpClient) = 
-        let mutable msg = ""
-        let mutable isDone = false
-        while not isDone do 
-            let count = client.GetStream().Read(messageBuf, 0, messageBuf.Length)
-            msg <- msg + Encoding.ASCII.GetString(messageBuf, 0, count)   
-            if count = 0 || msg.IndexOf('\n') >= 0 then isDone <- true else ()
-        msg.TrimEnd [| '\r'; '\n' |] 
+
     let rec clientLoop(client: TcpClient) = async {
-        let isDone = ref false
-        while not !isDone do 
-            if not client.Connected then isDone := true
-            else client |> getMessage |> handleRequst 
+            if client.Connected then 
+                let! count = client.GetStream().AsyncRead(messageBuf, 0, messageBuf.Length)
+                let msg = Encoding.ASCII.GetString(messageBuf, 0, count)   
+                msg.TrimEnd [| '\r'; '\n' |] 
+                |> handleRequst 
+                return! clientLoop(client)
     }
     let server = async {
         let listener = new TcpListener(IPAddress.Any, padPortVal)

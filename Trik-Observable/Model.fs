@@ -17,7 +17,7 @@ type Model () as model =
         |> dict
     )
     let mutable analogSensor = None
-
+    member val PadConfigPort = 3333 with get, set
     member val ServoConfig = 
         [| 
           ("JE1", "/sys/class/pwm/ehrpwm.1:1", 
@@ -114,7 +114,7 @@ type Model () as model =
     member x.Pad 
         with get() = 
             let padDefaultInit() =
-                pad <- Some(new Trik.PadServer(4444))
+                pad <- Some(new Trik.PadServer(x.PadConfigPort))
             if pad.IsNone then padDefaultInit()
             pad.Value
 
