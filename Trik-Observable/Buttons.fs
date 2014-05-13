@@ -23,5 +23,5 @@ type Button (deviceFilePath) as btn =
             let evType = BitConverter.ToUInt16(bytes, offset + 8)
             let evCode = BitConverter.ToUInt16(bytes, offset + 10)
             let evValue = BitConverter.ToInt32(bytes, offset + 12)
-            if evType = 1us then Some (enum<Button_Event_Code>(int evCode), evValue = 1)
-            else None 
+            if evType = 1us then Some (enum<Button_Event_Code>(int evCode), (evValue = 1) )
+            else None
