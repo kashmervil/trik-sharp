@@ -10,14 +10,6 @@ open System.Threading
 let logFifoPath = @"/tmp/dsp-detector.out.fifo"
 let cmdFifoPath = @"/tmp/dsp-detector.in.fifo"
 
-let speed = 100;
-let stopK = 1;
-let PK = 0.42;
-let IK = 0.006;
-let DK = -0.009;
-let encC = 1.0 / (334.0 * 34.0); //1 : (num of points of encoder wheel * reductor ratio)
-let max_fifo_input_size = 4000
-
 type LogFifo(path:string) = 
     let sr = new StreamReader(path)
 
@@ -25,35 +17,18 @@ type LogFifo(path:string) =
     let lineTargetDataParsed = new Event<_>()
     let lineColorDataParsed = new Event<_>()
 
-    let checkLines (lines:string[]) last = 
-        let mutable i = last
-        let mutable wasLoc = false
-        let mutable wasHsv = false
-        while (not (wasHsv && wasLoc) ) && i >= 0 do
-            let logStruct = lines.[i].Split([| ' ' |], StringSplitOptions.RemoveEmptyEntries)
-            //printfn "%s" logStruct.[0]
-            if not wasLoc && logStruct.[0] = "loc:" then 
-                let x     = Helpers.fastInt32Parse logStruct.[1]
-                let angle = Helpers.fastInt32Parse logStruct.[2]
-                let mass  = Helpers.fastInt32Parse logStruct.[3]
-                wasLoc <- true
-                lineTargetDataParsed.Trigger(x, angle, mass)
-                //printfn "ltparsed"
-            elif not wasHsv && logStruct.[0] = "hsv:" then
-                let hue    = Helpers.fastInt32Parse logStruct.[1]
-                let hueTol = Helpers.fastInt32Parse logStruct.[2]
-                let sat    = Helpers.fastInt32Parse logStruct.[3]
-                let satTol = Helpers.fastInt32Parse logStruct.[4]
-                let _val   = Helpers.fastInt32Parse logStruct.[5]
-                let valTol = Helpers.fastInt32Parse logStruct.[6]
-                wasHsv <- true
-                lineColorDataParsed.Trigger(hue, hueTol, sat, satTol, _val, valTol)
+    let checkLine (line: string) = 
+            let logStruct = line.Split([| ' ' |], StringSplitOptions.RemoveEmptyEntries)
+            if logStruct.[0] = "loc:" then 
+                let vals = List.map (fun i -> Helpers.fastInt32Parse logStruct.[i]) [1 .. 3]
+                lineTargetDataParsed.Trigger (vals.[0], vals.[1], vals.[2])
+            elif logStruct.[0] = "hsv:" then
+                let vals = List.map (fun i -> Helpers.fastInt32Parse logStruct.[i]) [1 .. 6]
+                lineColorDataParsed.Trigger(vals.[1], vals.[2], vals.[3], vals.[4], vals.[5], vals.[6])
+                //lineColorDataParsed.Trigger(hue, hueTol, sat, satTol, _val, valTol)
             else ()
-            i <- i - 1
     let rec loop() = 
-        let ln = sr.ReadLine()
-        //eprintfn "%s" ln
-        checkLines [| ln |] 0
+        sr.ReadLine() |> checkLine
         if not loopDone then loop() 
     do Async.Start <| async { loop() } 
     member x.LineTargetDataParsed = lineTargetDataParsed.Publish
@@ -118,11 +93,10 @@ type MotorControler (motor: Trik.PowerMotor, enc: Encoder, sign) =
 
 type Linetracer (model: Model) = 
     let sw = new Stopwatch()
+    do sw.Restart()
     do eprintfn "Linetracer ctor"
     let cmd_fifo = new CmdFifo(cmdFifoPath)
     let log_fifo = new LogFifo(logFifoPath)
-    //do System.Console.ReadKey |> ignore
-    do sw.Restart()
     let localConfPath = "ltc.ini"
     let conf = Helpers.loadIniConf localConfPath
     let elapsed = sw.ElapsedMilliseconds
@@ -147,9 +121,6 @@ type Linetracer (model: Model) =
     let mutable (frontSensorObs: IDisposable) = null
     let mutable (sideSensorObs: IDisposable) = null
     let startAutoMode(stm) = 
-        (*frontSensorObs <- 
-            frontSensor.ToObservable()
-            |> Observable.subscribe (fun x -> if x > 60 then frontSensorObs.Dispose(); stm() ) *)
         stopAutoMode <-
             log_fifo.LineTargetDataParsed
             //|> Observable.subscribe(fun (x, angle, mass) -> eprintfn "lt: %d %d" x mass )
