@@ -15,8 +15,10 @@ let button = new Button("/dev/input/event0")
 
 let testMainWaitHandle = new EventWaitHandle(false, EventResetMode.AutoReset)
 let testSensorsWaitHandle = new EventWaitHandle(false, EventResetMode.AutoReset)
+let testStripeWaitHandle = new EventWaitHandle(false, EventResetMode.AutoReset)
 let testMainRunning = ref false
 let testSensorsRunning = ref false
+let testStripeRunning = ref false
 
 let testPad (model:Model) = 
     let servo1 = model.Servo.["JE2"]
@@ -64,6 +66,19 @@ let testMain (model:Model) =
     testMainWaitHandle.WaitOne() |> ignore
     testMainRunning := false
 
+let testStripe (model:Model) = 
+    printfn "testStripe (start)"
+    testStripeRunning := true
+    use disp = 
+        model.Gyro.ToObservable()
+        |> Observable.map 
+            (fun x -> (100 - abs(x.[0]/10) - abs(x.[2]/10), abs(x.[0]/10) + abs(x.[1]/10), abs(x.[2]/10) + abs(x.[1]/10)) )
+        |> Observable.subscribe(model.LedStripe.SetPower)
+    log "testStripe Ready (key to finish)"
+    testStripeWaitHandle.WaitOne() |> ignore
+    testStripeRunning := false
+
+
 let testSensors (model:Model) = 
     printfn "testSensors (start)"
     testSensorsRunning := true  
@@ -91,6 +106,7 @@ let main _ =
     log "Loaded model"
     let demoList() = 
         printfn "1. testMain\n2. testSensors\n3. testStripe"
+    demoList()
     let exit = new EventWaitHandle(false, EventResetMode.AutoReset)
     use disp = 
         button.ToObservable() 
@@ -105,6 +121,13 @@ let main _ =
                     Async.Start(async { testMain(model); demoList() })
                 else 
                     testMainWaitHandle.Set() |> ignore
+            | Button_Event_Code.Left, true -> 
+                if not !testSensorsRunning then 
+                    testSensorsWaitHandle.Reset() |> ignore
+                    Async.Start(async { testSensors(model); demoList() })
+                else 
+                    testSensorsWaitHandle.Set() |> ignore
+                    
             | Button_Event_Code.Up, true -> 
                 if not !testSensorsRunning then 
                     testSensorsWaitHandle.Reset() |> ignore
