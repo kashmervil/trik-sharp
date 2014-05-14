@@ -116,6 +116,11 @@ type Model () as model =
     member x.LedStripe
         with get() = 
             if ledStripe.IsNone then
+                IO.File.WriteAllText("/sys/class/gpio/gpio62/value", "1")
+                Helpers.I2C.send 0x10 0x1000 2
+                Helpers.I2C.send 0x11 0x1000 2
+                Helpers.I2C.send 0x12 0x1000 2
+                Helpers.I2C.send 0x13 0x1000 2
                 ledStripe <- Some(new Trik.LedStripe(x.LedStripeConfig))
             ledStripe.Value
     
