@@ -76,7 +76,7 @@ let main _ =
                              |])
     log "Loaded"
     //testSensors model
-    testMain model
+    //testMain model
     let button = new Button("/dev/input/event0")   
     button.BlockingRead() |> ignore
     0
