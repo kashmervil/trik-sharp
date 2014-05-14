@@ -4,12 +4,19 @@ open System
 open System.Collections.Generic
 open System.Reactive.Linq
 open Trik
+open System.Threading
 
 type Distance =  Far | Middle | Near
 
 let log s = printfn s
 
 let button = new Button("/dev/input/event0")   
+
+
+let testMainWaitHandle = new EventWaitHandle(false, EventResetMode.AutoReset)
+let testSensorsWaitHandle = new EventWaitHandle(false, EventResetMode.AutoReset)
+let testMainRunning = ref false
+let testSensorsRunning = ref false
 
 let testPad (model:Model) = 
     let servo1 = model.Servo.["JE2"]
@@ -31,9 +38,9 @@ let testPad (model:Model) =
     )
 
     log "Ready (any key to finish)"
-    System.Console.ReadKey() |> ignore
    
 let testMain (model:Model) = 
+    testMainRunning := true    
     let rawToDist x = match x with 
                       | _ when x > 80 -> Near
                       | _ when x > 30 -> Middle
@@ -52,32 +59,54 @@ let testMain (model:Model) =
     use r_disp = motorActions.Subscribe(rightWheel)
     use l_disp = motorActions.Subscribe(leftWheel)
 
-    log "Ready (any key to finish)"
-    button.BlockingRead() |> ignore
+    log "testMain Ready (key to finish)"
+    testMainWaitHandle.WaitOne() |> ignore
+    testMainRunning := false
 
 let testSensors (model:Model) = 
+    testSensorsRunning := true  
     let gyro = model.Gyro
     let a = ref 0
     use unsub = 
         gyro.ToObservable() 
         |> Observable.subscribe(fun (x: int array) -> 
         a := (!a + 1) % 5; if !a = 0 then printfn "%A" x.[2] else () )
-    
-    log "Ready (any key to finish)"
-    button.BlockingRead() |> ignore
+
+    log "testSensors Ready (key to finish)"
+    testSensorsWaitHandle.WaitOne() |> ignore
+    testSensorsRunning := false
 
 [<EntryPoint>]
 let main _ = 
     log "Started"
     Helpers.I2C.init "/dev/i2c-2" 0x48 1
-    (*use model = new Model(ServoConfig = [| 
+    use model = new Model(ServoConfig = [| 
                               ("JE1", "/sys/class/pwm/ehrpwm.1:1", 
                                 { stop = 0; zero = 1310000; min = 1200000; max = 1420000; period = 20000000 } )
                               ("JE2", "/sys/class/pwm/ehrpwm.1:0", 
                                 { stop = 0; zero = 1550000; min =  800000; max = 2250000; period = 20000000 } )
                              |])
-    log "Loaded"*)
+    log "Loaded model"
     //testSensors model
     //testMain model
-    button.BlockingRead() |> ignore
+    let exit = new EventWaitHandle(false, EventResetMode.AutoReset)
+    use disp = 
+        button.ToObservable() 
+        |> Observable.map(fun x -> printfn "recv %A" x;  x)
+        |> Observable.subscribe(function 
+            | Button_Event_Code.Down, true -> exit.Set() |> ignore
+            | Button_Event_Code.Right, true -> 
+                if not !testMainRunning then 
+                    testMainWaitHandle.Reset() |> ignore
+                    testMain(model)
+                else 
+                    testMainWaitHandle.Set() |> ignore
+            | Button_Event_Code.Up, true -> 
+                if not !testSensorsRunning then 
+                    testSensorsWaitHandle.Reset() |> ignore
+                    testSensors(model)
+                else 
+                    testSensorsWaitHandle.Set() |> ignore
+            | _ -> () ) 
+    exit.WaitOne() |> ignore
     0
