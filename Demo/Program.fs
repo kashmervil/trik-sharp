@@ -87,24 +87,26 @@ let main _ =
                                 { stop = 0; zero = 1550000; min =  800000; max = 2250000; period = 20000000 } )
                              |])
     log "Loaded model"
-    //testSensors model
-    //testMain model
+    let demoList() = 
+        printfn "1. testMain \n2.testSensors"
     let exit = new EventWaitHandle(false, EventResetMode.AutoReset)
     use disp = 
         button.ToObservable() 
         |> Observable.map(fun x -> printfn "recv %A" x;  x)
         |> Observable.subscribe(function 
-            | Button_Event_Code.Down, true -> exit.Set() |> ignore
+            | Button_Event_Code.Down, true -> 
+                printfn "Exiting"
+                exit.Set() |> ignore
             | Button_Event_Code.Right, true -> 
                 if not !testMainRunning then 
                     testMainWaitHandle.Reset() |> ignore
-                    testMain(model)
+                    Async.Start(async { testMain(model); demoList() })
                 else 
                     testMainWaitHandle.Set() |> ignore
             | Button_Event_Code.Up, true -> 
                 if not !testSensorsRunning then 
                     testSensorsWaitHandle.Reset() |> ignore
-                    testSensors(model)
+                    Async.Start(async { testSensors(model); demoList() } )
                 else 
                     testSensorsWaitHandle.Set() |> ignore
             | _ -> () ) 
