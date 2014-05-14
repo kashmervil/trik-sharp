@@ -3,7 +3,6 @@ open System
 open System.IO
 open System.Reactive.Linq
 open System.Diagnostics
-open Trik.Helpers
 
 type Button_Event_Code  = 
                     Sync    = 0
