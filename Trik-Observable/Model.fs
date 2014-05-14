@@ -143,4 +143,5 @@ type Model () as model =
             dispose pad
             disposeMap motor
             disposeMap servo
-            disposeMap analogSensor 
+            disposeMap analogSensor
+            dispose ledStripe
