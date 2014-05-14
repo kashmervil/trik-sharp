@@ -98,6 +98,7 @@ type FifoSensor<'T>(path: string, dataSize, bufSize) as sens =
             member this.Dispose() = lock observers <| fun () -> observers.Remove(observer) |> ignore } )
     let obsNext (x: 'T) = lock observers <| fun () -> observers |> Seq.iter (fun obs -> obs.OnNext(x) ) 
     let bytes = Array.zeroCreate bufSize
+    let bytesBlocking = Array.zeroCreate bufSize
     let mutable disposed = false
     let mutable offset = 0
     let rec reading() = async {
@@ -114,6 +115,9 @@ type FifoSensor<'T>(path: string, dataSize, bufSize) as sens =
     do Async.Start <| reading()
     [<DefaultValue>]
     val mutable ParseFunc: (byte[] -> int -> 'T option)
+    member x.BlockingRead() = 
+        let cnt = stream.Read(bytesBlocking, offset, bufSize)
+        sens.ParseFunc bytesBlocking offset
     member x.ToObservable() = obs
     interface IDisposable with
         member x.Dispose() = 

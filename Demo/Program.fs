@@ -78,6 +78,5 @@ let main _ =
     //testSensors model
     testMain model
     let button = new Button("/dev/input/event0")   
-    use d = button.ToObservable().Subscribe(printfn "%A") 
-    Console.ReadLine() |> ignore
+    button.BlockingRead() |> ignore
     0
