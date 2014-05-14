@@ -40,6 +40,7 @@ let testPad (model:Model) =
     log "Ready (any key to finish)"
    
 let testMain (model:Model) = 
+    printfn "testMain (start)"
     testMainRunning := true    
     let rawToDist x = match x with 
                       | _ when x > 80 -> Near
@@ -53,7 +54,7 @@ let testMain (model:Model) =
     let rightWheel = model.Motor.["JM2"]
     let leftWheel = model.Motor.["JM1"]
     let frontSensor = model.AnalogSensor.["JA1"].ToObservable().Select(rawToDist)
-    let motorActions = frontSensor.Select(fun x ->    printfn "%A" x;
+    let motorActions = frontSensor.Select(fun x ->    //printfn "%A" x;
                                                       distToSpeed x).DistinctUntilChanged()
 
     use r_disp = motorActions.Subscribe(rightWheel)
@@ -64,6 +65,7 @@ let testMain (model:Model) =
     testMainRunning := false
 
 let testSensors (model:Model) = 
+    printfn "testSensors (start)"
     testSensorsRunning := true  
     let gyro = model.Gyro
     let a = ref 0
@@ -88,14 +90,14 @@ let main _ =
                              |])
     log "Loaded model"
     let demoList() = 
-        printfn "1. testMain \n2.testSensors"
+        printfn "1. testMain\n2. testSensors\n3. testStripe"
     let exit = new EventWaitHandle(false, EventResetMode.AutoReset)
     use disp = 
         button.ToObservable() 
         |> Observable.map(fun x -> printfn "recv %A" x;  x)
         |> Observable.subscribe(function 
             | Button_Event_Code.Down, true -> 
-                printfn "Exiting"
+                printfn "Exiting (start)"
                 exit.Set() |> ignore
             | Button_Event_Code.Right, true -> 
                 if not !testMainRunning then 
@@ -111,4 +113,5 @@ let main _ =
                     testSensorsWaitHandle.Set() |> ignore
             | _ -> () ) 
     exit.WaitOne() |> ignore
+    printfn "Exiting (after wait)"
     0
