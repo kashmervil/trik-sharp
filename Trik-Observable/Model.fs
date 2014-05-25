@@ -4,7 +4,7 @@ open Trik.ServoMotor
 
 type Model () as model = 
     //do printfn "Creating of model"\
-    
+    //do Helpers.I2C.init "/dev/i2c-2" 0x48 1
     let mutable gyro = None
     let mutable accel = None
     let mutable led = None
