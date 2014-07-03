@@ -5,12 +5,16 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>34af8df3-713b-447b-bf82-219c64a63dce</ProjectGuid>
+    <ProjectGuid>acb696c8-fb71-4c1b-a2f7-6789af0ded74</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>Demo_stripe</RootNamespace>
-    <AssemblyName>Demo_stripe</AssemblyName>
+    <RootNamespace>Demo_fs_1</RootNamespace>
+    <AssemblyName>Demo_fs_1</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <Name>Demo_stripe</Name>
+    <Name>Demo_fs_1</Name>
+	<UseMSBuildEngine>False</UseMSBuildEngine>
+    <Name>FSharp-Demo-1</Name>
+    <UseMSBuildEngine>False</UseMSBuildEngine>
+    <TargetFSharpCoreVersion>4.3.0.0</TargetFSharpCoreVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -21,7 +25,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <DocumentationFile>bin\Debug\Demo_stripe.XML</DocumentationFile>
+    <DocumentationFile>bin\Debug\Demo_fs_1.XML</DocumentationFile>
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -32,7 +36,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <DocumentationFile>bin\Release\Demo_stripe.XML</DocumentationFile>
+    <DocumentationFile>bin\Release\Demo_fs_1.XML</DocumentationFile>
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
@@ -43,13 +47,39 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
+    <Reference Include="System.Reactive.Core">
+      <HintPath>..\packages\Rx-Core.2.2.2\lib\net40\System.Reactive.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Interfaces">
+      <HintPath>..\packages\Rx-Interfaces.2.2.2\lib\net40\System.Reactive.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Linq">
+      <HintPath>..\packages\Rx-Linq.2.2.2\lib\net40\System.Reactive.Linq.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.PlatformServices">
+      <HintPath>..\packages\Rx-PlatformServices.2.2.3\lib\net40\System.Reactive.PlatformServices.dll</HintPath>
+    </Reference>
     <Reference Include="Trik.Observable">
       <HintPath>..\Trik-Observable\bin\Release\Trik.Observable.dll</HintPath>
+      <HintPath>..\..\Trik-Observable\bin\Release\Trik.Observable.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Demo_stripe.fs" />
     <None Include="App.config" />
+    <Compile Include="Linetracer.fs" />
+    <Compile Include="Program.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Demo\Demo_fs.fsproj">
+      <Name>Demo_fs</Name>
+      <Project>{8c089c86-79de-42df-bc81-a13ee42e671c}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\Demo_cs\Demo_cs.csproj">
+      <Name>Demo_cs</Name>
+      <Project>{80252cf2-7f82-4613-ba63-aea4070ef8de}</Project>
+      <Private>True</Private>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>

@@ -60,7 +60,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Trik-Observable\Trik.Observable.fsproj">
+    <ProjectReference Include="..\..\Trik-Observable\Trik.Observable.fsproj">
       <Project>{b3c7b4ed-ead9-4044-b37b-5f5660bd6a14}</Project>
       <Name>Trik.Observable</Name>
     </ProjectReference>
