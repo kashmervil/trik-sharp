@@ -112,23 +112,23 @@ let main _ =
         button.ToObservable() 
         |> Observable.map(fun x -> printfn "recv %A" x;  x)
         |> Observable.subscribe(function 
-            | Button_Event_Code.Down, true -> 
+            | ButtonEventCode.Down, true -> 
                 printfn "Exiting (start)"
                 exit.Set() |> ignore
-            | Button_Event_Code.Right, true -> 
+            | ButtonEventCode.Right, true -> 
                 if not !testMainRunning then 
                     testMainWaitHandle.Reset() |> ignore
                     Async.Start(async { testMain(model); demoList() })
                 else 
                     testMainWaitHandle.Set() |> ignore
-            | Button_Event_Code.Left, true -> 
+            | ButtonEventCode.Left, true -> 
                 if not !testSensorsRunning then 
                     testSensorsWaitHandle.Reset() |> ignore
                     Async.Start(async { testSensors(model); demoList() })
                 else 
                     testSensorsWaitHandle.Set() |> ignore
                     
-            | Button_Event_Code.Up, true -> 
+            | ButtonEventCode.Up, true -> 
                 if not !testSensorsRunning then 
                     testSensorsWaitHandle.Reset() |> ignore
                     Async.Start(async { testSensors(model); demoList() } )

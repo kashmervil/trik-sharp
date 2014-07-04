@@ -68,8 +68,6 @@ let fastInt32Parse (s:string) =
         n <- n * 10 + int (s.Chars i) - zero
     sign * n
 
-let inline konst c _ = c
-
 let inline limit l u x = if u < x then u elif l > x then l else x  
 
 let inline milliseconds x = 1<ms>*x
