@@ -39,7 +39,7 @@ type Model () as model =
           ("M1", 0x16)
           ("JM3", 0x17)
          |] with get, set
-    member val LedStripeConfig = {red = 0x14; green = 0x15; blue = 0x16; ground = 0x17;}
+    member val LedStripeConfig = {Red = 0x14; Green = 0x15; Blue = 0x16; Ground = 0x17;}
          with get, set
     member val AnalogSensorConfig = 
         [| 
