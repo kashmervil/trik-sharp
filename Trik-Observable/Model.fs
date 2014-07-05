@@ -3,8 +3,9 @@ open System
 open Trik.ServoMotor
 
 type Model () as model = 
-    //do printfn "Creating of model"\
-    //do Helpers.I2C.init "/dev/i2c-2" 0x48 1
+
+    do Helpers.I2C.Init "/dev/i2c-2" 0x48 1
+
     let mutable gyro = None
     let mutable accel = None
     let mutable led = None
@@ -43,21 +44,22 @@ type Model () as model =
          with get, set
     member val AnalogSensorConfig = 
         [| 
-          ("JA1", 0x25 )
-          ("JA2", 0x24 )
-          ("JA3", 0x23 )
-          ("JA4", 0x22 )
-          ("JA5", 0x21 )
-          ("JA6", 0x20 )
+          ("JA1", 0x25)
+          ("JA2", 0x24)
+          ("JA3", 0x23)
+          ("JA4", 0x22)
+          ("JA5", 0x21)
+          ("JA6", 0x20)
         |] with get, set
     member x.Motor
         with get() = 
             let motorInit() = 
                 IO.File.WriteAllText("/sys/class/gpio/gpio62/value", "1")
-                Helpers.I2C.send 0x10 0x1000 2
-                Helpers.I2C.send 0x11 0x1000 2
-                Helpers.I2C.send 0x12 0x1000 2
-                Helpers.I2C.send 0x13 0x1000 2
+                Helpers.I2C.Init "/dev/i2c-2" 0x48 1
+                Helpers.I2C.Send 0x10 0x1000 2
+                Helpers.I2C.Send 0x11 0x1000 2
+                Helpers.I2C.Send 0x12 0x1000 2
+                Helpers.I2C.Send 0x13 0x1000 2
                 motor <- 
                     x.MotorConfig
                     |> Array.map (fun (port, cnum)  -> (port, new PowerMotor(cnum)))             
@@ -117,10 +119,10 @@ type Model () as model =
         with get() = 
             if ledStripe.IsNone then
                 IO.File.WriteAllText("/sys/class/gpio/gpio62/value", "1")
-                Helpers.I2C.send 0x10 0x1000 2
-                Helpers.I2C.send 0x11 0x1000 2
-                Helpers.I2C.send 0x12 0x1000 2
-                Helpers.I2C.send 0x13 0x1000 2
+                Helpers.I2C.Send 0x10 0x1000 2
+                Helpers.I2C.Send 0x11 0x1000 2
+                Helpers.I2C.Send 0x12 0x1000 2
+                Helpers.I2C.Send 0x13 0x1000 2
                 ledStripe <- Some(new Trik.LedStripe(x.LedStripeConfig))
             ledStripe.Value
     

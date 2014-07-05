@@ -11,6 +11,8 @@ type ButtonEventCode  =
                     | Power = 116
                     | Menu  = 139
 
+
+/// Button event type in a form of (Button Code, Pressed/Released) 
 type ButtonEvent = ButtonEventCode * bool
 
 type Button (deviceFilePath) as btn = 

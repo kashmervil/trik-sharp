@@ -2,7 +2,7 @@
 open Trik
 [<EntryPoint>]
 let main argv = 
-    Helpers.I2C.init "/dev/i2c-2" 0x48 1
+    Helpers.I2C.Init "/dev/i2c-2" 0x48 1
     use model = new Model()
 //model.LedStripe |> ignore
     let inline f (x:int array) = 

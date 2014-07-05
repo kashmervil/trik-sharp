@@ -2,7 +2,7 @@
 open System.Reactive.Linq
 [<EntryPoint>]
 let main _ = 
-    Helpers.I2C.init "/dev/i2c-2" 0x48 1
+    Helpers.I2C.Init "/dev/i2c-2" 0x48 1
     use model = new Model()
     let motorL = model.Motor.["JM2"]//Two port in controller's behind
     let motorR = model.Motor.["JM1"]//you can change to ports you like 
