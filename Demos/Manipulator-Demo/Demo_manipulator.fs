@@ -8,7 +8,7 @@ let exit = new EventWaitHandle(false, EventResetMode.AutoReset)
 [<EntryPoint>]
 let main argv = 
     printfn "Started"
-    Helpers.I2C.init "/dev/i2c-2" 0x48 1
+    Helpers.I2C.Init "/dev/i2c-2" 0x48 1
     use model = new Model(ServoConfig = [| 
                               ("JE1", "/sys/class/pwm/ehrpwm.1:1", 
                                 { stop = 0; zero = 1500000; min = 800000; max = 2400000; period = 20000000 } )

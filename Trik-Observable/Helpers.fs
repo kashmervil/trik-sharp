@@ -6,23 +6,16 @@ open System.Reactive.Linq
 open System.Collections.Generic
 open System.IO
 
-let GlobalStopwatch = new Diagnostics.Stopwatch()
-GlobalStopwatch.Start()
+[<AutoOpenAttribute>]
+module Measures = 
+    [<Measure>] type ms
+    let millisec = 1<ms>
+    [<Measure>] type permil
 
-[<Measure>]
-type ms
-[<Measure>]
-type permil
+    [<Measure>] type tick
 
+    [<Measure>] type rad 
 
-let private I2CLockObj = new Object()
-
-[<DllImport("libconWrap.so.1.0.0", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)>]
-    extern void private wrap_I2c_init(string, int, int)
-[<DllImport("libconWrap.so.1.0.0", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)>]
-    extern void private wrap_I2c_SendData(int, int, int) 
-[<DllImport("libconWrap.so.1.0.0", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)>]
-    extern int private wrap_I2c_ReceiveData(int)
 
 let isLinux = not <| Environment.OSVersion.VersionString.StartsWith "Microsoft"
 let inline trikSpecific f = if isLinux then f () else ()
@@ -31,22 +24,30 @@ let Syscall_shell cmd  =
     let args = sprintf "-c '%s'" cmd
     trikSpecific <| fun () ->
         let proc = System.Diagnostics.Process.Start("/bin/sh", args)
-        printfn "Syscall: %A" cmd
         proc.WaitForExit()
         proc.ExitCode |> ignore
-        //if proc.ExitCode  <> 0 then
-        //    printf "Init script failed '%s'" cmd
-
-let I2CLockCall f args : 'T = 
-        if isLinux then lock I2CLockObj <| fun () -> f args
-        else Unchecked.defaultof<'T>
+        if proc.ExitCode  <> 0 then
+            printf "Init script failed '%s'" cmd
 
 let generate(timespan, func) = Observable.Interval(timespan).Select(fun _ -> func())
 
-module I2C = 
-    let inline init string deviceId forced = I2CLockCall wrap_I2c_init (string, deviceId, forced)
-    let inline send command data len = I2CLockCall wrap_I2c_SendData (command, data, len)  
-    let inline receive (command: int) = I2CLockCall wrap_I2c_ReceiveData command
+module I2C =
+    [<DllImport("libconWrap.so.1.0.0", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)>]
+    extern void private wrap_I2c_init(string, int, int)
+    [<DllImport("libconWrap.so.1.0.0", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)>]
+    extern void private wrap_I2c_SendData(int, int, int) 
+    [<DllImport("libconWrap.so.1.0.0", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)>]
+    extern int private wrap_I2c_ReceiveData(int)
+    
+    let private I2CLockObj = new Object()
+
+    let I2CLockCall f args : 'T = 
+        if isLinux then lock I2CLockObj <| fun () -> f args
+        else Unchecked.defaultof<'T>
+
+    let inline Init string deviceId forced = I2CLockCall wrap_I2c_init (string, deviceId, forced)
+    let inline Send command data len = I2CLockCall wrap_I2c_SendData (command, data, len)  
+    let inline Receive (command: int) = I2CLockCall wrap_I2c_ReceiveData command
 
 let loadIniConf path = 
     IO.File.ReadAllLines (path)
@@ -68,9 +69,8 @@ let fastInt32Parse (s:string) =
         n <- n * 10 + int (s.Chars i) - zero
     sign * n
 
-let inline konst c _ = c
-
-let inline limit l u x = if u < x then u elif l > x then l else x  
+/// Squishes Value between lowBound and upBound
+let inline limit lowBound upBound value = if upBound < value then upBound elif lowBound > value then lowBound else value  
 
 let inline milliseconds x = 1<ms>*x
 
@@ -79,7 +79,7 @@ let inline permil min max v =
     (1000<permil> * (v' - min))/(max - min)
 
 let defaultRefreshRate = 50.0
-
+ 
 type PollingSensor<'T>() = 
     [<DefaultValueAttribute>]
     val mutable ReadFunc: (unit -> 'T)
@@ -89,38 +89,3 @@ type PollingSensor<'T>() =
         generate(refreshRate, x.Read)
     member x.ToObservable() = x.ToObservable(System.TimeSpan.FromMilliseconds defaultRefreshRate)
 
-type FifoSensor<'T>(path: string, dataSize, bufSize) as sens = 
-    let stream = File.Open(path, IO.FileMode.Open, IO.FileAccess.Read, IO.FileShare.Read)
-    let observers = new ResizeArray<IObserver<'T> >()
-    let obs = Observable.Create(fun observer -> 
-        lock observers <| fun () -> observers.Add(observer) |> ignore 
-        { new IDisposable with 
-            member this.Dispose() = lock observers <| fun () -> observers.Remove(observer) |> ignore } )
-    let obsNext (x: 'T) = lock observers <| fun () -> observers |> Seq.iter (fun obs -> obs.OnNext(x) ) 
-    let bytes = Array.zeroCreate bufSize
-    let bytesBlocking = Array.zeroCreate bufSize
-    let mutable disposed = false
-    let mutable offset = 0
-    let rec reading() = async {
-        if not disposed then 
-            let! readCnt = stream.AsyncRead(bytes, 0, bytes.Length)
-            let blocks = readCnt / dataSize
-            offset <- 0
-            seq {1 .. blocks} |> 
-                Seq.iter (fun _ -> 
-                    sens.ParseFunc bytes offset |> Option.iter obsNext
-                    offset <- offset + dataSize) 
-            return! reading()
-    }
-    do Async.Start <| reading()
-    [<DefaultValue>]
-    val mutable ParseFunc: (byte[] -> int -> 'T option)
-    member x.BlockingRead() = 
-        let cnt = stream.Read(bytesBlocking, offset, bufSize)
-        sens.ParseFunc bytesBlocking offset
-    member x.ToObservable() = obs
-    interface IDisposable with
-        member x.Dispose() = 
-            disposed <- true
-            stream.Dispose()
-    //member x.Read() = x.ReadFunc()

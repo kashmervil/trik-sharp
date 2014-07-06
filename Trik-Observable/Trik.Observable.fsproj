@@ -62,6 +62,7 @@
   <ItemGroup>
     <None Include="App.config" />
     <Compile Include="Helpers.fs" />
+    <Compile Include="FifoSensor.fs" />
     <None Include="packages.config" />
     <Compile Include="Servomotor.fs" />
     <Compile Include="PowerMotor.fs" />

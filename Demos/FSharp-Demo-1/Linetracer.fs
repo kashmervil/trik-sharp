@@ -1,11 +1,13 @@
 ﻿module Linetracer
 
-open Trik
 open System
 open System.IO
 open System.Collections
 open System.Diagnostics
 open System.Threading
+open Trik
+open Trik.Helpers
+
 
 let logFifoPath = @"/tmp/dsp-detector.out.fifo"
 let cmdFifoPath = @"/tmp/dsp-detector.in.fifo"
@@ -95,13 +97,13 @@ type MotorControler (motor: Trik.PowerMotor, enc: Encoder, sign) =
     val mutable PowerAddition : int
     [<DefaultValue>]
     val mutable PowerBase : int
-    let mutable currentSpeed = 0.0f
-    let mutable encPoints_prev = 0.0f
+    let mutable currentSpeed = 0.0f<rad>
+    let mutable encPoints_prev = 0.0f<rad>
     let sw = new Stopwatch()
     do sw.Start()
     let mutable time_prev = sw.ElapsedMilliseconds
     let countSpeed() = 
-        let encPoints = enc.Read()
+        let encPoints = enc.ReadRadian()
         let time = sw.ElapsedMilliseconds
         let period = time - time_prev |> float32
         let speed = (encPoints - encPoints_prev) * 100.0f / (period * max_ppms)

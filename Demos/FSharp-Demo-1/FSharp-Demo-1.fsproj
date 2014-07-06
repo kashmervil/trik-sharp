@@ -10,8 +10,6 @@
     <RootNamespace>Demo_fs_1</RootNamespace>
     <AssemblyName>Demo_fs_1</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <Name>Demo_fs_1</Name>
-	<UseMSBuildEngine>False</UseMSBuildEngine>
     <Name>FSharp-Demo-1</Name>
     <UseMSBuildEngine>False</UseMSBuildEngine>
     <TargetFSharpCoreVersion>4.3.0.0</TargetFSharpCoreVersion>
@@ -40,10 +38,10 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="mscorlib" />
-    <Reference Include="FSharp.Core, Version=4.3.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <Reference Include="FSharp.Core, Version=$(TargetFSharpCoreVersion), Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Private>True</Private>
     </Reference>
+    <Reference Include="mscorlib" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
@@ -60,7 +58,6 @@
       <HintPath>..\packages\Rx-PlatformServices.2.2.3\lib\net40\System.Reactive.PlatformServices.dll</HintPath>
     </Reference>
     <Reference Include="Trik.Observable">
-      <HintPath>..\Trik-Observable\bin\Release\Trik.Observable.dll</HintPath>
       <HintPath>..\..\Trik-Observable\bin\Release\Trik.Observable.dll</HintPath>
     </Reference>
   </ItemGroup>
@@ -69,22 +66,22 @@
     <Compile Include="Linetracer.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Demo\Demo_fs.fsproj">
-      <Name>Demo_fs</Name>
-      <Project>{8c089c86-79de-42df-bc81-a13ee42e671c}</Project>
-      <Private>True</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\Demo_cs\Demo_cs.csproj">
-      <Name>Demo_cs</Name>
-      <Project>{80252cf2-7f82-4613-ba63-aea4070ef8de}</Project>
-      <Private>True</Private>
-    </ProjectReference>
-  </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>
   </PropertyGroup>
-  <Import Project="$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.0\Framework\v4.0\Microsoft.FSharp.Targets" Condition=" Exists('$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.0\Framework\v4.0\Microsoft.FSharp.Targets')" />
+  <Choose>
+    <When Condition="'$(VisualStudioVersion)' == '11.0'">
+      <PropertyGroup>
+        <FSharpTargetsPath>$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.0\Framework\v4.0\Microsoft.FSharp.Targets</FSharpTargetsPath>
+      </PropertyGroup>
+    </When>
+    <Otherwise>
+      <PropertyGroup>
+        <FSharpTargetsPath>$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\FSharp\Microsoft.FSharp.Targets</FSharpTargetsPath>
+      </PropertyGroup>
+    </Otherwise>
+  </Choose>
+  <Import Project="$(FSharpTargetsPath)" Condition="Exists('$(FSharpTargetsPath)')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
