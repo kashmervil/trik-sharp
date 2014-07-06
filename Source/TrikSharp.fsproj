@@ -76,7 +76,6 @@
     <Compile Include="Led.fs" />
     <Compile Include="Buttons.fs" />
     <Compile Include="Model.fs" />
-    <Content Include="config.xml" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
