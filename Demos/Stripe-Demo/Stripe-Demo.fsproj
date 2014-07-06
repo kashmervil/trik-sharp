@@ -44,8 +44,8 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
-    <Reference Include="Trik.Observable">
-      <HintPath>..\..\Trik-Observable\bin\Release\Trik.Observable.dll</HintPath>
+    <Reference Include="Trik.Core">
+      <HintPath>..\..\Source\bin\Release\Trik.Core.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

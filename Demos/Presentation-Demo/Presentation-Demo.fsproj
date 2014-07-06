@@ -59,8 +59,8 @@
       <HintPath>..\..\packages\Rx-PlatformServices.2.2.4\lib\net40\System.Reactive.PlatformServices.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Trik.Observable">
-      <HintPath>..\..\Trik-Observable\bin\Release\Trik.Observable.dll</HintPath>
+    <Reference Include="Trik.Core">
+      <HintPath>..\..\Source\bin\Release\Trik.Core.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

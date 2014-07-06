@@ -7,9 +7,9 @@
     <ProjectGuid>B3C7B4ED-EAD9-4044-B37B-5F5660BD6A14</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>Trik_Observable</RootNamespace>
-    <AssemblyName>Trik.Observable</AssemblyName>
+    <AssemblyName>Trik.Core</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <Name>Trik.Observable</Name>
+    <Name>TrikSharp</Name>
     <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
     <UseMSBuildEngine>False</UseMSBuildEngine>
   </PropertyGroup>
@@ -66,14 +66,14 @@
     <None Include="packages.config" />
     <Compile Include="Servomotor.fs" />
     <Compile Include="PowerMotor.fs" />
-    <Compile Include="Sensor3d.fs" />
     <Compile Include="AnalogSensor.fs" />
     <Compile Include="Encoder.fs" />
-    <Compile Include="LED.fs" />
     <Compile Include="LedStripe.fs" />
     <Compile Include="PadServer.fs" />
+    <Compile Include="Sensor3d.fs" />
     <Compile Include="Gyroscope.fs" />
     <Compile Include="Accelerometer.fs" />
+    <Compile Include="Led.fs" />
     <Compile Include="Buttons.fs" />
     <Compile Include="Model.fs" />
     <Content Include="config.xml" />

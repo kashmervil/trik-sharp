@@ -1,8 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Trik.Observable", "Trik-Observable\Trik.Observable.fsproj", "{B3C7B4ED-EAD9-4044-B37B-5F5660BD6A14}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Demos", "Demos", "{3A613CE4-5E65-4A77-BC21-FB2B1802E9C4}"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FSharp-Demo", "Demos\FSharp-Demo\FSharp-Demo.fsproj", "{8C089C86-79DE-42DF-BC81-A13EE42E671C}"
@@ -17,16 +15,14 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Presentation-Demo", "Demos\
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Stripe-Demo", "Demos\Stripe-Demo\Stripe-Demo.fsproj", "{34AF8DF3-713B-447B-BF82-219C64A63DCE}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "TrikSharp", "Source\TrikSharp.fsproj", "{B3C7B4ED-EAD9-4044-B37B-5F5660BD6A14}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{B3C7B4ED-EAD9-4044-B37B-5F5660BD6A14}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B3C7B4ED-EAD9-4044-B37B-5F5660BD6A14}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B3C7B4ED-EAD9-4044-B37B-5F5660BD6A14}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B3C7B4ED-EAD9-4044-B37B-5F5660BD6A14}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8C089C86-79DE-42DF-BC81-A13EE42E671C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8C089C86-79DE-42DF-BC81-A13EE42E671C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8C089C86-79DE-42DF-BC81-A13EE42E671C}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -51,6 +47,10 @@ Global
 		{34AF8DF3-713B-447B-BF82-219C64A63DCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{34AF8DF3-713B-447B-BF82-219C64A63DCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{34AF8DF3-713B-447B-BF82-219C64A63DCE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B3C7B4ED-EAD9-4044-B37B-5F5660BD6A14}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3C7B4ED-EAD9-4044-B37B-5F5660BD6A14}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3C7B4ED-EAD9-4044-B37B-5F5660BD6A14}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3C7B4ED-EAD9-4044-B37B-5F5660BD6A14}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
