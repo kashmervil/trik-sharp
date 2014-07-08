@@ -37,7 +37,7 @@ For file transferring with Wi-Fi connected [TRIK-controller](http://www.trikset.
 
  * Set up _**ssh**_ tunnel with controller board (linux _**ssh**_ tool or _**Putty**_ can be used)
  * Copy to a robot all files in a folder you got from build 
- * Make sure folder contains _**Trik.Core.dll**_.  If it does not then copy this assembly too
+ * Make sure folder contains _**Trik.Core.dll**_ and _**libconWrap.so**_.  If it does not then copy these assembly too
  * Copy to a robot _**Fsharp.Core.dll**_ which can be find GAC
  
  
