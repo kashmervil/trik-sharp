@@ -10,7 +10,7 @@ type Distance =  Far | Middle | Near
 
 let log s = printfn s
 
-let button = new Button("/dev/input/event0")   
+let button = new ButtonsPad("/dev/input/event0")   
 
 
 let testMainWaitHandle = new EventWaitHandle(false, EventResetMode.AutoReset)
@@ -112,23 +112,23 @@ let main _ =
         button.ToObservable() 
         |> Observable.map(fun x -> printfn "recv %A" x;  x)
         |> Observable.subscribe(function 
-            | ButtonEventCode.Down, true -> 
+            | ButtonEventCode.Down, true, _ -> 
                 printfn "Exiting (start)"
                 exit.Set() |> ignore
-            | ButtonEventCode.Right, true -> 
+            | ButtonEventCode.Right, true, _ -> 
                 if not !testMainRunning then 
                     testMainWaitHandle.Reset() |> ignore
                     Async.Start(async { testMain(model); demoList() })
                 else 
                     testMainWaitHandle.Set() |> ignore
-            | ButtonEventCode.Left, true -> 
+            | ButtonEventCode.Left, true, _ -> 
                 if not !testSensorsRunning then 
                     testSensorsWaitHandle.Reset() |> ignore
                     Async.Start(async { testSensors(model); demoList() })
                 else 
                     testSensorsWaitHandle.Set() |> ignore
                     
-            | ButtonEventCode.Up, true -> 
+            | ButtonEventCode.Up, true, _ -> 
                 if not !testSensorsRunning then 
                     testSensorsWaitHandle.Reset() |> ignore
                     Async.Start(async { testSensors(model); demoList() } )
@@ -136,5 +136,4 @@ let main _ =
                     testSensorsWaitHandle.Set() |> ignore
             | _ -> () ) 
     exit.WaitOne() |> ignore
-    printfn "Exiting (after wait)"
     0

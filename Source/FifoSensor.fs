@@ -2,6 +2,7 @@
 open System
 open System.Reactive.Linq
 
+[<AbstractClass>]
 type FifoSensor<'T>(path: string, dataSize, bufSize) as sens = 
     let stream = IO.File.Open(path, IO.FileMode.Open, IO.FileAccess.Read, IO.FileShare.Read)
     let observers = new ResizeArray<IObserver<'T> >()
