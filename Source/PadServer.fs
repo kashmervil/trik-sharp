@@ -2,7 +2,6 @@
 open System
 open System.Net
 open System.Net.Sockets
-open System.Reactive.Linq
 open System.Text
 open System.Collections.Generic
 

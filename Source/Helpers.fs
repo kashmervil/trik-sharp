@@ -2,7 +2,6 @@
 
 open System
 open System.Runtime.InteropServices
-open System.Reactive.Linq
 open System.Collections.Generic
 open System.IO
 
@@ -28,8 +27,6 @@ let Syscall_shell cmd  =
         proc.ExitCode |> ignore
         if proc.ExitCode  <> 0 then
             printf "Init script failed '%s'" cmd
-
-let generate(timespan, func) = Observable.Interval(timespan).Select(fun _ -> func())
 
 module I2C =
     [<DllImport("libconWrap.so.1.0.0", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)>]
@@ -85,7 +82,7 @@ type PollingSensor<'T>() =
     val mutable ReadFunc: (unit -> 'T)
     member x.Read() = x.ReadFunc()
     member x.ToObservable(refreshRate: System.TimeSpan) = 
-        let rd = x.Read
-        generate(refreshRate, x.Read)
+        Trik.Observable.Interval(refreshRate) 
+        |> Observable.map (fun _ -> x.Read())
     member x.ToObservable() = x.ToObservable(System.TimeSpan.FromMilliseconds defaultRefreshRate)
 

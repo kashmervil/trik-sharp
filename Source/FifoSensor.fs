@@ -1,13 +1,12 @@
 ﻿namespace Trik
 open System
-open System.Reactive.Linq
 
 [<AbstractClass>]
 type FifoSensor<'T>(path: string, dataSize, bufSize) as sens = 
     let stream = IO.File.Open(path, IO.FileMode.Open, IO.FileAccess.Read, IO.FileShare.Read)
     let observers = new ResizeArray<IObserver<'T> >()
-    let obs = Observable.Create(fun observer -> 
-        lock observers <| fun () -> observers.Add(observer) |> ignore 
+    let obs = Trik.Observable.Create(fun observer -> 
+        lock observers <| fun () -> observers.Add(observer)
         { new IDisposable with 
             member this.Dispose() = lock observers <| fun () -> observers.Remove(observer) |> ignore } )
     let obsNext (x: 'T) = lock observers <| fun () -> observers |> Seq.iter (fun obs -> obs.OnNext(x) ) 

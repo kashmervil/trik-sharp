@@ -9,7 +9,7 @@
     <RootNamespace>Trik_Observable</RootNamespace>
     <AssemblyName>Trik.Core</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <Name>TrikSharp</Name>
+    <Name>Trik.Core</Name>
     <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
     <UseMSBuildEngine>False</UseMSBuildEngine>
   </PropertyGroup>
@@ -61,10 +61,10 @@
   </PropertyGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <Compile Include="Observable.fs" />
     <Compile Include="Helpers.fs" />
-    <Compile Include="FifoSensor.fs" />
-    <None Include="packages.config" />
     <Compile Include="Servomotor.fs" />
+    <Compile Include="FifoSensor.fs" />
     <Compile Include="PowerMotor.fs" />
     <Compile Include="AnalogSensor.fs" />
     <Compile Include="Encoder.fs" />
@@ -82,19 +82,6 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Reactive.Interfaces">
-      <HintPath>..\packages\Rx-Interfaces.2.2.2\lib\net40\System.Reactive.Interfaces.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Reactive.Core">
-      <HintPath>..\packages\Rx-Core.2.2.2\lib\net40\System.Reactive.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Reactive.Linq">
-      <HintPath>..\packages\Rx-Linq.2.2.2\lib\net40\System.Reactive.Linq.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Reactive.PlatformServices">
-      <HintPath>..\packages\Rx-PlatformServices.2.2.3\lib\net40\System.Reactive.PlatformServices.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

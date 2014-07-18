@@ -1,6 +1,5 @@
 ﻿namespace Trik
 open System
-open System.Reactive.Linq
 
 type ButtonEventCode  = 
      | Sync  = 0
@@ -24,10 +23,13 @@ type ButtonsPad (deviceFilePath) =
     static let state = new Collections.BitArray(256)
     let maxEventSize = 1024
     let usualEventSize = 16
-    
     let stream = IO.File.Open(deviceFilePath, IO.FileMode.Open, IO.FileAccess.Read, IO.FileShare.Read)
     
     let observers = new ResizeArray<IObserver<ButtonEvent>>()
+    let obs = Trik.Observable.Create(fun observer -> 
+              lock observers <| fun () -> observers.Add(observer) 
+              { new IDisposable with 
+                    member this.Dispose() = lock observers <| fun () -> observers.Remove(observer) |> ignore } )
     let obsNext x = lock observers <| fun () -> observers |> Seq.iter (fun obs -> obs.OnNext x ) 
     let bytes = Array.zeroCreate maxEventSize
     let bytesBlocking = Array.zeroCreate maxEventSize
@@ -47,7 +49,6 @@ type ButtonsPad (deviceFilePath) =
   
             else None
 
-
     let rec reading() = async {
         if continueReading then 
             let! readCnt = stream.AsyncRead(bytes, 0, bytes.Length)
@@ -65,15 +66,7 @@ type ButtonsPad (deviceFilePath) =
     member x.ToObservable() = 
         continueReading <- true 
         Async.Start <| reading()
-        { new IObservable<ButtonEvent> with
-            member x.Subscribe observer =  
-                lock observers <| fun () -> observers.Add(observer) 
-                { new IDisposable with 
-                    member this.Dispose() = 
-                        lock observers <| fun () -> observers.Remove(observer) |> ignore 
-                }
-        }
-        
+        obs 
     interface IDisposable with
         member x.Dispose() = 
             continueReading <- false

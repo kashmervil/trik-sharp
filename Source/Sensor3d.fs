@@ -2,7 +2,6 @@ namespace Trik
 
 open System
 open System.IO
-open System.Reactive.Linq
 open System.Diagnostics
 
 type Sensor3d (min, max, deviceFilePath) as sens = 
