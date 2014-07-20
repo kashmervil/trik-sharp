@@ -9,7 +9,7 @@ namespace Demo_cs
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             Helpers.I2C.Init("/dev/i2c-2", 0x48, 1);
             var model = new Model();//.Create("config.xml");
@@ -28,7 +28,6 @@ namespace Demo_cs
                 return (x > 35) ? 0 : 72;
             }
                 ).DistinctUntilChanged().Subscribe(l_wheel);
-            System.Console.ReadKey();
 
             //obs.Subscribe(x => { Console.WriteLine(x.Item1); });
         }

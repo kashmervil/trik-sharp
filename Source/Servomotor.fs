@@ -26,26 +26,28 @@ type Servomotor(servoPath: string, kind: ServoMotor.Kind) =
     
     let fd = new IO.StreamWriter(servoPath + "/duty_ns", AutoFlush = true)
     let mutable lastCommand = 0
-    let mutable disposed = false
-    member x.SetPower command = 
+    
+    member self.Power 
+        with get() = lastCommand
+        and  set command =  
             let v = Helpers.limit -100 100 command 
             let range = if v < 0 then kind.zero - kind.min else kind.max - kind.zero                            
             let duty = (kind.zero + range * v / 100)     
             fd.Write(duty)
             
-    member x.Zero() = fd.Write(0)
+    member self.Zero() = fd.Write(0)
             
     interface IObserver<int> with
-        member this.OnNext(command) = 
+        member self.OnNext(command) = 
             if Math.Abs(lastCommand - command) > ServoMotor.observerEps
-            then lastCommand <- command; this.SetPower command
+            then lastCommand <- command; self.Power <- command
             
-        member this.OnError e = this.SetPower kind.stop
-        member this.OnCompleted () = this.SetPower kind.stop
+        member self.OnError e = self.Power <- kind.stop
+        member self.OnCompleted () = self.Power <- kind.stop
 
     interface IDisposable with
-        member x.Dispose() =
-            x.Zero()
-            (fd:>IDisposable).Dispose()
+        member self.Dispose() =
+            self.Zero()
+            (fd :> IDisposable).Dispose()
             setOption "request" "0"
     

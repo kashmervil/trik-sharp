@@ -8,10 +8,11 @@
     <OutputType>Library</OutputType>
     <RootNamespace>Trik_Observable</RootNamespace>
     <AssemblyName>Trik.Core</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <Name>Trik.Core</Name>
     <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
     <UseMSBuildEngine>False</UseMSBuildEngine>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

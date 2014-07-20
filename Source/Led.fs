@@ -19,15 +19,15 @@ type Led(deviceFilePath: string) =
         red.Write(ifFlag LedColor.Red); red.Flush()
     do setTo LedColor.Off
     
-    member x.SetColor c = setTo c
+    member self.SetColor c = setTo c
 
     interface IObserver<LedColor> with
-        member this.OnNext(c) = setTo c 
-        member this.OnError(e) = setTo LedColor.Off
-        member this.OnCompleted() = setTo LedColor.Off
+        member self.OnNext(c) = setTo c 
+        member self.OnError(e) = setTo LedColor.Off
+        member self.OnCompleted() = setTo LedColor.Off
 
     interface IDisposable with
-        member x.Dispose() = 
+        member self.Dispose() = 
             setTo LedColor.Off 
             (green:>IDisposable).Dispose()
             (red:>IDisposable).Dispose()

@@ -11,9 +11,10 @@ let main _ =
 
     use l_disp = power.Subscribe(motorL)
     use r_disp = power.Subscribe(motorR)
-    use led_disp = power |> Observable.map (function | 100 -> LedColor.Green 
-                                                     | 0   -> LedColor.Orange 
-                                                     | _   -> LedColor.Red)
-                         |> Observable.subscribe(model.Led.SetColor)
+    let ledStream = power |> Observable.map (function | 100 -> LedColor.Green 
+                                                      | 0   -> LedColor.Orange 
+                                                      | _   -> LedColor.Red)
+    use led_disp = ledStream.Subscribe(model.Led)
+    
     System.Console.ReadKey() |> ignore
     0

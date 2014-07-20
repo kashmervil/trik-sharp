@@ -9,8 +9,9 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>Presentation_Demo_noRx</RootNamespace>
     <AssemblyName>Presentation_Demo_noRx</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <Name>Presentation-Demo-noRx</Name>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
