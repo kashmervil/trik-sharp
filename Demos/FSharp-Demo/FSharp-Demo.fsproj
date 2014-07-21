@@ -82,9 +82,13 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="Trik.Core">
-      <HintPath>..\..\Source\bin\Release\Trik.Core.dll</HintPath>
-    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Source\Trik.Core.fsproj">
+      <Name>Trik.Core</Name>
+      <Project>{b3c7b4ed-ead9-4044-b37b-5f5660bd6a14}</Project>
+      <Private>True</Private>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>Copy "$(TargetDir)..\..\..\..\Source\BinaryComponents\libconWrap.so.1.0.0" "$(TargetDir)"</PostBuildEvent>
