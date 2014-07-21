@@ -2,10 +2,10 @@
 [<EntryPoint>]
 let main _ = 
     use model = new Model()
-    let motorL = model.Motor.["JM2"]//Two port in controller's behind
-    let motorR = model.Motor.["JM1"]//you can change to ports you like 
+    let motorL = model.Motor.["M2"]//Two port in controller's behind
+    let motorR = model.Motor.["M1"]//you can change to ports you like 
     //for full ports description and location go http://goo.gl/jRWJ4j
-    let power = model.AnalogSensor.["JA1"].ToObservable() 
+    let power = model.AnalogSensor.["A1"].ToObservable() 
                 |> Observable.map (fun d -> if d > 55 then 100 elif d < 45 then -100 else 0) 
                 |> Observable.DistinctUntilChanged
 
@@ -15,6 +15,5 @@ let main _ =
                                                       | 0   -> LedColor.Orange 
                                                       | _   -> LedColor.Red)
     use led_disp = ledStream.Subscribe(model.Led)
-    
     System.Console.ReadKey() |> ignore
     0

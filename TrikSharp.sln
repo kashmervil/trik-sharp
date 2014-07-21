@@ -34,6 +34,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Trik.Core", "Source\Trik.Co
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Presentation-Demo-noRx", "Demos\Presentation-Demo-noRx\Presentation-Demo-noRx.fsproj", "{89F8E448-F811-4C21-96FE-FEEEC0DE4BB6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSharp-Demo-1", "Demos\CSharp-Demo-1\CSharp-Demo-1.csproj", "{1AED2D9A-E749-42F6-B5AF-1596710FCF92}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -72,6 +74,10 @@ Global
 		{89F8E448-F811-4C21-96FE-FEEEC0DE4BB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{89F8E448-F811-4C21-96FE-FEEEC0DE4BB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{89F8E448-F811-4C21-96FE-FEEEC0DE4BB6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1AED2D9A-E749-42F6-B5AF-1596710FCF92}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1AED2D9A-E749-42F6-B5AF-1596710FCF92}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1AED2D9A-E749-42F6-B5AF-1596710FCF92}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1AED2D9A-E749-42F6-B5AF-1596710FCF92}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -84,5 +90,6 @@ Global
 		{558F722A-9B6F-413B-A4EB-F5B59F78EB7A} = {3A613CE4-5E65-4A77-BC21-FB2B1802E9C4}
 		{34AF8DF3-713B-447B-BF82-219C64A63DCE} = {3A613CE4-5E65-4A77-BC21-FB2B1802E9C4}
 		{89F8E448-F811-4C21-96FE-FEEEC0DE4BB6} = {3A613CE4-5E65-4A77-BC21-FB2B1802E9C4}
+		{1AED2D9A-E749-42F6-B5AF-1596710FCF92} = {3A613CE4-5E65-4A77-BC21-FB2B1802E9C4}
 	EndGlobalSection
 EndGlobal

@@ -140,9 +140,9 @@ type Linetracer (model: Model) =
     let elapsed = sw.ElapsedMilliseconds
     do eprintfn "Linetracer ctor: config parsed: %A ms" elapsed 
 
-    let motorL = new MotorControler(model.Motor.["JM1"], model.Encoder.["JB2"], motor_sign, PowerBase = power_base)
-    let motorR = new MotorControler(model.Motor.["JM3"], model.Encoder.["JB3"], motor_sign * -1, PowerBase = power_base)
-    let frontSensor = model.AnalogSensor.["JA2"]
+    let motorL = new MotorControler(model.Motor.["M1"], model.Encoder.["B2"], motor_sign, PowerBase = power_base)
+    let motorR = new MotorControler(model.Motor.["M3"], model.Encoder.["B3"], motor_sign * -1, PowerBase = power_base)
+    let frontSensor = model.AnalogSensor.["A2"]
     do eprintfn "Linetracer ctor: Motor controllers created"
     let mutable last_pow_add = 0
     let mutable (stopAutoMode: IDisposable) = null

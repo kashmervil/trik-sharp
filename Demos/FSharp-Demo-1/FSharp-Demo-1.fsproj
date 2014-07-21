@@ -9,10 +9,11 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>Demo_fs_1</RootNamespace>
     <AssemblyName>Demo_fs_1</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <Name>FSharp-Demo-1</Name>
     <UseMSBuildEngine>False</UseMSBuildEngine>
     <TargetFSharpCoreVersion>4.3.0.0</TargetFSharpCoreVersion>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

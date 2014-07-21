@@ -16,10 +16,10 @@ let main argv =
                                 { stop = 0; zero = 1500000; min = 800000; max = 2400000; period = 20000000 } )
                              |], PadConfigPort = 4444)
    
-    let servo1 = model.Servo.["JE2"]
-    let servo2 = model.Servo.["JE1"]
-    let p1 = model.Motor.["JM2"]
-    let p2 = model.Motor.["JM3"]
+    let servo1 = model.Servo.["E2"]
+    let servo2 = model.Servo.["E1"]
+    let p1 = model.Motor.["M2"]
+    let p2 = model.Motor.["M3"]
     //let prX1, prY1, prX2, prY2 = ref -1, ref -1, ref -1, ref -1
     let pad = model.Pad
     use dbtn = pad.Buttons.Subscribe (function 

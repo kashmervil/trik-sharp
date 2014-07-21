@@ -4,7 +4,7 @@ open Trik.ServoMotor
 
 type Model () as model = 
 
-    do Helpers.I2C.Init "/dev/i2c-2" 0x48 1
+    static do Helpers.I2C.Init "/dev/i2c-2" 0x48 1
 
     let mutable gyro = None
     let mutable accel = None
@@ -22,34 +22,34 @@ type Model () as model =
     member val PadConfigPort = 3333 with get, set
     member val ServoConfig = 
         [| 
-          ("JE1", "/sys/class/pwm/ehrpwm.1:1", 
+          ("E1", "/sys/class/pwm/ehrpwm.1:1", 
             { stop = 0; zero = 1450000; min = 1200000; max = 1800000; period = 20000000 } )
-          ("JE2", "/sys/class/pwm/ehrpwm.1:0", 
+          ("E2", "/sys/class/pwm/ehrpwm.1:0", 
             { stop = 0; zero = 1450000; min = 1200000; max = 1800000; period = 20000000 } )
          |] with get, set
     member val EncoderConfig =
         [| 
-          ("JB2", 0x31)
-          ("JB4", 0x32)
-          ("JB3", 0x33)
+          ("B2", 0x31)
+          ("B4", 0x32)
+          ("B3", 0x33)
          |] with get, set
     member val MotorConfig = 
         [| 
-          ("JM1", 0x14)
-          ("JM2", 0x15)
-          ("M1", 0x16)
-          ("JM3", 0x17)
+          ("M1", 0x14)
+          ("M2", 0x15)
+          ("M3", 0x16)
+          ("M4", 0x17)
          |] with get, set
     member val LedStripeConfig = {Red = 0x14; Green = 0x15; Blue = 0x16; Ground = 0x17;}
          with get, set
     member val AnalogSensorConfig = 
         [| 
-          ("JA1", 0x25)
-          ("JA2", 0x24)
-          ("JA3", 0x23)
-          ("JA4", 0x22)
-          ("JA5", 0x21)
-          ("JA6", 0x20)
+          ("A1", 0x25)
+          ("A2", 0x24)
+          ("A3", 0x23)
+          ("A4", 0x22)
+          ("A5", 0x21)
+          ("A6", 0x20)
         |] with get, set
     member x.Motor
         with get() = 

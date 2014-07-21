@@ -1,19 +1,19 @@
 ﻿namespace Trik
 open System
-[<RequireQualifiedAccessAttribute>]
-module Observable =   
+[<AbstractClass; Sealed>]
+type  Observable =   
 
-    let Create(subscription) = { new IObservable<'T> with
+    static member Create(subscription) = { new IObservable<'T> with
                                     member self.Subscribe observer = subscription observer}
 
-    let DistinctUntilChanged (sequence: IObservable<'T> when 'T: equality) = 
+    static member DistinctUntilChanged (sequence: IObservable<'T> when 'T: equality) = 
         let prev = ref None
         let func x = if (!prev).IsNone || (!prev).Value <> x 
                         then prev := Some x; !prev
                         else None
         Observable.choose func sequence
     
-    let Interval(timeSpan: System.TimeSpan) = 
+    static member Interval(timeSpan: System.TimeSpan) = 
         let counter = ref 0
         let observers = new ResizeArray<IObserver<int>>()
         let obsNext _ = lock (observers) <|
@@ -40,3 +40,6 @@ module Observable =
             }
         observable
 
+    static member Subscribe(source : IObservable<'T>, observer: IObserver<'T>) = source.Subscribe(observer)
+    static member Subscribe(source : IObservable<'T>, callback : 'T -> unit)= source.Subscribe(callback)
+    static member Subscribe(source : IObservable<'T>, callback : Func<'T,unit>)= source.Subscribe(callback.Invoke)

@@ -19,7 +19,7 @@ module Measures =
 let isLinux = not <| Environment.OSVersion.VersionString.StartsWith "Microsoft"
 let inline trikSpecific f = if isLinux then f () else ()
 
-let Syscall_shell cmd  = 
+let SyscallShell cmd  = 
     let args = sprintf "-c '%s'" cmd
     trikSpecific <| fun () ->
         let proc = System.Diagnostics.Process.Start("/bin/sh", args)
@@ -67,7 +67,9 @@ let fastInt32Parse (s:string) =
     sign * n
 
 /// Squishes Value between lowBound and upBound
-let inline limit lowBound upBound value = if upBound < value then upBound elif lowBound > value then lowBound else value  
+let inline limit lowBound upBound value = if upBound < value then upBound 
+                                          elif lowBound > value then lowBound 
+                                          else value  
 
 let inline milliseconds x = 1<ms>*x
 

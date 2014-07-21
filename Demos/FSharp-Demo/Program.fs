@@ -21,22 +21,21 @@ let testSensorsRunning = ref false
 let testStripeRunning = ref false
 
 let testPad (model:Model) = 
-    let servo1 = model.Servo.["JE2"]
-    let servo2 = model.Servo.["JE1"]
+    let servo1 = model.Servo.["E2"]
+    let servo2 = model.Servo.["E1"]
     let prX1, prY1, prX2, prY2 = ref -1, ref -1, ref -1, ref -1
     let pad = model.Pad
     use dbtn = pad.Buttons.Subscribe (fun num ->  printfn "%A" num)
-    use disp = pad.Pads.Subscribe ( fun (num, coord) ->  
-        //printfn "%A %A" num coord 
+    use disp = pad.Pads.Subscribe (fun (num, coord) ->  
         match num, coord with
         | (1, Some(x, y) ) -> 
-            servo1.SetPower(x)
+            servo1.Power <- x
             //if !prX1 = -1 then prX1 := x; prY1 := y 
             //else servo1.SetPower(x - !prX1)
         | (1, None) -> prX1 := -1; prY1 := -1; printfn "None 1";
-        | (2, Some(x, _) ) -> servo2.SetPower(- x * 2)
+        | (2, Some(x, _) ) -> servo2.Power <- -x * 2
         | (2, None) -> servo2.Zero(); printfn "None 1";
-        | (_, _) -> () 
+        | _ -> failwith " wrong pad command"
     )
 
     log "Ready (any key to finish)"
@@ -53,9 +52,9 @@ let testMain (model:Model) =
                         | Middle -> 0
                         | Far -> 100
 
-    let rightWheel = model.Motor.["JM2"]
-    let leftWheel = model.Motor.["JM1"]
-    let frontSensor = model.AnalogSensor.["JA1"].ToObservable().Select(rawToDist)
+    let rightWheel = model.Motor.["M2"]
+    let leftWheel = model.Motor.["M1"]
+    let frontSensor = model.AnalogSensor.["A1"].ToObservable().Select(rawToDist)
     let motorActions = frontSensor.Select(fun x ->    //printfn "%A" x;
                                                       distToSpeed x).DistinctUntilChanged()
 

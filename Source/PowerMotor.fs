@@ -10,7 +10,7 @@ type PowerMotor(i2cCommandNumber) =
     /// 0   - stands for STOP signal.
     ///-100 - max power for moving in one direction.
     /// 100 - max power for opposite another. 
-    ///(You can reassemble your motor cable to make sure it's going right way without any code changing) 
+    ///(You can reassemble your motor cable to make sure it's going right way without any code changing)
     member self.Power
          with get() = power
          and set p = I2C.Send i2cCommandNumber (limit -100 100 p) 1; power <- p
