@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Trik;
+using Trik.Config;
 using System.Threading;
 
 namespace CSharp_Demo_1
@@ -14,14 +15,14 @@ namespace CSharp_Demo_1
         {
             var robot = new Model();
             int counter = 0;
-            //var led = new Trik.Led("/sys/class/leds/");
-
-            while (counter < 1000)
+            var motor = new Trik.PowerMotor((int)Motor.M1);
+            while (counter < 10)
             {
-                for (int i = 0; i < 4; i++)
+                for (int i = 1; i < 4; i++)
                 {
                     robot.Led.Color = (Trik.LedColor) i;
                     Thread.Sleep(500);
+                    //robot.Accel.BlockingRead();
                 }
                 counter++;
             }

@@ -24,7 +24,6 @@ let SyscallShell cmd  =
     trikSpecific <| fun () ->
         let proc = System.Diagnostics.Process.Start("/bin/sh", args)
         proc.WaitForExit()
-        proc.ExitCode |> ignore
         if proc.ExitCode  <> 0 then
             printf "Init script failed '%s'" cmd
 

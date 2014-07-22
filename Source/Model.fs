@@ -55,7 +55,6 @@ type Model () as model =
         with get() = 
             let motorInit() = 
                 IO.File.WriteAllText("/sys/class/gpio/gpio62/value", "1")
-                Helpers.I2C.Init "/dev/i2c-2" 0x48 1
                 Helpers.I2C.Send 0x10 0x1000 2
                 Helpers.I2C.Send 0x11 0x1000 2
                 Helpers.I2C.Send 0x12 0x1000 2
