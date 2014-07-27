@@ -17,17 +17,35 @@ type TaskBuilder() =
                              | Normal r -> f r 
                              | Break as a -> a
                              | ExitTask (t: 'a) as b -> b
-  
+   
     member self.Combine(c1, c2) = self.Bind(c1, c2)
                                   
-    member self.For(collection: seq<_>, func) = 
-        let en = collection.GetEnumerator()
-        self.While((fun () -> en.MoveNext()), self.Delay(fun () -> let value = en.Current in func value))
-
     member self.Delay(x) = x
+    
     member self.Run(x) = Task x
+    
+    member self.Zero() = Normal ()
+    
+    member self.Yield(x) = Normal x
 
     member self.Return(x) = Normal x
+
+    member self.ReturnFrom(x) = x
+
+    member self.TryWith(body, handler) =
+        try self.ReturnFrom(body())
+        with e -> handler e
+
+    member self.TryFinally(body, func) =
+        try self.ReturnFrom(body())
+        finally func() 
+
+    member self.Using(disposable: 'T when 'T:> System.IDisposable, body) =
+        let body' = fun () -> body disposable
+        self.TryFinally(body', fun () -> 
+            match disposable with 
+                | null -> () 
+                | disp -> disp.Dispose())
 
     member self.While(guard, cexpr) = 
         let counter = ref 0
@@ -37,12 +55,13 @@ type TaskBuilder() =
                               | Break -> Normal ()
                               | Normal _ as d -> Normal ()
                               | ExitTask _ as x -> x
-
         loop <| Normal()
-    member self.Zero() = Normal ()
-    member self.ReturnFrom(x) = x
-    member self.Yield(x) = Normal x
+
+    member self.For(collection: seq<_>, func) = 
+        self.Using(collection.GetEnumerator(), fun en -> 
+            self.While((fun () -> en.MoveNext()), self.Delay(fun () -> func en.Current)))
     
+
 let task = new TaskBuilder()
 
 let BREAK = Break

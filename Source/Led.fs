@@ -8,7 +8,7 @@ open Trik
 type LedColor = Green = 1 | Red = 2 | Orange = 3 | Off = 0
 
 ///Type representing on-board light emitting diode
-type Led(deviceFilePath: string) as led =
+type Led(deviceFilePath: string) =
     let on = [| byte 49|]
     let off =[| byte 48|]
     let green = IO.File.OpenWrite(deviceFilePath + "/led_green/brightness")
