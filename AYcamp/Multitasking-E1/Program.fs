@@ -12,6 +12,10 @@ let main _ =
                             robot.Led <- x
                             robot.Sleep(500)
                        }
+    let d = task { let rec loop() = robot.Sleep(1000); loop()
+                   loop()    
+    }
+   
 
     let k = 0.3 // some coefficient
     let drive = task { while true do
@@ -25,9 +29,8 @@ let main _ =
                      }
 
 
-    do flicker.Start()
-    do drive.StartAndWait()
-    //(robot :> IDisposable).Dispose()
+    robot.TaskStart flicker
+    robot.TaskStart drive
     0
 
 

@@ -12,6 +12,7 @@ let main _ =
                             printfn "current %d" x
                             Threading.Thread.Sleep(1000)//robot.Sleep(500)
                        }
+    let disp = Task.Start(flicker)
 
     let k = 0.3 // some coefficient
 
@@ -26,8 +27,8 @@ let main _ =
                      }
 
 
-    do flicker.Start()
-    do drive.StartAndWait()
+    do flicker//.Start()
+    do drive//.StartAndWait()
     //(robot :> IDisposable).Dispose()
     0
 
