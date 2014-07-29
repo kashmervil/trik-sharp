@@ -1,11 +1,11 @@
 ﻿namespace Trik
 open System
+open System.Collections.Generic
 open Trik.ServoMotor
 
 type Model () as model = 
 
     static do Helpers.I2C.Init "/dev/i2c-2" 0x48 1
-
     let mutable gyro = None
     let mutable accel = None
     let mutable led = None
@@ -19,6 +19,9 @@ type Model () as model =
         |> dict
     )
     let mutable analogSensor = None
+    let mutable isDisposed = false
+    do AppDomain.CurrentDomain.ProcessExit.Add(fun _ -> (model :> IDisposable).Dispose())
+
     member val PadConfigPort = 3333 with get, set
     member val ServoConfig = 
         [| 
@@ -133,16 +136,21 @@ type Model () as model =
             pad.Value
 
     interface IDisposable with
-        member x.Dispose() = 
-            let inline dispose (device: 'T option when 'T :> IDisposable) = 
-                 device |> Option.iter (fun x -> x.Dispose())
-            let inline disposeMap (devices: Collections.Generic.IDictionary<string, 'T> option when 'T :> IDisposable) = 
-                devices |> Option.iter (Seq.iter (fun x -> x.Value.Dispose()))
-            dispose gyro
-            dispose accel
-            dispose led
-            dispose pad
-            disposeMap motor
-            disposeMap servo
-            disposeMap analogSensor
-            dispose ledStripe
+        member self.Dispose() = 
+            lock self 
+            <| fun () -> 
+                   if not isDisposed then
+                        let inline dispose (device: 'T option when 'T :> IDisposable) = 
+                             device |> Option.iter (fun x -> x.Dispose())
+                        let inline disposeMap (devices: IDictionary<string, 'T> option when 'T :> IDisposable) = 
+                            devices |> Option.iter (Seq.iter (fun x -> x.Value.Dispose()))
+                        dispose gyro
+                        dispose accel
+                        dispose led
+                        dispose pad
+                        disposeMap motor
+                        disposeMap servo
+                        disposeMap analogSensor
+                        dispose ledStripe
+                        isDisposed <- true
+            

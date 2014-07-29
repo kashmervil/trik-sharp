@@ -16,10 +16,10 @@ let main _ =
     let k = 0.3 // some coefficient
 
     let drive = task { while true do
-                          let u = k * (float <| robot.SensorA2 - 50)
-                          robot.MotorM1 <- 70 + int u
-                          robot.MotorM2 <- 70 - int u
-                          if robot.SensorA1 > 60 then 
+                          //let u = k * (float <| robot.SensorA2 - 50)
+                          //robot.MotorM1 <- 70 + int u
+                          //robot.MotorM2 <- 70 - int u
+                          if 90 < System.Random().Next(100) then
                             do! BREAK
                           robot.Sleep(300)
                        done

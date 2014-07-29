@@ -10,13 +10,17 @@ type Task = Task of (unit -> ExecutionStatus<unit>) with
      
     member self.Start() = match self with Task x -> async {x() |> ignore} |> Async.Start
     member self.StartAndWait() = match self with Task x -> async {x() |> ignore} |> Async.RunSynchronously
+     
 
+[<AutoOpen>]
+module internal builder = 
+    let bind x f = match x with  
+                   | Normal r -> f r 
+                   | Break as a -> a
+                   | ExitTask (t: 'a) as b -> b
     
 type TaskBuilder() = 
-    member self.Bind(x, f) = match x with  
-                             | Normal r -> f r 
-                             | Break as a -> a
-                             | ExitTask (t: 'a) as b -> b
+    member self.Bind(x, f) = bind x f
    
     member self.Combine(c1, c2) = self.Bind(c1, c2)
                                   
