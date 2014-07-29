@@ -1,8 +1,8 @@
-﻿module Trik.Junior
+﻿namespace Trik.Junior
 
 open System
 open System.Collections.Generic
-open Trik.Tasking
+
 type Robot() =
     
     let super = new Trik.Model()
@@ -10,7 +10,7 @@ type Robot() =
     let servos = ["E1"; "E2"] |> List.map (fun x -> super.Servo.[x])
     let sensors = ["A1"; "A2"; "A3"] |> List.map (fun x -> super.AnalogSensor.[x])
 
-    let tasks = new ResizeArray<IDisposable>()
+    let resources = new ResizeArray<_>()
     
     member self.Led 
         with get() =  super.Led.Color
@@ -28,7 +28,7 @@ type Robot() =
     member self.ServoE1 with set p = servos.[0].Power <- p
     member self.ServoE2 with set p = servos.[1].Power <- p
 
-    member self.TaskStart(task: ReadyToStart<_>) = lock self <| fun () -> tasks.Add(Task.Start(task))
+    member self.RegisterResource(d: IDisposable) = lock resources <| fun () -> resources.Add(d)
 
     member self.Stop() = motors |> List.iter (fun x -> x.Stop())
                          servos |> List.iter (fun x -> x.Zero())
@@ -36,9 +36,10 @@ type Robot() =
     member self.Sleep(sec: float) = System.Threading.Thread.Sleep(int <| sec * 1000.)
     member self.Sleep(millisec: int) = System.Threading.Thread.Sleep(millisec)
     member self.Say(text) = Async.Start 
-                            <| async { Helpers.SyscallShell <| "espeak -v russian_test -s 100 " + text}
+                            <| async { Trik.Helpers.SyscallShell <| "espeak -v russian_test -s 100 " + text}
     interface IDisposable with
-        member self.Dispose() = (super :> IDisposable).Dispose(); tasks.ForEach(fun x -> x.Dispose())
+        member self.Dispose() = (super :> IDisposable).Dispose(); resources.ForEach(fun x -> x.Dispose())
     
-
-
+[<AutoOpen>]
+module Declarations =
+    let robot = new Robot()
