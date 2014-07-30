@@ -1,17 +1,6 @@
 ﻿namespace Trik
-
 open System
-open Trik
 
-/// Numbers of I2C ports associated with Stripe  
-type LedStripePorts = {
-    Red: int
-    Green: int
-    Blue: int
-    Ground: int
-    }
-
-    
 ///<summary>Provides methods for working with Light Emitting Diode Stripe
 ///</summary>  
 

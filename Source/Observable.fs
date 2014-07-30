@@ -3,8 +3,8 @@ open System
 [<AbstractClass; Sealed>]
 type  Observable =   
 
-    static member Create(subscription) = { new IObservable<'T> with
-                                    member self.Subscribe observer = subscription observer}
+    static member Create(subscription: Func<IObserver<'T>,IDisposable>) = { new IObservable<'T> with
+                                    member self.Subscribe observer = subscription.Invoke observer}
 
     static member DistinctUntilChanged(source: IObservable<'T> when 'T: equality) = 
         let hasCurrentKey = ref false

@@ -97,13 +97,14 @@ type MotorControler (motor: Trik.PowerMotor, enc: Encoder, sign) =
     val mutable PowerAddition : int
     [<DefaultValue>]
     val mutable PowerBase : int
-    let mutable currentSpeed = 0.0f<rad>
-    let mutable encPoints_prev = 0.0f<rad>
+    let mutable currentSpeed = 0.0f
+    let mutable encPoints_prev = 0.0f
     let sw = new Stopwatch()
     do sw.Start()
     let mutable time_prev = sw.ElapsedMilliseconds
     let countSpeed() = 
-        let encPoints = enc.ReadRadian()
+        let parToRad = 0.03272492f
+        let encPoints = parToRad * (float32 <| enc.Read())
         let time = sw.ElapsedMilliseconds
         let period = time - time_prev |> float32
         let speed = (encPoints - encPoints_prev) * 100.0f / (period * max_ppms)

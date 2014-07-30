@@ -63,6 +63,7 @@
   </PropertyGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <Compile Include="Collections.fs" />
     <Compile Include="Observable.fs" />
     <Compile Include="Config.fs" />
     <Compile Include="Helpers.fs" />

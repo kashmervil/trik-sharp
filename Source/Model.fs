@@ -1,7 +1,6 @@
 ﻿namespace Trik
 open System
 open System.Collections.Generic
-open Trik.ServoMotor
 
 type Model () as model = 
 
@@ -79,7 +78,7 @@ type Model () as model =
             let servoInit() = 
                 servo <- 
                     x.ServoConfig
-                    |> Array.map (fun (port, path, kind) ->  (port, new Servomotor(path, kind)))             
+                    |> Array.map (fun (port, path, kind) ->  (port, new ServoMotor(path, kind)))             
                     |> dict
                     |> Some
             if servo.IsNone then servoInit() 

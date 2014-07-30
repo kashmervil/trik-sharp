@@ -2,13 +2,20 @@
 
 open System
 open System.Collections.Generic
-
+open Trik
 type Robot() as is =
     
+    static let mutable isRobotAlive = false
+    do if isRobotAlive then invalidOp "Only single instance is allowed"
+    do isRobotAlive <- true
+
     let super = new Trik.Model()
     let motors = ["M1"; "M2"; "M3"; "M4"] |> List.map (fun x -> super.Motor.[x])
     let servos = ["E1"; "E2"] |> List.map (fun x -> super.Servo.[x])
     let sensors = ["A1"; "A2"; "A3"] |> List.map (fun x -> super.AnalogSensor.[x])
+
+    let mutable gyroValue: Point = Point.Zero
+    let mutable accelValue: Point = Point.Zero
 
     static let resources = new ResizeArray<_>()
     
@@ -30,6 +37,12 @@ type Robot() as is =
 
     member self.ServoE1 with set p = servos.[0].Power <- p
     member self.ServoE2 with set p = servos.[1].Power <- p
+
+    member self.GyroRead() = 
+        match super.Gyro.BlockingRead() with
+        | Some x -> lock gyroValue (fun () -> gyroValue <- x); x
+        | None   -> gyroValue
+    
 
     static member RegisterResource(d: IDisposable) = lock resources <| fun () -> resources.Add(d)
 

@@ -2,29 +2,31 @@
 open Trik.Junior
 open Trik.Junior.Parallel
 
+
+//robot or brick
+
 printfn "Starting"
-let flicker = task { while true do
-                        for x in [LedColor.Green; LedColor.Orange; LedColor.Red] do
-                        robot.Led <- x
-                        robot.Sleep(500)
+let flicker = task { for i=1 to 100 do
+                        for color in [LedColor.Green; LedColor.Orange; LedColor.Red] do
+                            robot.Led <- color // setColor?
+                            robot.Sleep(500)
                     }
 
-let k = 0.3 // some coefficient
+let k = 3 // some coefficient
 let drive = task { while true do
-                        let u = k * (float <| robot.SensorA2 - 50)
-                        robot.MotorM1 <- 70 + int u
-                        robot.MotorM2 <- 70 - int u
-                        if robot.SensorA1 > 60 then 
+                        let u = k * (robot.SensorA2 - 500) / 10// Raw data
+                        robot.MotorM1 <- 70 + u
+                        robot.MotorM2 <- 70 - u
+                        if robot.SensorA1 > 600 then 
                             do! BREAK
-                        System.Console.WriteLine("Senson 1 {0} \n Sensor 2 {0}", robot.SensorA1, robot.SensorA2)
                         robot.Sleep(300)
                     done
                     }
 
 printfn "Executing"
-let d = flicker.Start()
-drive.StartAndWait()
-System.Console.Read() |> ignore
+
+flicker.Execute() //ывфываваывыаыфываыфвыаф
+drive.StartAndWait()//fsadfdsafdsasdafsdafasd
 
 
 

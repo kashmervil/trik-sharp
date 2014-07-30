@@ -4,24 +4,17 @@ open System.Net
 open System.Net.Sockets
 open System.Text
 open System.Collections.Generic
-
-
-[<RequireQualifiedAccess>]
-type PadEvent = 
-    | Pad of int * ( int * int ) option
-    | Button of int
-    | Wheel of int
-    | Stop
+open Trik.Collections
 
 type PadServer(?port) =
-    let padPortVal = defaultArg port 4444
 
-    let obs_src = new Event<PadEvent>()
-    let obs = obs_src.Publish
-    let obsNext = obs_src.Trigger
+    let padPortVal = defaultArg port 4444
+    let source = new Event<PadEvent>()
+    let obs = source.Publish
+    let obsNext = source.Trigger
     let mutable working = false
-    let mutable request_accumulator = ""
-    let messageBuf = Array.create 1024 <| byte 0
+    let messageBuf = Array.zeroCreate 1024
+
     let handleRequst (req:String) = 
         match req.Split([| ' ' |]) with
         | [| "wheel"; x |] -> PadEvent.Wheel(Int32.Parse(x) ) |> obsNext 
@@ -44,7 +37,7 @@ type PadServer(?port) =
         printfn "Listening  now on %d..." padPortVal
         let rec loop() = async {
             let client = listener.AcceptTcpClient()
-            if not working then () else Async.Start(clientLoop client)
+            if working then Async.Start(clientLoop client)
             return! loop() 
         }
         Async.Start(loop() )

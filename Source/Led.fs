@@ -1,11 +1,5 @@
 ﻿namespace Trik
-
 open System
-open Trik
-
-[<RequireQualifiedAccess>]
-[<Flags>]
-type LedColor = Green = 1 | Red = 2 | Orange = 3 | Off = 0
 
 ///Type representing on-board light emitting diode
 type Led(deviceFilePath: string) =

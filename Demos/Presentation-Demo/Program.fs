@@ -8,7 +8,7 @@ let main _ =
     let motorR = model.Motor.["M1"]//you can change to ports you like 
     //for full ports description and location go http://goo.gl/jRWJ4j
     let power = model.AnalogSensor.["A1"].ToObservable().Select(fun d -> //second port in front 
-                            if d > 55 then 100 elif d < 45 then -100 else 0).DistinctUntilChanged()
+                            if d > 550 then 100 elif d < 450 then -100 else 0).DistinctUntilChanged()
      
     let l_disp = power.Subscribe(motorL)
     let r_disp = power.Subscribe(motorR)

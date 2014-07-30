@@ -5,7 +5,7 @@ open System.IO
 open System.Diagnostics
 
 type Sensor3d (min, max, deviceFilePath) as sens = 
-    inherit FifoSensor<int array>(deviceFilePath, 16, 16)
+    inherit FifoSensor<Point>(deviceFilePath, 16, 16)
     [<Literal>]
     let ev_abs = 3us
     let last = Array.zeroCreate 3
@@ -17,4 +17,4 @@ type Sensor3d (min, max, deviceFilePath) as sens =
             last.[int evCode] <- Helpers.limit min max evValue 
             None
         else
-            Some [| last.[0]; last.[1]; last.[2] |]
+            Some {x = last.[0]; y = last.[1]; z = last.[2]}

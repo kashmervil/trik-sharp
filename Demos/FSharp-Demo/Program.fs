@@ -71,7 +71,9 @@ let testStripe (model:Model) =
     use disp = 
         model.Gyro.ToObservable()
         |> Observable.map 
-            (fun x -> (100 - abs(x.[0]/10) - abs(x.[2]/10), abs(x.[0]/10) + abs(x.[1]/10), abs(x.[2]/10) + abs(x.[1]/10)) )
+            (fun coord -> (100 - abs(coord.x/10) - abs(coord.z/10)
+                          , abs(coord.x/10) + abs(coord.y/10)
+                          , abs(coord.z/10) + abs(coord.y/10)) )
         |> Observable.subscribe(model.LedStripe.SetPower)
     log "testStripe Ready (key to finish)"
     testStripeWaitHandle.WaitOne() |> ignore
@@ -85,8 +87,8 @@ let testSensors (model:Model) =
     let a = ref 0
     use unsub = 
         gyro.ToObservable() 
-        |> Observable.subscribe(fun (x: int array) -> 
-        a := (!a + 1) % 5; if !a = 0 then printfn "%A" x.[2] else () )
+        |> Observable.subscribe(fun coord -> 
+        a := (!a + 1) % 5; if !a = 0 then printfn "%A" coord.z else () )
 
     log "testSensors Ready (key to finish)"
     testSensorsWaitHandle.WaitOne() |> ignore

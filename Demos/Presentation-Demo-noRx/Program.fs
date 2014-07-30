@@ -6,7 +6,7 @@ let main _ =
     let motorR = model.Motor.["M1"]//you can change to ports you like 
     //for full ports description and location go http://goo.gl/jRWJ4j
     let power = model.AnalogSensor.["A1"].ToObservable() 
-                |> Observable.map (fun d -> if d > 55 then 100 elif d < 45 then -100 else 0) 
+                |> Observable.map (fun d -> if d > 550 then 100 elif d < 450 then -100 else 0) 
                 |> Observable.DistinctUntilChanged
 
     use l_disp = power.Subscribe(motorL)

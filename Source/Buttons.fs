@@ -1,19 +1,6 @@
 ﻿namespace Trik
 open System
 
-type ButtonEventCode  = 
-     | Sync  = 0
-     | Enter = 28 
-     | Up    = 103 
-     | Left  = 105 
-     | Right = 106
-     | Down  = 108
-     | Power = 116
-     | Menu  = 139
-      
-/// Button event type in a form of (Button Code, Pressed/Released) 
-type ButtonEvent = ButtonEventCode * bool * double
-
 type ButtonsPad (deviceFilePath) = 
     static let () = Enum.GetValues(typeof<ButtonEventCode>) 
                     |> Seq.cast<ButtonEventCode> 
@@ -30,7 +17,7 @@ type ButtonsPad (deviceFilePath) =
               lock observers <| fun () -> observers.Add(observer) 
               { new IDisposable with 
                     member this.Dispose() = lock observers <| fun () -> observers.Remove(observer) |> ignore } )
-    let obsNext x = lock observers <| fun () -> observers.ForEach(fun obs -> obs.OnNext x ) 
+    let obsNext x = lock observers <| fun () -> observers.ForEach(fun obs -> obs.OnNext x) 
     let bytes = Array.zeroCreate maxEventSize
     let bytesBlocking = Array.zeroCreate maxEventSize
     
