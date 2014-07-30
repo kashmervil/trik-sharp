@@ -6,6 +6,9 @@ open Trik.ServoMotor
 type Model () as model = 
 
     static do Helpers.I2C.Init "/dev/i2c-2" 0x48 1
+    
+    static let resources = new ResizeArray<_>()
+
     let mutable gyro = None
     let mutable accel = None
     let mutable led = None
@@ -135,11 +138,14 @@ type Model () as model =
             if pad.IsNone then padDefaultInit()
             pad.Value
 
+    static member RegisterResource(d: IDisposable) = lock resources <| fun () -> resources.Add(d)
+
     interface IDisposable with
         member self.Dispose() = 
             lock self 
             <| fun () -> 
                    if not isDisposed then
+                        resources.ForEach(fun x -> x.Dispose()) 
                         let inline dispose (device: 'T option when 'T :> IDisposable) = 
                              device |> Option.iter (fun x -> x.Dispose())
                         let inline disposeMap (devices: IDictionary<string, 'T> option when 'T :> IDisposable) = 

@@ -76,7 +76,7 @@ let inline permil min max v =
     let v' = limit min max v
     (1000<permil> * (v' - min))/(max - min)
 
-let defaultRefreshRate = 50.0
+let defaultRate = 50.0
  
 type PollingSensor<'T>() = 
     [<DefaultValueAttribute>]
@@ -85,5 +85,5 @@ type PollingSensor<'T>() =
     member x.ToObservable(refreshRate: System.TimeSpan) = 
         Trik.Observable.Interval(refreshRate) 
         |> Observable.map (fun _ -> x.Read())
-    member x.ToObservable() = x.ToObservable(System.TimeSpan.FromMilliseconds defaultRefreshRate)
+    member x.ToObservable() = x.ToObservable(System.TimeSpan.FromMilliseconds defaultRate)
 

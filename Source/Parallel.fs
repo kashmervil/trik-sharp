@@ -2,6 +2,7 @@
 open System
 open System.Threading
 open Trik.Junior
+open Trik
 
 type ExecutionStatus<'T> = Normal of 'T | Break | ExitTask of int | Cancelled
 
@@ -25,7 +26,8 @@ and
             Async.Start(a, cts.Token)
             let d = { new System.IDisposable with
                             member self.Dispose() = cts.Cancel()}
-            robot.RegisterResource d
+            Model.RegisterResource d
+            Robot.RegisterResource d
             new RunningTask(d)
         
         member self.Execute() = self.Start() |> ignore 
@@ -35,7 +37,9 @@ and
             let a, cts = helper timeout
             let d = { new System.IDisposable with
                             member self.Dispose() = cts.Cancel()}
-            robot.RegisterResource d
+            Model.RegisterResource d
+            Robot.RegisterResource d
+
             Async.RunSynchronously(a, cancellationToken = cts.Token)
 
 
@@ -61,9 +65,11 @@ module private BuilderImpl =
         with e -> handler(e).Value token
 
     let tryFinallyT (body: unit -> Task<_>) compensation = 
-        Task <| fun token -> 
-        try body().Value token
-        finally compensation ()
+        Task <| fun token ->
+        if token.IsCancellationRequested then Cancelled
+        else 
+            try body().Value token
+            finally compensation ()
 
     let usingT (disposable: 'T when 'T:> System.IDisposable) body =
         let body' = fun () -> body disposable
@@ -74,12 +80,14 @@ module private BuilderImpl =
 
     let whileT guard (cexpr : unit -> Task<_>) = 
         Task <| fun token -> 
-        let rec loop result = match result with
-                              | Normal () when guard() -> loop <| cexpr().Value token
-                              | Break -> Normal ()
-                              | Normal () -> Normal ()
-                              | ExitTask n -> ExitTask n
-                              | Cancelled -> Cancelled
+        let rec loop result = 
+            if token.IsCancellationRequested then Cancelled 
+            else match result with
+                 | Normal () when guard() -> loop <| cexpr().Value token
+                 | Break -> Normal ()
+                 | Normal () -> Normal ()
+                 | ExitTask n -> ExitTask n
+                 | Cancelled -> Cancelled
         loop <| Normal()     
 
 

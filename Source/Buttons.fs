@@ -30,7 +30,7 @@ type ButtonsPad (deviceFilePath) =
               lock observers <| fun () -> observers.Add(observer) 
               { new IDisposable with 
                     member this.Dispose() = lock observers <| fun () -> observers.Remove(observer) |> ignore } )
-    let obsNext x = lock observers <| fun () -> observers |> Seq.iter (fun obs -> obs.OnNext x ) 
+    let obsNext x = lock observers <| fun () -> observers.ForEach(fun obs -> obs.OnNext x ) 
     let bytes = Array.zeroCreate maxEventSize
     let bytesBlocking = Array.zeroCreate maxEventSize
     

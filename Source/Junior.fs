@@ -3,14 +3,17 @@
 open System
 open System.Collections.Generic
 
-type Robot() =
+type Robot() as is =
     
     let super = new Trik.Model()
     let motors = ["M1"; "M2"; "M3"; "M4"] |> List.map (fun x -> super.Motor.[x])
     let servos = ["E1"; "E2"] |> List.map (fun x -> super.Servo.[x])
     let sensors = ["A1"; "A2"; "A3"] |> List.map (fun x -> super.AnalogSensor.[x])
 
-    let resources = new ResizeArray<_>()
+    static let resources = new ResizeArray<_>()
+    
+    let mutable isDisposed = false
+    do AppDomain.CurrentDomain.ProcessExit.Add(fun _ -> if not isDisposed then (is :> IDisposable).Dispose())
     
     member self.Led 
         with get() =  super.Led.Color
@@ -28,7 +31,7 @@ type Robot() =
     member self.ServoE1 with set p = servos.[0].Power <- p
     member self.ServoE2 with set p = servos.[1].Power <- p
 
-    member self.RegisterResource(d: IDisposable) = lock resources <| fun () -> resources.Add(d)
+    static member RegisterResource(d: IDisposable) = lock resources <| fun () -> resources.Add(d)
 
     member self.Stop() = motors |> List.iter (fun x -> x.Stop())
                          servos |> List.iter (fun x -> x.Zero())
@@ -38,7 +41,16 @@ type Robot() =
     member self.Say(text) = Async.Start 
                             <| async { Trik.Helpers.SyscallShell <| "espeak -v russian_test -s 100 " + text}
     interface IDisposable with
-        member self.Dispose() = (super :> IDisposable).Dispose(); resources.ForEach(fun x -> x.Dispose())
+        member self.Dispose() = 
+            if not isDisposed then
+                lock self 
+                <| fun () -> 
+                    isDisposed <- true
+                    lock super 
+                        <| fun () -> 
+                        resources.ForEach(fun x -> x.Dispose())
+                        (super :> IDisposable).Dispose()
+
     
 [<AutoOpen>]
 module Declarations =
