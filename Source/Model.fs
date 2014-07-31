@@ -4,8 +4,8 @@ open System.Collections.Generic
 
 type Model () as model = 
 
-    static do Helpers.I2C.Init "/dev/i2c-2" 0x48 1
-    
+    static do Helpers.trikSpecific <| fun () -> Helpers.I2C.Init "/dev/i2c-2" 0x48 1
+                                                IO.File.WriteAllText("/sys/class/gpio/gpio62/value", "1")
     static let resources = new ResizeArray<_>()
 
     let mutable gyro = None
@@ -59,11 +59,7 @@ type Model () as model =
     member x.Motor
         with get() = 
             let motorInit() = 
-                IO.File.WriteAllText("/sys/class/gpio/gpio62/value", "1")
-                Helpers.I2C.Send 0x10 0x1000 2
-                Helpers.I2C.Send 0x11 0x1000 2
-                Helpers.I2C.Send 0x12 0x1000 2
-                Helpers.I2C.Send 0x13 0x1000 2
+                [0x10 .. 0x13] |>  List.iter (fun x -> Helpers.I2C.Send x 0x1000 2)
                 motor <- 
                     x.MotorConfig
                     |> Array.map (fun (port, cnum)  -> (port, new PowerMotor(cnum)))             
@@ -122,11 +118,7 @@ type Model () as model =
     member x.LedStripe
         with get() = 
             if ledStripe.IsNone then
-                IO.File.WriteAllText("/sys/class/gpio/gpio62/value", "1")
-                Helpers.I2C.Send 0x10 0x1000 2
-                Helpers.I2C.Send 0x11 0x1000 2
-                Helpers.I2C.Send 0x12 0x1000 2
-                Helpers.I2C.Send 0x13 0x1000 2
+                [0x10 .. 0x13] |>  List.iter (fun x -> Helpers.I2C.Send x 0x1000 2)
                 ledStripe <- Some(new Trik.LedStripe(x.LedStripeConfig))
             ledStripe.Value
     

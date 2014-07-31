@@ -3,7 +3,6 @@ open Trik.Junior
 open Trik.Junior.Parallel
 
 printfn "Starting"
-
 let flicker = task { for i=1 to 100 do
                         for color in [LedColor.Green; LedColor.Orange; LedColor.Red] do
                             robot.Led <- color
@@ -24,7 +23,7 @@ let drive = task { while true do
 let upside = task { while true do 
                         let d = robot.GyroRead().z
                         printfn "z = %d" d
-                        if robot.GyroRead().z < -100 then 
+                        if robot.GyroRead().z > 50 then 
                             printfn "It's likely that I'm upside down"
                         robot.Sleep(100)
                   }

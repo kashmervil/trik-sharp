@@ -26,7 +26,6 @@ and
             Async.Start(a, cts.Token)
             let d = { new System.IDisposable with
                             member self.Dispose() = cts.Cancel()}
-            Model.RegisterResource d
             Robot.RegisterResource d
             new RunningTask(d)
         
@@ -37,7 +36,6 @@ and
             let a, cts = helper milliseconds
             let d = { new System.IDisposable with
                             member self.Dispose() = cts.Cancel()}
-            Model.RegisterResource d
             Robot.RegisterResource d
             Async.RunSynchronously a
 
@@ -55,7 +53,6 @@ and
                 let (Group allTasks) = self
                 let d = { new System.IDisposable with
                             member self.Dispose() = cts.Cancel()}
-                Model.RegisterResource d
                 Robot.RegisterResource d
 
                 allTasks |> List.map (fun f -> async {f.Value cts.Token |> ignore})

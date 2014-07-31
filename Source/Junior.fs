@@ -10,9 +10,9 @@ type Robot() as is =
     do isRobotAlive <- true
 
     let super = new Trik.Model()
-    let motors = ["M1"; "M2"; "M3"; "M4"] |> List.map (fun x -> super.Motor.[x])
-    let servos = ["E1"; "E2"] |> List.map (fun x -> super.Servo.[x])
-    let sensors = ["A1"; "A2"; "A3"] |> List.map (fun x -> super.AnalogSensor.[x])
+    let motors = ["M1"; "M2"; "M3"; "M4"] |> List.map super.Motor.get_Item
+    let servos = ["E1"; "E2"] |> List.map super.Servo.get_Item
+    let sensors = ["A1"; "A2"; "A3"] |> List.map super.AnalogSensor.get_Item
 
     let mutable gyroValue: Point = Point.Zero
     let mutable accelValue: Point = Point.Zero
