@@ -68,8 +68,7 @@
     <Compile Include="Config.fs" />
     <Compile Include="Helpers.fs" />
     <Compile Include="FifoSensor.fs" />
-    <Compile Include="Servomotor.fs" />
-    <Compile Include="FifoSensor.fs" />
+    <Compile Include="ServoMotor.fs" />
     <Compile Include="PowerMotor.fs" />
     <Compile Include="AnalogSensor.fs" />
     <Compile Include="Encoder.fs" />

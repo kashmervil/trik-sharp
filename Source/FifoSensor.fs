@@ -9,7 +9,7 @@ type FifoSensor<'T>(path: string, dataSize, bufSize) as sens =
         lock observers <| fun () -> observers.Add(observer)
         { new IDisposable with 
             member this.Dispose() = lock observers <| fun () -> observers.Remove(observer) |> ignore } )
-    let obsNext (x: 'T) = lock observers <| fun () -> observers |> Seq.iter (fun obs -> obs.OnNext(x) ) 
+    let obsNext (x: 'T) = lock observers <| fun () -> observers.ForEach(fun obs -> obs.OnNext(x) ) 
     let bytes = Array.zeroCreate bufSize
     let bytesBlocking = Array.zeroCreate bufSize
     let mutable continueReading = false

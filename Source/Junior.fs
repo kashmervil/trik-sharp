@@ -43,6 +43,11 @@ type Robot() as is =
         | Some x -> lock gyroValue (fun () -> gyroValue <- x); x
         | None   -> gyroValue
     
+    member self.AccelRead() = 
+        match super.Gyro.BlockingRead() with
+        | Some x -> lock gyroValue (fun () -> gyroValue <- x); x
+        | None   -> gyroValue
+    
 
     static member RegisterResource(d: IDisposable) = lock resources <| fun () -> resources.Add(d)
 

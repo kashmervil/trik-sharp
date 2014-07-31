@@ -21,8 +21,8 @@ and
             cts.CancelAfter(timeout) 
             async {f cts.Token |> ignore}, cts
 
-        member self.Start(?timeout) =
-            let a, cts = helper timeout
+        member self.Start(?milliseconds) =
+            let a, cts = helper milliseconds
             Async.Start(a, cts.Token)
             let d = { new System.IDisposable with
                             member self.Dispose() = cts.Cancel()}
@@ -33,15 +33,37 @@ and
         member self.Execute() = self.Start() |> ignore 
 
         member self.Value = f
-        member self.StartAndWait(?timeout) =
-            let a, cts = helper timeout
+        member self.StartAndWait(?milliseconds) =
+            let a, cts = helper milliseconds
             let d = { new System.IDisposable with
                             member self.Dispose() = cts.Cancel()}
             Model.RegisterResource d
             Robot.RegisterResource d
+            Async.RunSynchronously a
 
-            Async.RunSynchronously(a, cancellationToken = cts.Token)
+        static member (<+>) ((a: Task<_>), (b: Task<_>)) = Group (a::b::[])
+        static member (<+>) ((a: Task<_>), (Group b: TaskGroup<_>)) = Group (a::b)
+        static member (<+>) ((Group b: TaskGroup<_>), (a: Task<_>)) = Group (a::b)
 
+    and 
+        [<NoComparison; NoEquality>]
+        TaskGroup<'T> = Group of list<Task<'T>> with
+            member self.StartAndWait(?milliseconds) = 
+                let timeout = defaultArg milliseconds -1  
+                let cts = new CancellationTokenSource()
+                cts.CancelAfter(timeout) 
+                let (Group allTasks) = self
+                let d = { new System.IDisposable with
+                            member self.Dispose() = cts.Cancel()}
+                Model.RegisterResource d
+                Robot.RegisterResource d
+
+                allTasks |> List.map (fun f -> async {f.Value cts.Token |> ignore})
+                |> Async.Parallel |> Async.RunSynchronously |> ignore
+
+            static member (<+>) ((Group a: TaskGroup<_>), (Group b: TaskGroup<_>)) = Group (a @ b)
+
+                
 
 let inline private wrapStatus status = Task (fun token -> if token.IsCancellationRequested 
                                                           then Cancelled else status)
