@@ -1,40 +1,59 @@
 ﻿namespace Trik
 open System
 
+
 [<AbstractClass>]
 type FifoSensor<'T>(path: string, dataSize, bufSize) as sens = 
-    let stream = IO.File.Open(path, IO.FileMode.Open, IO.FileAccess.Read, IO.FileShare.Read)
     let observers = new ResizeArray<IObserver<'T> >()
     let obs = Trik.Observable.Create(fun observer -> 
         lock observers <| fun () -> observers.Add(observer)
         { new IDisposable with 
             member this.Dispose() = lock observers <| fun () -> observers.Remove(observer) |> ignore } )
     let obsNext (x: 'T) = lock observers <| fun () -> observers.ForEach(fun obs -> obs.OnNext(x) ) 
-    let bytes = Array.zeroCreate bufSize
-    let bytesBlocking = Array.zeroCreate bufSize
-    let mutable continueReading = false
-    let mutable offset = 0
-    let rec reading() = async {
-        if continueReading then 
-            let! readCnt = stream.AsyncRead(bytes, 0, bytes.Length)
-            let blocks = readCnt / dataSize
-            offset <- 0
-            seq {1 .. blocks} |> 
-                Seq.iter (fun _ -> 
-                    sens.ParseFunc bytes offset |> Option.iter obsNext
-                    offset <- offset + dataSize) 
-            return! reading()
-    }
+    let obsError e = lock observers <| fun () -> observers.ForEach(fun obs -> obs.OnError e ) 
+    let obsCompleted _ = lock observers <| fun () -> observers.ForEach(fun obs -> obs.OnCompleted() ) 
+    
+    let mutable cts = null
+    let mutable lastValue = None
+    
+    let loop() = 
+        let rec reading (stream: IO.StreamReader) = async {
+                let line = stream.ReadLine()//stream.AsyncRead(bytes, 0, bytes.Length)
+                sens.ParseFunc line |> Option.iter (fun x -> lastValue<- Some x; obsNext x)
+                return! reading stream
+            }
+             
+        async {
+            try
+                let stream = IO.File.Open(path, IO.FileMode.Open, IO.FileAccess.Read, IO.FileShare.Read)
+                let streamReader = new IO.StreamReader(stream)
+                let! _ = Async.StartChild(Async.TryCancelled(reading streamReader, obsCompleted))
+                ()
+            with e ->  eprintfn "FifoSensor %s %A" path e; obsError e
+              }
+
+
     [<DefaultValue>]
-    val mutable ParseFunc: (byte[] -> int -> 'T option)
-    member x.BlockingRead() = 
-        let cnt = stream.Read(bytesBlocking, offset, bufSize)
-        sens.ParseFunc bytesBlocking offset
-    member x.ToObservable() = 
-        continueReading <- true 
-        Async.Start <| reading()
-        obs 
+    val mutable ParseFunc: (string -> 'T option)
+    
+    member self.Read() = 
+        match lastValue with
+        | None -> invalidOp "Read failed or missing Start() before Read()"
+        | Some x -> x
+
+    member self.Start() = 
+        cts <- new Threading.CancellationTokenSource()
+        Async.Start(loop(), cancellationToken = cts.Token)
+    
+    member self.Stop() = 
+        if cts <> null then cts.Cancel()
+        obsCompleted()
+
+    member self.ToObservable() = obs
+
+    abstract Dispose: unit -> unit 
+    default self.Dispose() = 
+        cts.Cancel()
+
     interface IDisposable with
-        member x.Dispose() = 
-            continueReading <- false
-            stream.Dispose()
+        member self.Dispose() = self.Dispose()

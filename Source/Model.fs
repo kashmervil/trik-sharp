@@ -16,6 +16,7 @@ type Model () as model =
     let mutable motor = None
     let mutable ledStripe = None
     let mutable servo = None
+    let mutable lineSensor = None
     let mutable encoder = lazy (
         model.EncoderConfig 
         |> Array.map (fun (port, cnum) -> (port, new Encoder(cnum)))
@@ -60,6 +61,11 @@ type Model () as model =
           ("A5", 0x21)
           ("A6", 0x20)
         |] with get, set
+    member val LineSensorConfig = 
+        ("/etc/init.d/line-sensor-ov7670.sh"
+        , "/run/line-sensor.in.fifo"
+        , "/run/line-sensor.out.fifo")
+         with get, set
     member x.Motor
         with get() = 
             let motorInit() = 
@@ -131,6 +137,11 @@ type Model () as model =
             if pad.IsNone then padDefaultInit()
             pad.Value
 
+    member self.LineSensor
+        with get() = 
+            let lineSensorDefaultInit() = lineSensor <- Some <| new LineSensor(self.LineSensorConfig)
+            if lineSensor.IsNone then lineSensorDefaultInit()
+            lineSensor.Value
     static member RegisterResource(d: IDisposable) = lock resources <| fun () -> resources.Add(d)
 
     interface IDisposable with
@@ -151,5 +162,6 @@ type Model () as model =
                         disposeMap servo
                         disposeMap analogSensor
                         dispose ledStripe
+                        lineSensor.Value.Stop()
                         isDisposed <- true
             

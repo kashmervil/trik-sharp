@@ -30,17 +30,10 @@ type Robot() as is =
         Ports.Servo.Values 
         |>  Array.map (fun port -> port, new ServoMotor(port.Path(), ServoMotor.Servo1)) |> dict
    
-    member self.GyroRead() = 
-        match super.Gyro.BlockingRead() with
-        | Some x -> gyroValue <- x; x
-        | None   -> gyroValue
+    member self.GyroRead() = super.Gyro.Read()
     
-    member self.AccelRead() = 
-        match super.Gyro.BlockingRead() with
-        | Some x -> accelValue <- x; x
-        | None   -> accelValue
+    member self.AccelRead() = super.Accel.Read()
     
-
     static member RegisterResource(d: IDisposable) = lock resources <| fun () -> resources.Add(d)
 
     member self.Stop() = self.Motor.Values |> Seq.iter (fun x -> x.Stop())

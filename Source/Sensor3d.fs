@@ -9,7 +9,8 @@ type Sensor3d (min, max, deviceFilePath) as sens =
     [<Literal>]
     let ev_abs = 3us
     let last = Array.zeroCreate 3
-    do sens.ParseFunc <- fun bytes offset -> 
+    do sens.ParseFunc <- fun bytes -> 
+        (*let offset = 0
         let evType = BitConverter.ToUInt16(bytes, offset + 8)
         let evCode = BitConverter.ToUInt16(bytes, offset + 10)
         let evValue = BitConverter.ToInt32(bytes, offset + 12)
@@ -17,4 +18,5 @@ type Sensor3d (min, max, deviceFilePath) as sens =
             last.[int evCode] <- Helpers.limit min max evValue 
             None
         else
-            Some <| new Point(last.[0], last.[1], last.[2])
+            Some <| new Point(last.[0], last.[1], last.[2])*)
+        None

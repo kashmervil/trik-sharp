@@ -63,18 +63,20 @@
   </PropertyGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <Compile Include="Collections.fs" />
     <Compile Include="Observable.fs" />
-    <Compile Include="Ports.fs" />
     <Compile Include="Helpers.fs" />
+    <Compile Include="Collections.fs" />
+    <Compile Include="Ports.fs" />
+    <Compile Include="FifoSensorReader.fs" />
     <Compile Include="FifoSensor.fs" />
+    <Compile Include="Sensor3d.fs" />
+    <Compile Include="LineSensor.fs" />
     <Compile Include="ServoMotor.fs" />
     <Compile Include="PowerMotor.fs" />
     <Compile Include="AnalogSensor.fs" />
     <Compile Include="Encoder.fs" />
     <Compile Include="LedStripe.fs" />
     <Compile Include="PadServer.fs" />
-    <Compile Include="Sensor3d.fs" />
     <Compile Include="Gyroscope.fs" />
     <Compile Include="Accelerometer.fs" />
     <Compile Include="Led.fs" />
