@@ -17,4 +17,4 @@ type Sensor3d (min, max, deviceFilePath) as sens =
             last.[int evCode] <- Helpers.limit min max evValue 
             None
         else
-            Some {x = last.[0]; y = last.[1]; z = last.[2]}
+            Some <| new Point(last.[0], last.[1], last.[2])

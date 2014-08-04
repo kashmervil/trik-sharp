@@ -10,7 +10,7 @@ type AnalogSensor(register) as sens =
             Helpers.I2C.Receive register 
             |> Helpers.limit 0 1024 
         value
-    new (port : Trik.Config.AnalogSensor) = new AnalogSensor(int port) 
+    new (port : Ports.Sensor) = new AnalogSensor(port.ToI2CNumber()) 
     interface IDisposable with
         member x.Dispose() = ()
    

@@ -5,6 +5,7 @@ open System.Collections.Generic
 type Model () as model = 
 
     static do Helpers.trikSpecific <| fun () -> Helpers.I2C.Init "/dev/i2c-2" 0x48 1
+                                                List.iter (fun x -> Helpers.I2C.Send x 0x1000 2) [0x10 .. 0x13]
                                                 IO.File.WriteAllText("/sys/class/gpio/gpio62/value", "1")
     static let resources = new ResizeArray<_>()
 
@@ -31,6 +32,9 @@ type Model () as model =
             { stop = 0; zero = 1450000; min = 1200000; max = 1800000; period = 20000000 } )
           ("E2", "/sys/class/pwm/ehrpwm.1:0", 
             { stop = 0; zero = 1450000; min = 1200000; max = 1800000; period = 20000000 } )
+          ("E3", "/sys/class/pwm/ehrpwm.0:1", 
+            { stop = 0; zero = 1450000; min = 1200000; max = 1800000; period = 20000000 } )
+            
          |] with get, set
     member val EncoderConfig =
         [| 
@@ -59,7 +63,6 @@ type Model () as model =
     member x.Motor
         with get() = 
             let motorInit() = 
-                [0x10 .. 0x13] |>  List.iter (fun x -> Helpers.I2C.Send x 0x1000 2)
                 motor <- 
                     x.MotorConfig
                     |> Array.map (fun (port, cnum)  -> (port, new PowerMotor(cnum)))             
@@ -118,7 +121,6 @@ type Model () as model =
     member x.LedStripe
         with get() = 
             if ledStripe.IsNone then
-                [0x10 .. 0x13] |>  List.iter (fun x -> Helpers.I2C.Send x 0x1000 2)
                 ledStripe <- Some(new Trik.LedStripe(x.LedStripeConfig))
             ledStripe.Value
     

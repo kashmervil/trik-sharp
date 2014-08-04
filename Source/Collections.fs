@@ -3,11 +3,17 @@ open System
 
 [<AutoOpen>]
 module Collections = 
-    type Point = {x: int; y: int; z: int} with
-        static member Zero = {x=0; y=0; z=0}
-        static member (+) (c1: Point, c2: Point) = {x=c1.x + c2.x; y=c1.y + c2.y; z=c1.z + c2.z} 
-        static member (-) (c1: Point, c2: Point) = {x=c1.x - c2.x; y=c1.y - c2.y; z=c1.z - c2.z}
-        static member (*) (c1: Point, c2: Point) = {x=c1.x * c2.x; y=c1.y * c2.y; z=c1.z * c2.z} 
+    [<Struct>]
+    type Point(x: int, y: int, z: int) =
+        member self.X = x
+        member self.Y = y
+        member self.Z = z
+    
+        static member Zero = new Point(0,0,0)
+        static member (+) (c1: Point, c2: Point) = new Point(c1.X + c2.X, c1.Y + c2.Y, c1.Z + c2.Z)
+        static member (-) (c1: Point, c2: Point) = new Point(c1.X - c2.X, c1.Y - c2.Y, c1.Z - c2.Z)
+        static member (*) (c1: Point, c2: Point) = new Point(c1.X * c2.X, c1.Y * c2.Y, c1.Z * c2.Z)
+         
 
     type ButtonEventCode  = 
      | Sync  = 0

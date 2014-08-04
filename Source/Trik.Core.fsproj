@@ -65,7 +65,7 @@
     <None Include="App.config" />
     <Compile Include="Collections.fs" />
     <Compile Include="Observable.fs" />
-    <Compile Include="Config.fs" />
+    <Compile Include="Ports.fs" />
     <Compile Include="Helpers.fs" />
     <Compile Include="FifoSensor.fs" />
     <Compile Include="ServoMotor.fs" />
