@@ -10,10 +10,9 @@ type LineSensor(scriptPath, commandPath: string, sensorPath) as sensor =
     do sensor.ParseFunc <- fun  text  ->
             let parsedLines = text.Split([|' '|], StringSplitOptions.RemoveEmptyEntries) 
             match parsedLines with
-                | [| "loc:"; x; y; z |] -> Some <| (LOC <| new Location(x, y, z))
-                | [| "hsv:"; q1; q2; q3; q4; q5; q6 |] -> printfn " %s" text
-                                                          commandFifo.WriteLine(text.Replace(':', ' '))
-                                                          None
+                | [| "loc:"; x; y; z |] -> Some (LOC <| new Location(x, y, z))
+                | [| "hsv:"; _; _; _; _; _; _ |] -> commandFifo.WriteLine(text.Replace(':', ' '))
+                                                    None
                 | z -> printfn "none %A" z; None
 
     let script cmd = Helpers.SyscallShell <| scriptPath + " " + cmd

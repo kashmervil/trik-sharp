@@ -1,33 +1,6 @@
 ﻿namespace Trik
 open System
 
-type Notifier<'T>() =
-    let observers = new ResizeArray<IObserver<'T> >()
-    let obs = Trik.Observable.Create(fun observer -> 
-        lock observers <| fun () -> observers.Add(observer)
-        { new IDisposable with 
-            member this.Dispose() = lock observers <| fun () -> observers.Remove(observer) |> ignore })
-
-    member self.OnError e = 
-            lock (observers)
-            <| fun () -> observers.ForEach(fun obs -> obs.OnError e)
-            observers.Clear()
-
-    member self.OnNext (x: 'T) = 
-        try 
-            lock (observers)
-            <| fun () -> observers.ForEach(fun obs -> obs.OnNext x) 
-        with e -> self.OnError e
-
-    member self.OnCompleted _ = 
-            lock (observers)
-            <| fun () -> observers.ForEach(fun obs -> obs.OnCompleted()) 
-            observers.Clear()
-    member self.Publish() = obs
-    interface IDisposable with
-        member self.Dispose() = self.OnCompleted()
-    
-
 [<AbstractClass>]
 type BinaryFifoSensor<'T>(path, dataSize, bufSize) as sens = 
     
@@ -73,7 +46,7 @@ type BinaryFifoSensor<'T>(path, dataSize, bufSize) as sens =
         if cts <> null then cts.Cancel()
         notifier.OnCompleted()
 
-    member self.ToObservable() = notifier.Publish()
+    member self.ToObservable() = notifier.Publish
 
     interface IDisposable with
         member self.Dispose() = cts.Cancel()

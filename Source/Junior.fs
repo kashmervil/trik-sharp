@@ -30,15 +30,17 @@ type Robot() as is =
     
     member self.AccelRead() = super.Accel.Read()
     
-    static member RegisterResource(d: IDisposable) = lock resources <| fun () -> resources.Add(d)
-
     member self.Stop() = self.Motor.Values |> Seq.iter (fun x -> x.Stop())
                          self.Servo.Values |> Seq.iter (fun x -> x.Zero()) 
-
+    
+    member self.LineSensor = super.LineSensor
     member self.Sleep(sec: float) = System.Threading.Thread.Sleep(int <| sec * 1000.)
     member self.Sleep(millisec: int) = System.Threading.Thread.Sleep(millisec)
     member self.Say(text) = Async.Start 
                             <| async { Trik.Helpers.SyscallShell <| "espeak -v russian_test -s 100 " + text}
+    
+    static member RegisterResource(d: IDisposable) = lock resources <| fun () -> resources.Add(d)
+
     interface IDisposable with
         member self.Dispose() = 
             if not isDisposed then

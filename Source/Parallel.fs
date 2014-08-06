@@ -8,9 +8,6 @@ type ExecutionStatus<'T> = Normal of 'T | Break | ExitTask of int | Cancelled
 
 type RunningTask(d: IDisposable) = 
     member self.Stop() = d.Dispose()
-and
-    [<NoComparison; NoEquality>]
-    private TaskImpl<'T> = (CancellationToken -> ExecutionStatus<'T>)
 and 
     [<NoComparison; NoEquality>]
     Task<'T>(f: CancellationToken -> ExecutionStatus<'T>) =
