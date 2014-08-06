@@ -67,8 +67,8 @@
     <Compile Include="Helpers.fs" />
     <Compile Include="Collections.fs" />
     <Compile Include="Ports.fs" />
-    <Compile Include="FifoSensorReader.fs" />
-    <Compile Include="FifoSensor.fs" />
+    <Compile Include="BinaryFifoSensor.fs" />
+    <Compile Include="StringFifoSensor.fs" />
     <Compile Include="Sensor3d.fs" />
     <Compile Include="LineSensor.fs" />
     <Compile Include="ServoMotor.fs" />

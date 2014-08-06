@@ -154,14 +154,14 @@ type Model () as model =
                              device |> Option.iter (fun x -> x.Dispose())
                         let inline disposeMap (devices: IDictionary<string, 'T> option when 'T :> IDisposable) = 
                             devices |> Option.iter (Seq.iter (fun x -> x.Value.Dispose()))
+                        dispose lineSensor
                         dispose gyro
                         dispose accel
                         dispose led
                         dispose pad
+                        dispose ledStripe
                         disposeMap motor
                         disposeMap servo
                         disposeMap analogSensor
-                        dispose ledStripe
-                        lineSensor.Value.Stop()
                         isDisposed <- true
             

@@ -1,9 +1,9 @@
 ﻿namespace Trik
 open System
-
+open System.Threading
 
 [<AbstractClass>]
-type FifoSensor<'T>(path: string, dataSize, bufSize) as sens = 
+type StringFifoSensor<'T>(path: string) as sens = 
     let observers = new ResizeArray<IObserver<'T> >()
     let obs = Trik.Observable.Create(fun observer -> 
         lock observers <| fun () -> observers.Add(observer)
@@ -13,12 +13,12 @@ type FifoSensor<'T>(path: string, dataSize, bufSize) as sens =
     let obsError e = lock observers <| fun () -> observers.ForEach(fun obs -> obs.OnError e ) 
     let obsCompleted _ = lock observers <| fun () -> observers.ForEach(fun obs -> obs.OnCompleted() ) 
     
-    let mutable cts = null
+    let mutable cts: CancellationTokenSource = new CancellationTokenSource(0)
     let mutable lastValue = None
     
     let loop() = 
         let rec reading (stream: IO.StreamReader) = async {
-                let line = stream.ReadLine()//stream.AsyncRead(bytes, 0, bytes.Length)
+                let line = stream.ReadLine()
                 sens.ParseFunc line |> Option.iter (fun x -> lastValue<- Some x; obsNext x)
                 return! reading stream
             }
@@ -41,7 +41,8 @@ type FifoSensor<'T>(path: string, dataSize, bufSize) as sens =
         | None -> invalidOp "Read failed or missing Start() before Read()"
         | Some x -> x
 
-    member self.Start() = 
+    member self.Start() =
+        if not cts.IsCancellationRequested then invalidOp "Second call of Start() without Stop()"
         cts <- new Threading.CancellationTokenSource()
         Async.Start(loop(), cancellationToken = cts.Token)
     

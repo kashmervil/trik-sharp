@@ -11,12 +11,8 @@ type Robot() as is =
     static let mutable isRobotAlive = false
     do if isRobotAlive then invalidOp "Only single instance is allowed"
     do isRobotAlive <- true
-
     let super = new Trik.Model()
-
-    let mutable gyroValue: Point = Point.Zero
-    let mutable accelValue: Point = Point.Zero
-
+    
     static let resources = new ResizeArray<_>()
     
     let mutable isDisposed = false
@@ -54,7 +50,6 @@ type Robot() as is =
                         resources.ForEach(fun x -> x.Dispose())
                         (super :> IDisposable).Dispose()
 
-    
 [<AutoOpen>]
 module Declarations =
     let robot = new Robot()
