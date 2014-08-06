@@ -75,9 +75,5 @@ type BinaryFifoSensor<'T>(path, dataSize, bufSize) as sens =
 
     member self.ToObservable() = notifier.Publish()
 
-    abstract Dispose: unit -> unit 
-    default self.Dispose() = 
-        cts.Cancel()
-
     interface IDisposable with
-        member self.Dispose() = self.Dispose()
+        member self.Dispose() = cts.Cancel()

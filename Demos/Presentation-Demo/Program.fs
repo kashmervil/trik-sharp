@@ -2,13 +2,12 @@
 open System.Reactive.Linq
 [<EntryPoint>]
 let main _ = 
-    Helpers.I2C.Init "/dev/i2c-2" 0x48 1
     let model = new Model()
-    let motorL = model.Motor.["M2"]//Two port in controller's behind
-    let motorR = model.Motor.["M1"]//you can change to ports you like 
-    //for full ports description and location go http://goo.gl/jRWJ4j
+    let motorL = model.Motor.["M2"]//Two ports in the controller's behind
+    let motorR = model.Motor.["M1"]//you can change ports to any of the range M1 .. M4 
+    //for full ports description go http://goo.gl/jRWJ4j
     let power = model.AnalogSensor.["A1"].ToObservable().Select(fun d -> //second port in front 
-                            if d > 550 then 100 elif d < 450 then -100 else 0).DistinctUntilChanged()
+                            if d < 450 then 100 elif d > 550 then -100 else 0).DistinctUntilChanged()
      
     let l_disp = power.Subscribe(motorL)
     let r_disp = power.Subscribe(motorR)

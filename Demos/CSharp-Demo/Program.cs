@@ -11,7 +11,6 @@ namespace Demo_cs
     {
         static void Main()
         {
-            Helpers.I2C.Init("/dev/i2c-2", 0x48, 1);
             var model = new Model();
             var r_wheel = model.Motor["M1"];
             var l_wheel = model.Motor["M2"];

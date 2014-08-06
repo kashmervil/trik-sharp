@@ -17,7 +17,6 @@ type Sensor3d (min, max, devicePath) =
             let evValue = BitConverter.ToInt32(bytes, offset + 12)
             if evType = ev_abs && evCode < 3us then 
                 last.[int evCode] <- Helpers.limit min max evValue 
-                printfn "Got %d" evValue
                 None
             else
                 Some <| new Point(last.[0], last.[1], last.[2])
