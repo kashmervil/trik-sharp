@@ -19,7 +19,7 @@ type StringFifoSensor<'T>(path: string) as sens =
     let loop() = 
         let rec reading (stream: IO.StreamReader) = async {
                 let line = stream.ReadLine()
-                sens.ParseFunc line |> Option.iter (fun x -> lastValue<- Some x; obsNext x)
+                sens.Parse line |> Option.iter (fun x -> lastValue<- Some x; obsNext x)
                 return! reading stream
             }
              
@@ -32,9 +32,7 @@ type StringFifoSensor<'T>(path: string) as sens =
             with e ->  eprintfn "FifoSensor %s %A" path e; obsError e
               }
 
-
-    [<DefaultValue>]
-    val mutable ParseFunc: (string -> 'T option)
+    abstract Parse: string -> 'T option
     
     member self.Read() = 
         match lastValue with

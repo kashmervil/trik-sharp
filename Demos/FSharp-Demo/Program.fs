@@ -29,11 +29,11 @@ let testPad (model:Model) =
     use disp = pad.Pads.Subscribe (fun (num, coord) ->  
         match num, coord with
         | (1, Some(x, y) ) -> 
-            servo1.Power <- x
+            servo1.SetPower  x
             //if !prX1 = -1 then prX1 := x; prY1 := y 
             //else servo1.SetPower(x - !prX1)
         | (1, None) -> prX1 := -1; prY1 := -1; printfn "None 1";
-        | (2, Some(x, _) ) -> servo2.Power <- -x * 2
+        | (2, Some(x, _) ) -> servo2.SetPower(-x * 2)
         | (2, None) -> servo2.Zero(); printfn "None 1";
         | _ -> failwith " wrong pad command"
     )

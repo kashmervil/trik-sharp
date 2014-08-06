@@ -18,7 +18,7 @@ namespace CSharp_Demo_1
             {
                 for (int i = 1; i < 4; i++)
                 {
-                    robot.Led.Color = (Collections.LedColor) i;
+                    robot.Led.SetColor((Collections.LedColor) i);
                     Thread.Sleep(500);
                 }
                 counter++;

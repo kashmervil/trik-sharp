@@ -26,13 +26,14 @@ type Robot() as is =
         Ports.Servo.Values 
         |>  Array.map (fun port -> port, new ServoMotor(port.Path(), ServoMotor.Servo1)) |> dict
    
-    member self.GyroRead() = super.Gyro.Read()
+    member self.Gyro = super.Gyro
     
-    member self.AccelRead() = super.Accel.Read()
+    member self.Accel = super.Accel
     
     member self.Stop() = self.Motor.Values |> Seq.iter (fun x -> x.Stop())
                          self.Servo.Values |> Seq.iter (fun x -> x.Zero()) 
     
+    member self.Encoder = super.Encoder
     member self.LineSensor = super.LineSensor
     member self.Sleep(sec: float) = System.Threading.Thread.Sleep(int <| sec * 1000.)
     member self.Sleep(millisec: int) = System.Threading.Thread.Sleep(millisec)

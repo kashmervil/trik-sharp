@@ -117,7 +117,7 @@ type MotorControler (motor: Trik.PowerMotor, enc: Encoder, sign) =
         speed
     member x.doStep() = 
         x.ActualSpeed <- x.PowerBase + x.PowerAddition 
-        motor.Power <- sign * x.ActualSpeed   
+        motor.SetPower(sign * x.ActualSpeed)   
 
 type Linetracer (model: Model) = 
     let sw = new Stopwatch()

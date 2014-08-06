@@ -79,10 +79,9 @@ let inline permil min max v =
 
 let defaultRate = 50.0
  
+[<AbstractClass>]
 type PollingSensor<'T>() = 
-    [<DefaultValueAttribute>]
-    val mutable ReadFunc: (unit -> 'T)
-    member x.Read() = x.ReadFunc()
+    abstract Read: unit -> 'T
     member x.ToObservable(refreshRate: System.TimeSpan) = 
         Trik.Observable.Interval(refreshRate) 
         |> Observable.map (fun _ -> x.Read())

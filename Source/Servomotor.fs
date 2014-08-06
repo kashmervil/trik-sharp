@@ -13,9 +13,7 @@ type ServoMotor(servoPath: string, kind: ServoMotor.Kind) =
     let fd = new IO.StreamWriter(servoPath + "/duty_ns", AutoFlush = true)
     let mutable lastCommand = 0
     
-    member self.Power 
-        with get() = lastCommand
-        and  set command =  
+    member self.SetPower command =  
             lock self 
             <| fun () ->
                 let v = Helpers.limit -100 100 command 
@@ -28,10 +26,10 @@ type ServoMotor(servoPath: string, kind: ServoMotor.Kind) =
     interface IObserver<int> with
         member self.OnNext(command) = 
             if Math.Abs(lastCommand - command) > ServoMotor.observerEps
-            then lastCommand <- command; self.Power <- command
+            then lastCommand <- command; self.SetPower command
             
-        member self.OnError e = self.Power <- kind.stop
-        member self.OnCompleted () = self.Power <- kind.stop
+        member self.OnError e = self.SetPower kind.stop
+        member self.OnCompleted () = self.SetPower kind.stop
 
     interface IDisposable with
         member self.Dispose() =

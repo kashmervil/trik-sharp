@@ -12,18 +12,16 @@ type Led(deviceFilePath: string) =
     
     let mutable color = LedColor.Off
     ///Led has three colors Green, Red, Orange 
-    member self.Color 
-        with get() = color
-        and set (c: LedColor) = 
+    member self.SetColor(c: LedColor) = 
             let inline ifFlag f = (if c.HasFlag f then on else off), 0, 1
             green.Write(ifFlag LedColor.Green); green.Flush()
             red.Write(ifFlag LedColor.Red); red.Flush()
             color <- c
     ///Powers off the led
-    member self.PowerOff() = self.Color <- LedColor.Off
+    member self.PowerOff() = self.SetColor LedColor.Off
 
     interface IObserver<LedColor> with
-        member self.OnNext(c) = self.Color <- c
+        member self.OnNext(c) = self.SetColor c
         member self.OnError(e) = self.PowerOff()
         member self.OnCompleted() = self.PowerOff()
 

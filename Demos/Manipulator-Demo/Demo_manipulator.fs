@@ -31,14 +31,14 @@ let main argv =
         match num, coord with
         | (1, Some(x, y) ) -> 
             printfn "servo1.SetPower(%d)" x
-            servo1.Power <- x
-            servo2.Power <- -y * 2
+            servo1.SetPower(x)
+            servo2.SetPower(-y * 2)
         | (2, Some(x, y) ) -> 
             printfn "power %d %d" x y
             let base' = y
             let add' = x / 2
-            p1.Power <- base' + add'
-            p2.Power <- base' - add'
+            p1.SetPower(base' + add')
+            p2.SetPower(base' - add')
         (* | (1, None) -> prX1 := -1; prY1 := -1; printfn "None 1";
         | (2, Some(x, _) ) -> 
             printfn "servo2.SetPower(- %d * 2)" x 

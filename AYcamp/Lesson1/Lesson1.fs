@@ -10,12 +10,10 @@ type Robot() =
     let motors = ["M1"; "M2"; "M3"; "M4"] |> List.map (fun x -> super.Motor.[x])
     let sensors = ["A1"; "A2"; "A3"] |> List.map (fun x -> super.AnalogSensor.[x])
 
-    member self.Led 
-        with get() =  super.Led.Color
-        and set c = super.Led.Color <- c
+    member self.Led = super.Led
 
-    member self.MotorM1 with set p = motors.[0].Power <- p
-    member self.MotorM2 with set p = motors.[1].Power <- p
+    member self.MotorM1 with set p = motors.[0].SetPower p
+    member self.MotorM2 with set p = motors.[1].SetPower p
    
     member self.SensorA1 = sensors.[0].Read()
 

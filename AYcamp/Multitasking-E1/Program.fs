@@ -6,15 +6,15 @@ open Trik.Junior.Parallel
 printfn "Starting"
 let flicker = task { for i=1 to 100 do
                         for color in [LedColor.Green; LedColor.Orange; LedColor.Red] do
-                            robot.Led.Color <- color
-                            robot.Sleep(500)   
+                            robot.Led.SetColor color
+                            robot.Sleep(500)
                     }
 
 let k = 3 
 let drive = task { while true do
                         let u = k * (robot.Sensor.[A2].Read() - 500) / 10
-                        robot.Motor.[M1].Power <- 70 + u
-                        robot.Motor.[M2].Power <- 70 - u
+                        robot.Motor.[M1].SetPower(70 + u)
+                        robot.Motor.[M2].SetPower(70 - u)
                         if robot.Sensor.[A1].Read() > 600 then 
                             do! BREAK
                         robot.Sleep(300)
@@ -22,9 +22,9 @@ let drive = task { while true do
                     }
 
 let upside = task { while true do 
-                        let d = robot.GyroRead().Z
+                        let d = robot.Gyro.Read().Z
                         printfn "z = %d" d
-                        if robot.GyroRead().Z > 50 then 
+                        if robot.Gyro.Read().Z > 50 then 
                             printfn "It's likely that I'm upside down"
                         robot.Sleep(100)
                   }
