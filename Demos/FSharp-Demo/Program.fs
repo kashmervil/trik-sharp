@@ -116,23 +116,23 @@ let main _ =
         |> Observable.map(fun x -> printfn "recv %A" x;  x)
         |> Observable.subscribe(fun x -> 
             match x.AsTuple with
-            | ButtonEventCode.Down, true, _ -> 
+            | ButtonEventCode.Down, true -> 
                 printfn "Exiting (start)"
                 exit.Set() |> ignore
-            | ButtonEventCode.Right, true, _ -> 
+            | ButtonEventCode.Right, true -> 
                 if not !testMainRunning then 
                     testMainWaitHandle.Reset() |> ignore
                     Async.Start(async { testMain(model); demoList() })
                 else 
                     testMainWaitHandle.Set() |> ignore
-            | ButtonEventCode.Left, true, _ -> 
+            | ButtonEventCode.Left, true -> 
                 if not !testSensorsRunning then 
                     testSensorsWaitHandle.Reset() |> ignore
                     Async.Start(async { testSensors(model); demoList() })
                 else 
                     testSensorsWaitHandle.Set() |> ignore
                     
-            | ButtonEventCode.Up, true, _ -> 
+            | ButtonEventCode.Up, true -> 
                 if not !testSensorsRunning then 
                     testSensorsWaitHandle.Reset() |> ignore
                     Async.Start(async { testSensors(model); demoList() } )

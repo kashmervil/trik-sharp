@@ -37,8 +37,9 @@ type Notifier<'T>() =
 [<AbstractClass; Sealed>]
 type  Observable =   
 
-    static member Create(subscription: Func<IObserver<'T>,IDisposable>) = { new IObservable<'T> with
-                                    member self.Subscribe observer = subscription.Invoke observer}
+    static member Create(subscription: Func<IObserver<'T>,IDisposable>) = 
+        { new IObservable<'T> with
+              member self.Subscribe observer = subscription.Invoke observer}
 
     static member DistinctUntilChanged(source: IObservable<'T> when 'T: equality) = 
         let hasCurrentKey = ref false
@@ -78,7 +79,7 @@ type  Observable =
                 if not token.IsCancellationRequested then
                     notifier.OnNext !counter
                     incr counter
-                    Thread.Sleep(int timeSpan.Ticks/10000)
+                    do! Async.Sleep(int timeSpan.Ticks/10000)
                     return! triggering token
                   }
         triggering cts.Token |> Async.Start

@@ -12,11 +12,12 @@ type BinaryFifoSensor<'T>(path, dataSize, bufSize, timeout) as sens =
     let mutable cts: CancellationTokenSource = new CancellationTokenSource()
     do cts.Cancel()
     let mutable offset = 0
-    
+
     let loop() = 
         let rec reading (stream: IO.FileStream) = 
             async {
-                let readCnt = stream.Read(bytes, 0, bytes.Length)
+                let! readAsync = Async.StartChild <| stream.AsyncRead(bytes, 0, bytes.Length)
+                let! readCnt = readAsync
                 let blocks = readCnt / dataSize
                 offset <- 0
                 for i = 1 to blocks do 
@@ -51,6 +52,9 @@ type BinaryFifoSensor<'T>(path, dataSize, bufSize, timeout) as sens =
         notifier.OnCompleted()
 
     member self.ToObservable() = obs
+    
+    abstract Dispose: unit -> unit
+    default self.Dispose() = self.Stop()
 
     interface IDisposable with
-        member self.Dispose() = self.Stop()
+        member self.Dispose() = self.Dispose()

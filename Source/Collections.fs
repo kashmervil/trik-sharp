@@ -27,17 +27,17 @@ module Collections =
      | Menu  = 139
       
     [<Struct>]
-    type ButtonEvent(button: ButtonEventCode, isPressed: bool, timeStamp: double) = 
+    type ButtonEvent(button: ButtonEventCode, isPressed: bool) = //, timeStamp: double) = 
         member self.Button = button
         member self.IsPressed = isPressed
-        member self.TimeStamp = timeStamp
-        member self.AsTuple = button, isPressed, timeStamp
+        //member self.TimeStamp = timeStamp
+        member self.AsTuple = button, isPressed//, timeStamp
 
-        new (code: int, isPressed: bool, timeStamp: double) = 
-            ButtonEvent(enum<ButtonEventCode> code, isPressed, timeStamp)
-        new (code: uint16, isPressed: bool, timeStamp: double) = 
-            ButtonEvent(int code, isPressed, timeStamp)
-        override self.ToString() = button.ToString() + " " + isPressed.ToString() + " " + timeStamp.ToString() 
+        new (code: int, isPressed: bool) = //, timeStamp: double) = 
+            ButtonEvent(enum<ButtonEventCode> code, isPressed)//, timeStamp)
+        new (code: uint16, isPressed: bool) = //, timeStamp: double) = 
+            ButtonEvent(int code, isPressed) //, timeStamp)
+        override self.ToString() = button.ToString() + " " + isPressed.ToString()// + " " + timeStamp.ToString() 
 
     [<AutoOpen>]
     module ServoMotor =
