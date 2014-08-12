@@ -4,24 +4,14 @@ open System.Threading
 
 [<AbstractClass>]
 type StringFifoSensor<'T>(path: string) as sens = 
-    let observers = new ResizeArray<IObserver<'T> >()
-    let obs = Trik.Observable.Create(fun observer -> 
-        lock observers <| fun () -> observers.Add(observer)
-        { new IDisposable with 
-            member this.Dispose() = lock observers <| fun () -> observers.Remove(observer) |> ignore } )
-    let obsNext (x: 'T) = lock observers <| fun () -> observers.ForEach(fun obs -> obs.OnNext(x) ) 
-    let obsError e = lock observers <| fun () -> observers.ForEach(fun obs -> obs.OnError e ) 
-    let obsCompleted _ = lock observers <| fun () -> observers.ForEach(fun obs -> obs.OnCompleted() ) 
-    
-    let mutable cts: CancellationTokenSource = new CancellationTokenSource(0)
-    let mutable lastValue = Unchecked.defaultof<'T>
-    let readValueEvent = new Event<'T>()
+    let notifier = new Notifier<'T>()
+    let mutable cts: CancellationTokenSource = new CancellationTokenSource()
+    do cts.Cancel()
     
     let loop() = 
-        
         let rec reading (stream: IO.StreamReader) = async {
                 let line = stream.ReadLine()
-                sens.Parse line |> Option.iter obsNext
+                sens.Parse line |> Option.iter notifier.OnNext
                 return! reading stream
             }
              
@@ -29,15 +19,15 @@ type StringFifoSensor<'T>(path: string) as sens =
             try
                 let stream = IO.File.Open(path, IO.FileMode.Open, IO.FileAccess.Read, IO.FileShare.Read)
                 let streamReader = new IO.StreamReader(stream)
-                let! _ = Async.StartChild(Async.TryCancelled(reading streamReader, obsCompleted))
+                let! _ = Async.StartChild(Async.TryCancelled(reading streamReader, notifier.OnCompleted))
                 ()
-            with e ->  eprintfn "FifoSensor %s %A" path e; obsError e
+            with e ->  eprintfn "FifoSensor %s %A" path e; notifier.OnError e
               }
 
     abstract Parse: string -> 'T option
     
     member self.Read() = 
-        Async.AwaitObservable obs |> Async.RunSynchronously
+        Async.AwaitObservable notifier.Publish |> Async.RunSynchronously
 
     member self.Start() =
         if not cts.IsCancellationRequested then invalidOp "Second call of Start() without Stop()"
@@ -46,9 +36,9 @@ type StringFifoSensor<'T>(path: string) as sens =
     
     member self.Stop() = 
         if cts <> null then cts.Cancel()
-        obsCompleted()
+        notifier.OnCompleted()
 
-    member self.ToObservable() = obs
+    member self.ToObservable() = notifier.Publish
 
     abstract Dispose: unit -> unit 
     default self.Dispose() = 

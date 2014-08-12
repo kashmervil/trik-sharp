@@ -10,7 +10,8 @@ type Distance =  Far | Middle | Near
 
 let log s = printfn s
 
-let button = new ButtonsPad("/dev/input/event0")   
+let buttonPad = new ButtonPad("/dev/input/event0")  
+buttonPad.Start() 
 
 
 let testMainWaitHandle = new EventWaitHandle(false, EventResetMode.AutoReset)
@@ -104,15 +105,17 @@ let main _ =
                               ("JE2", "/sys/class/pwm/ehrpwm.1:0", 
                                 { stop = 0; zero = 1550000; min =  800000; max = 2250000; period = 20000000 } )
                              |])
+    model.Gyro.Start()
     log "Loaded model"
     let demoList() = 
         printfn "1. testMain\n2. testSensors\n3. testStripe"
     demoList()
     let exit = new EventWaitHandle(false, EventResetMode.AutoReset)
     use disp = 
-        button.ToObservable() 
+        buttonPad.ToObservable() 
         |> Observable.map(fun x -> printfn "recv %A" x;  x)
-        |> Observable.subscribe(function 
+        |> Observable.subscribe(fun x -> 
+            match x.AsTuple with
             | ButtonEventCode.Down, true, _ -> 
                 printfn "Exiting (start)"
                 exit.Set() |> ignore

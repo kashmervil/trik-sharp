@@ -26,6 +26,8 @@ for color in [LedColor.Red; LedColor.Orange; LedColor.Green] do
     robot.Led.SetColor(color)
     robot.Sleep(300) 
 
+printfn "Now Accel should be stopped"
+robot.Accel.Stop()
 //robot.Say("Hello")
 //If you want to pass successive result of function or method call
 // where are several possible variants

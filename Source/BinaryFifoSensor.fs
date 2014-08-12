@@ -3,11 +3,13 @@ open System
 open System.Threading
 
 [<AbstractClass>]
-type BinaryFifoSensor<'T>(path, dataSize, bufSize) as sens = 
+type BinaryFifoSensor<'T>(path, dataSize, bufSize, timeout) as sens = 
     
     let notifier = new Notifier<'T>()
+    let obs = notifier.Publish
+    //let _ = notifier.Publish |> Observable.subscribe (printfn "%A")
     let bytes = Array.zeroCreate bufSize
-    let mutable cts: CancellationTokenSource = new CancellationTokenSource(0)
+    let mutable cts: CancellationTokenSource = new CancellationTokenSource()
     do cts.Cancel()
     let mutable offset = 0
     
@@ -32,14 +34,14 @@ type BinaryFifoSensor<'T>(path, dataSize, bufSize) as sens =
             with e ->  eprintfn "FifoSensor %s %A" path e; notifier.OnError e
               }
     
+    new (path, dataSize, bufSize) = new BinaryFifoSensor<'T>(path, dataSize, bufSize, -1)
     abstract Parse: byte[] * int -> 'T option
 
     member self.Read() = 
-        Async.AwaitObservable notifier.Publish |> Async.RunSynchronously
+        Async.RunSynchronously(Async.AwaitObservable obs, timeout)
         
 
     member self.Start() = 
-        
         if not cts.IsCancellationRequested then invalidOp "Second call of Start() without Stop()"
         cts <- new Threading.CancellationTokenSource()
         Async.Start(loop(), cancellationToken = cts.Token)
@@ -48,7 +50,7 @@ type BinaryFifoSensor<'T>(path, dataSize, bufSize) as sens =
         if cts <> null then cts.Cancel()
         notifier.OnCompleted()
 
-    member self.ToObservable() = notifier.Publish
+    member self.ToObservable() = obs
 
     interface IDisposable with
-        member self.Dispose() = cts.Cancel()
+        member self.Dispose() = self.Stop()

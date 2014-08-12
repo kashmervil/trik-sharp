@@ -3,19 +3,18 @@ open System
 
 [<AutoOpen>]
 module Collections = 
+    
     [<Struct>]
     type Point(x: int, y: int, z: int) =
         member self.X = x
         member self.Y = y
         member self.Z = z
-        override self.ToString() = sprintf "X= %d Y=%d Z= %d" x y z
+        override self.ToString() = sprintf "X= %d Y= %d Z= %d" x y z
 
         static member Zero = new Point(0,0,0)
         static member (+) (c1: Point, c2: Point) = new Point(c1.X + c2.X, c1.Y + c2.Y, c1.Z + c2.Z)
         static member (-) (c1: Point, c2: Point) = new Point(c1.X - c2.X, c1.Y - c2.Y, c1.Z - c2.Z)
         static member (*) (c1: Point, c2: Point) = new Point(c1.X * c2.X, c1.Y * c2.Y, c1.Z * c2.Z)
-
-         
 
     type ButtonEventCode  = 
      | Sync  = 0
@@ -27,8 +26,18 @@ module Collections =
      | Power = 116
      | Menu  = 139
       
-    /// Button event type in a form of (Button Code, Pressed/Released) 
-    type ButtonEvent = ButtonEventCode * bool * double
+    [<Struct>]
+    type ButtonEvent(button: ButtonEventCode, isPressed: bool, timeStamp: double) = 
+        member self.Button = button
+        member self.IsPressed = isPressed
+        member self.TimeStamp = timeStamp
+        member self.AsTuple = button, isPressed, timeStamp
+
+        new (code: int, isPressed: bool, timeStamp: double) = 
+            ButtonEvent(enum<ButtonEventCode> code, isPressed, timeStamp)
+        new (code: uint16, isPressed: bool, timeStamp: double) = 
+            ButtonEvent(int code, isPressed, timeStamp)
+        override self.ToString() = button.ToString() + " " + isPressed.ToString() + " " + timeStamp.ToString() 
 
     [<AutoOpen>]
     module ServoMotor =
