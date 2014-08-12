@@ -7,7 +7,7 @@ open System.Diagnostics
 type Sensor3d (min, max, devicePath) = 
     inherit BinaryFifoSensor<Point>(devicePath, 16, 1024)
     [<Literal>]
-    let ev_abs = 3us
+    let evAbs = 3us
     let last = Array.zeroCreate 3
     override self.Parse(bytes, offset) = 
         if bytes.Length < 16 then None
@@ -15,7 +15,7 @@ type Sensor3d (min, max, devicePath) =
             let evType = BitConverter.ToUInt16(bytes, offset + 8)
             let evCode = BitConverter.ToUInt16(bytes, offset + 10)
             let evValue = BitConverter.ToInt32(bytes, offset + 12)
-            if evType = ev_abs && evCode < 3us then 
+            if evType = evAbs && evCode < 3us then 
                 last.[int evCode] <- Helpers.limit min max evValue 
                 None
             else

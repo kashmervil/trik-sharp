@@ -70,7 +70,7 @@ type  Observable =
 
     static member Interval(timeSpan: System.TimeSpan) = 
         let counter = ref 0
-        let notifier = new Notifier<'T>()
+        let notifier = new Notifier<int>()
         let cts = new CancellationTokenSource()
 
         let rec triggering (token: CancellationToken) = 
@@ -87,3 +87,32 @@ type  Observable =
     static member Subscribe(source : IObservable<'T>, observer: IObserver<'T>) = source.Subscribe(observer)
     static member Subscribe(source : IObservable<'T>, callback : 'T -> unit)= source.Subscribe(callback)
     static member Subscribe(source : IObservable<'T>, callback : Func<'T,unit>)= source.Subscribe(callback.Invoke)
+
+
+
+module internal M = 
+    let internal synchronize f = 
+        let ctx = System.Threading.SynchronizationContext.Current 
+        f (fun g ->
+            let nctx = System.Threading.SynchronizationContext.Current 
+            if ctx <> null && ctx <> nctx then ctx.Post((fun _ -> g()), null)
+            else g() )
+
+#nowarn "21"
+#nowarn "40"
+type Async =
+    static member AwaitObservable(ev:IObservable<'T>) =
+      M.synchronize (fun f ->
+        Async.FromContinuations(fun (cont,econt,ccont) -> 
+          let rec finish cont value = 
+            remover.Dispose()
+            f (fun () -> cont value)
+          and remover : IDisposable = 
+            ev.Subscribe
+              ({ new IObserver<_> with
+                   member x.OnNext(v) = finish cont v
+                   member x.OnError(e) = finish econt e
+                   member x.OnCompleted() = 
+                      let msg = "Cancelling the workflow, because the Observable awaited using AwaitObservable has completed."
+                      finish ccont (new System.OperationCanceledException(msg)) }) 
+          () ))

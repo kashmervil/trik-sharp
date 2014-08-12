@@ -1,14 +1,15 @@
 ﻿namespace Trik
 open System
+open System.Threading
 
 [<AbstractClass>]
 type BinaryFifoSensor<'T>(path, dataSize, bufSize) as sens = 
     
     let notifier = new Notifier<'T>()
     let bytes = Array.zeroCreate bufSize
-    let mutable cts = null
+    let mutable cts: CancellationTokenSource = new CancellationTokenSource(0)
+    do cts.Cancel()
     let mutable offset = 0
-    let mutable lastValue = None
     
     let loop() = 
         let rec reading (stream: IO.FileStream) = 
@@ -18,7 +19,7 @@ type BinaryFifoSensor<'T>(path, dataSize, bufSize) as sens =
                 offset <- 0
                 for i = 1 to blocks do 
                         sens.Parse (bytes, offset) 
-                        |> Option.iter (fun x -> lastValue <- Some x; notifier.OnNext x)
+                        |> Option.iter notifier.OnNext
                         offset <- offset + dataSize 
                 return! reading stream
                }
@@ -30,15 +31,16 @@ type BinaryFifoSensor<'T>(path, dataSize, bufSize) as sens =
                 ()
             with e ->  eprintfn "FifoSensor %s %A" path e; notifier.OnError e
               }
-
+    
     abstract Parse: byte[] * int -> 'T option
 
     member self.Read() = 
-        match lastValue with
-        | None -> invalidOp "Read failed or missing Start() before Read()"
-        | Some x -> x
+        Async.AwaitObservable notifier.Publish |> Async.RunSynchronously
+        
 
     member self.Start() = 
+        
+        if not cts.IsCancellationRequested then invalidOp "Second call of Start() without Stop()"
         cts <- new Threading.CancellationTokenSource()
         Async.Start(loop(), cancellationToken = cts.Token)
     

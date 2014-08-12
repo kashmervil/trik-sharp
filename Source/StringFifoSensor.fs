@@ -14,12 +14,14 @@ type StringFifoSensor<'T>(path: string) as sens =
     let obsCompleted _ = lock observers <| fun () -> observers.ForEach(fun obs -> obs.OnCompleted() ) 
     
     let mutable cts: CancellationTokenSource = new CancellationTokenSource(0)
-    let mutable lastValue = None
+    let mutable lastValue = Unchecked.defaultof<'T>
+    let readValueEvent = new Event<'T>()
     
     let loop() = 
+        
         let rec reading (stream: IO.StreamReader) = async {
                 let line = stream.ReadLine()
-                sens.Parse line |> Option.iter (fun x -> lastValue<- Some x; obsNext x)
+                sens.Parse line |> Option.iter obsNext
                 return! reading stream
             }
              
@@ -35,9 +37,7 @@ type StringFifoSensor<'T>(path: string) as sens =
     abstract Parse: string -> 'T option
     
     member self.Read() = 
-        match lastValue with
-        | None -> invalidOp "Read failed or missing Start() before Read()"
-        | Some x -> x
+        Async.AwaitObservable obs |> Async.RunSynchronously
 
     member self.Start() =
         if not cts.IsCancellationRequested then invalidOp "Second call of Start() without Stop()"

@@ -20,7 +20,7 @@ let drive = task { while true do
                         robot.Sleep(300)
                     done
                     }
-
+robot.Gyro.Start()
 let upside = task { while true do 
                         let d = robot.Gyro.Read().Z
                         printfn "z = %d" d

@@ -49,7 +49,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Source\Trik.Core.fsproj">
+    <ProjectReference Include="..\..\Source\Trik.Core.fsproj">
       <Name>Trik.Core</Name>
       <Project>{b3c7b4ed-ead9-4044-b37b-5f5660bd6a14}</Project>
       <Private>True</Private>

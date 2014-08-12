@@ -18,13 +18,11 @@ type Robot() as is =
     let mutable isDisposed = false
     do AppDomain.CurrentDomain.ProcessExit.Add(fun _ -> if not isDisposed then (is :> IDisposable).Dispose())
     
-    member self.Led = new Trik.Led("/sys/class/leds/")
+    member self.Led = super.Led
 
-    member self.Motor = Ports.Motor.Values |> Array.map (fun port -> (port, new PowerMotor(port))) |> dict
-    member self.Sensor = Ports.Sensor.Values |> Array.map (fun port -> (port, new AnalogSensor(port))) |> dict
-    member self.Servo = 
-        Ports.Servo.Values 
-        |>  Array.map (fun port -> port, new ServoMotor(port.Path(), ServoMotor.Servo1)) |> dict
+    member self.Motor = super.Motor.Values |> Seq.mapi (fun i x -> Ports.Motor.Values.[i], x) |> dict
+    member self.Sensor = super.AnalogSensor.Values |> Seq.mapi (fun i x -> Ports.Sensor.Values.[i], x) |> dict
+    member self.Servo = super.Servo.Values |> Seq.mapi (fun i x -> Ports.Servo.Values.[i], x) |> dict
    
     member self.Gyro = super.Gyro
     

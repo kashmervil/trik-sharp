@@ -3,6 +3,10 @@ open System
 
 ///Type representing on-board light emitting diode
 type Led(deviceFilePath: string) =
+    static let mutable isLedAlive = false
+    do if isLedAlive then invalidOp "Only single instance is allowed"
+    do isLedAlive <- true
+    
     let on = [| byte 49|]
     let off =[| byte 48|]
     let green = IO.File.OpenWrite(deviceFilePath + "/led_green/brightness")
@@ -13,6 +17,7 @@ type Led(deviceFilePath: string) =
     let mutable color = LedColor.Off
     ///Led has three colors Green, Red, Orange 
     member self.SetColor(c: LedColor) = 
+            lock self <| fun () ->
             let inline ifFlag f = (if c.HasFlag f then on else off), 0, 1
             green.Write(ifFlag LedColor.Green); green.Flush()
             red.Write(ifFlag LedColor.Red); red.Flush()
