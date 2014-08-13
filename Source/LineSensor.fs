@@ -1,6 +1,5 @@
 ﻿namespace Trik
 open System
-open Trik.Helpers
 
 [<Sealed>]
 type LineSensor(scriptPath, commandPath: string, sensorPath) = 
@@ -17,7 +16,7 @@ type LineSensor(scriptPath, commandPath: string, sensorPath) =
             let parsedLines = text.Split([|' '|], StringSplitOptions.RemoveEmptyEntries) 
             match parsedLines with
                 | [| "loc:"; x; y; z |] -> Some (Location(x, y, z))
-                | [| "hsv:"; _; _; _; _; _; _ |] -> commandFifo.WriteLine(text.Replace(':', ' '))
+                | [| "hsv:"; _; _; _; _; _; _ |] -> printfn "%s" text; commandFifo.WriteLine(text.Replace(':', ' '))
                                                     None
                 | z -> printfn "none %A" z; None
 

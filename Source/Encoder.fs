@@ -1,8 +1,6 @@
 ﻿namespace Trik
-
 open System
 open Trik
-open Helpers.Measures
 type Encoder(i2cCommandNumber) =
     inherit Helpers.PollingSensor<int>()
     override self.Read() = Helpers.I2C.Receive i2cCommandNumber

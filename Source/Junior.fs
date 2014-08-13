@@ -1,9 +1,7 @@
 ﻿namespace Trik.Junior
 
 open System
-open System.Collections.Generic
 open Trik
-open Trik.Ports
 open Trik.Helpers
 
 [<NoEquality; NoComparison>]
@@ -38,7 +36,7 @@ type Robot() as is =
     member self.Sleep(millisec: int) = System.Threading.Thread.Sleep(millisec)
     member self.Say(text) = 
         Async.Start 
-        <| async { SyscallShell <| "espeak -v russian_test -s 100 " + text + "2> /dev/null"}
+        <| async { SyscallShell <| "espeak -v russian_test -s 100 \"" + text + "\" 2> /dev/null"}
     member self.PlayFile (file:string) = 
         Async.Start <| 
         async { 
