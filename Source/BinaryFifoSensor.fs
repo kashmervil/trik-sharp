@@ -46,6 +46,7 @@ type BinaryFifoSensor<'T>(path, dataSize, bufSize, timeout) as sens =
         if not cts.IsCancellationRequested then invalidOp "Second call of Start() without Stop()"
         cts <- new Threading.CancellationTokenSource()
         Async.Start(loop(), cancellationToken = cts.Token)
+
     
     member self.Stop() = 
         if cts <> null then cts.Cancel()

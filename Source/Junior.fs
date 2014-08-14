@@ -34,9 +34,11 @@ type Robot() as is =
     member self.LineSensor = super.LineSensor
     member self.Sleep(sec: float) = System.Threading.Thread.Sleep(int <| sec * 1000.)
     member self.Sleep(millisec: int) = System.Threading.Thread.Sleep(millisec)
+    
     member self.Say(text) = 
         Async.Start 
         <| async { SyscallShell <| "espeak -v russian_test -s 100 \"" + text + "\" 2> /dev/null"}
+    
     member self.PlayFile (file:string) = 
         Async.Start <| 
         async { 
@@ -45,6 +47,9 @@ type Robot() as is =
                 elif file.EndsWith(".mp3") then "cvlc --quiet &quot;" + file + "&quot; &amp;"
                 else invalidArg "file" "Incorrect filename"
               }
+    
+    member self.Button = new ButtonPad("dev/input/event0") 
+
     static member RegisterResource(d: IDisposable) = lock resources <| fun () -> resources.Add(d)
 
     interface IDisposable with
