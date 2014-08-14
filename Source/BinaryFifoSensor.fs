@@ -29,7 +29,7 @@ type BinaryFifoSensor<'T>(path, dataSize, bufSize, timeout) as sens =
              
         async {
             try
-                let stream = IO.File.Open(path, IO.FileMode.Open, IO.FileAccess.Read, IO.FileShare.Read)
+                let stream = IO.File.Open(path, IO.FileMode.Open, IO.FileAccess.Read, IO.FileShare.ReadWrite)
                 let! _ = Async.StartChild(Async.TryCancelled(reading stream, notifier.OnCompleted))
                 ()
             with e ->  eprintfn "FifoSensor %s %A" path e; notifier.OnError e
@@ -46,6 +46,7 @@ type BinaryFifoSensor<'T>(path, dataSize, bufSize, timeout) as sens =
         if not cts.IsCancellationRequested then invalidOp "Second call of Start() without Stop()"
         cts <- new Threading.CancellationTokenSource()
         Async.Start(loop(), cancellationToken = cts.Token)
+        notifier.OnNext Unchecked.defaultof<'T>
 
     
     member self.Stop() = 
@@ -53,7 +54,7 @@ type BinaryFifoSensor<'T>(path, dataSize, bufSize, timeout) as sens =
         notifier.OnCompleted()
 
     member self.ToObservable() = obs
-    
+
     abstract Dispose: unit -> unit
     default self.Dispose() = self.Stop()
 

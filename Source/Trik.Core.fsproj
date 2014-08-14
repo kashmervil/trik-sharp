@@ -66,6 +66,7 @@
     <Compile Include="Observable.fs" />
     <Compile Include="Helpers.fs" />
     <Compile Include="Collections.fs" />
+    <Compile Include="Emulation.fs" />
     <Compile Include="Ports.fs" />
     <Compile Include="BinaryFifoSensor.fs" />
     <Compile Include="StringFifoSensor.fs" />
