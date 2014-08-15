@@ -1,7 +1,6 @@
 ﻿namespace Trik
 open System
 open System.IO
-open Trik.Helpers
 open Trik.Collections
 
 type ButtonPad (deviceFilePath) as self= 
@@ -15,6 +14,8 @@ type ButtonPad (deviceFilePath) as self=
     
     do AppDomain.CurrentDomain.ProcessExit.Add(fun _ -> (self :> IDisposable).Dispose())
     static let state = new Collections.BitArray(256)
+    let testObserverDispose = 
+        self.ToObservable().Subscribe(fun (x: ButtonEvent) -> if x.Button <> ButtonEventCode.Sync then () else printfn "%A" "starting")
     let mutable clicksOnly = true
     member self.ClicksOnly 
         with get() = clicksOnly
@@ -44,8 +45,10 @@ type ButtonPad (deviceFilePath) as self=
         isPressed
 
     override self.Dispose() = 
+        base.Dispose()
         let bytes = Emulations.buttonClick ButtonEventCode.Down 
         emulatorStream.Write(bytes, 0, bytes.Length)
         emulatorStream.Flush(true)
         emulatorStream.Dispose()
-        base.Dispose()
+        testObserverDispose.Dispose()
+        

@@ -5,8 +5,9 @@ open System.Collections.Generic
 type Model () as model = 
 
     static do Helpers.trikSpecific <| fun () -> Helpers.I2C.Init "/dev/i2c-2" 0x48 1
-                                                List.iter (fun x -> Helpers.I2C.Send x 0x1000 2) [0x10 .. 0x13]
                                                 IO.File.WriteAllText("/sys/class/gpio/gpio62/value", "1")
+                                                Helpers.SyscallShell (String.Concat(List.map (sprintf "i2cset -y 2 0x48 %d 0x1000 w; ") [0x10 .. 0x13]))
+                                                
     static let resources = new ResizeArray<_>()
 
     let mutable gyro = None

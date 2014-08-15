@@ -21,7 +21,7 @@ let inline trikSpecific f = if isLinux then f () else ()
 
 let SyscallShell cmd  = 
     let args = sprintf "-c '%s'" cmd
-    printfn "%s" args
+    //printfn "%s" args
     trikSpecific <| fun () ->
         let proc = System.Diagnostics.Process.Start("/bin/sh", args)
         proc.WaitForExit()

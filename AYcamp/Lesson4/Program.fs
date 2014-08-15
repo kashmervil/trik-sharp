@@ -22,15 +22,17 @@ printfn "You pressed %A" <| buttonPad.Read()
 robot.LineSensor.Start()
 robot.Led.SetColor LedColor.Orange
 
-robot.LineSensor.VideoOut <- false
+//robot.LineSensor.VideoOut <- false
 
 printfn "Press any key to detect"
 let d = buttonPad.Read()
 
+//robot.LineSensor.DetectAndSet()
 robot.LineSensor.DetectAndSet()
+
 printfn "Detected; press Down to turn on video streaming"
 
-if buttonPad.Read().Button = ButtonEventCode.Down then robot.LineSensor.VideoOut <- true
+//if buttonPad.Read().Button = ButtonEventCode.Down then robot.LineSensor.VideoOut <- true
 
 printfn "Press Enter to stop evaluating"
 let mutable error = 0.0

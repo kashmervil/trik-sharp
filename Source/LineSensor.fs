@@ -29,7 +29,7 @@ type LineSensor(scriptPath, commandPath: string, sensorPath) =
     
     member self.DetectAndSet() = 
         if commandFifo = null then invalidOp "missing Start() before call"
-        commandFifo.WriteLine("detect")
+        commandFifo.WriteLine("detect");commandFifo.WriteLine("detect")
 
     member self.VideoOut
         with get() = videoOut
