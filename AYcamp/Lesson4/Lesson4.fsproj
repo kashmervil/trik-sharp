@@ -5,12 +5,13 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>9d8dd2ea-d050-42a3-9d30-5cf2754e05af</ProjectGuid>
+    <ProjectGuid>9D8DD2EA-D050-42A3-9D30-5CF2754E05AF</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>Lesson4</RootNamespace>
     <AssemblyName>Lesson4</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <Name>Lesson4</Name>
+    <ProductVersion>12.0.0</ProductVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -37,15 +38,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
-    <Reference Include="FSharp.Core, Version=4.3.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
-    <Reference Include="Trik.Core">
-      <HintPath>..\..\Source\bin\Release\Trik.Core.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.fs" />
@@ -62,4 +57,10 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <ItemGroup>
+    <ProjectReference Include="..\..\Source\Trik.Core.fsproj">
+      <Project>B3C7B4ED-EAD9-4044-B37B-5F5660BD6A14</Project>
+      <Name>Trik.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
 </Project>

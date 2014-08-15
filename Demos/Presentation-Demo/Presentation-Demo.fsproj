@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>558f722a-9b6f-413b-a4eb-f5b59f78eb7a</ProjectGuid>
+    <ProjectGuid>558F722A-9B6F-413B-A4EB-F5B59F78EB7A</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>demo_presentation</RootNamespace>
     <AssemblyName>demo_presentation</AssemblyName>
@@ -13,6 +13,7 @@
     <Name>Presentation-Demo</Name>
     <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
     <TargetFrameworkProfile />
+    <ProductVersion>12.0.0</ProductVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -39,27 +40,20 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
-    <Reference Include="FSharp.Core, Version=4.3.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Reactive.Core">
       <HintPath>..\..\packages\Rx-Core.2.2.4\lib\net45\System.Reactive.Core.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="System.Reactive.Interfaces">
       <HintPath>..\..\packages\Rx-Interfaces.2.2.4\lib\net45\System.Reactive.Interfaces.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="System.Reactive.Linq">
       <HintPath>..\..\packages\Rx-Linq.2.2.4\lib\net45\System.Reactive.Linq.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="System.Reactive.PlatformServices">
       <HintPath>..\..\packages\Rx-PlatformServices.2.2.4\lib\net45\System.Reactive.PlatformServices.dll</HintPath>
-      <Private>True</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -70,8 +64,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Source\Trik.Core.fsproj">
       <Name>Trik.Core</Name>
-      <Project>{b3c7b4ed-ead9-4044-b37b-5f5660bd6a14}</Project>
-      <Private>True</Private>
+      <Project>B3C7B4ED-EAD9-4044-B37B-5F5660BD6A14</Project>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
