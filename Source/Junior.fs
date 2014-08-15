@@ -48,7 +48,7 @@ type Robot() as is =
                 else invalidArg "file" "Incorrect filename"
               }
     
-    member self.Button = new ButtonPad("/dev/input/event0") 
+    member self.ButtonPad = new ButtonPad("/dev/input/event0") 
 
     static member RegisterResource(d: IDisposable) = lock resources <| fun () -> resources.Add(d)
 

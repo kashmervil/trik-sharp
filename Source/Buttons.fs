@@ -15,7 +15,11 @@ type ButtonPad (deviceFilePath) as self=
     do AppDomain.CurrentDomain.ProcessExit.Add(fun _ -> (self :> IDisposable).Dispose())
     static let state = new Collections.BitArray(256)
     let testObserverDispose = 
-        self.ToObservable().Subscribe(fun (x: ButtonEvent) -> if x.Button <> ButtonEventCode.Sync then () else printfn "%A" "starting")
+        self.ToObservable()
+            .Subscribe(fun (x: ButtonEvent) -> 
+              if x.Button <> ButtonEventCode.Sync then () 
+              else printfn "%A" "starting")
+
     let mutable clicksOnly = true
     member self.ClicksOnly 
         with get() = clicksOnly
