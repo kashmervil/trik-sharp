@@ -11,7 +11,7 @@ type Robot() as is =
     do if isRobotAlive then invalidOp "Only single instance is allowed"
     do isRobotAlive <- true
     let super = new Trik.Model()
-    
+    let buttonPad = new ButtonPad("/dev/input/event0")
     static let resources = new ResizeArray<_>()
     
     let mutable isDisposed = false
@@ -56,7 +56,7 @@ type Robot() as is =
         "v4l2grab -d \"/dev/video2\" -H 640 -W 480 -o trik-cam-" + date.ToString("yyMMdd-HH:mm:ss.jp\g") + " 2> /dev/null"
 
     
-    member self.ButtonPad = new ButtonPad("/dev/input/event0") 
+    member self.ButtonPad = buttonPad
 
     static member RegisterResource(d: IDisposable) = lock resources <| fun () -> resources.Add(d)
 
