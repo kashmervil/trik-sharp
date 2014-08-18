@@ -50,6 +50,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "LineSensor-Demo", "Demos\Li
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Lesson4", "AYcamp\Lesson4\Lesson4.fsproj", "{9D8DD2EA-D050-42A3-9D30-5CF2754E05AF}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Taking-Pictures", "AYcamp\Taking-Pictures\Taking-Pictures.fsproj", "{B4726C95-75C0-4B5E-AA20-650F84079C3C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -116,6 +118,10 @@ Global
 		{9D8DD2EA-D050-42A3-9D30-5CF2754E05AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9D8DD2EA-D050-42A3-9D30-5CF2754E05AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9D8DD2EA-D050-42A3-9D30-5CF2754E05AF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B4726C95-75C0-4B5E-AA20-650F84079C3C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4726C95-75C0-4B5E-AA20-650F84079C3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4726C95-75C0-4B5E-AA20-650F84079C3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4726C95-75C0-4B5E-AA20-650F84079C3C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -135,5 +141,6 @@ Global
 		{D5356F10-ED59-4DF0-9936-91CCC90F5A25} = {85F10031-AB00-49AD-87EA-3F7ADDB25A84}
 		{7FEE8DFC-E57E-48A9-B959-052688B66E16} = {85F10031-AB00-49AD-87EA-3F7ADDB25A84}
 		{9D8DD2EA-D050-42A3-9D30-5CF2754E05AF} = {85F10031-AB00-49AD-87EA-3F7ADDB25A84}
+		{B4726C95-75C0-4B5E-AA20-650F84079C3C} = {85F10031-AB00-49AD-87EA-3F7ADDB25A84}
 	EndGlobalSection
 EndGlobal
