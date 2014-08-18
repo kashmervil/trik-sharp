@@ -36,17 +36,25 @@ type Robot() as is =
     member self.Sleep(millisec: int) = System.Threading.Thread.Sleep(millisec)
     
     member self.Say(text) = 
-        Async.Start 
-        <| async { SyscallShell <| "espeak -v russian_test -s 100 \"" + text + "\" 2> /dev/null"}
+        PostToShell <| "espeak -v russian_test -s 100 \"" + text + "\" 2> /dev/null"
     
     member self.PlayFile (file:string) = 
-        Async.Start <| 
-        async { 
-                SyscallShell <| 
-                if file.EndsWith(".wav") then "aplay --quiet &quot;" + file + "&quot; &amp;"
-                elif file.EndsWith(".mp3") then "cvlc --quiet &quot;" + file + "&quot; &amp;"
-                else invalidArg "file" "Incorrect filename"
-              }
+        PostToShell <| 
+            if file.EndsWith(".wav") then "aplay --quiet &quot;" + file + "&quot; &amp;"
+            elif file.EndsWith(".mp3") then "cvlc --quiet &quot;" + file + "&quot; &amp;"
+            else invalidArg "file" "Incorrect filename"
+
+    member self.TakeScreenshot() = 
+        
+        PostToShell <|
+        let date = DateTime.Now
+        "fbgrab trik-screenshot-" + date.ToString("yyMMdd-HH:mm:ss.pn\g") + " 2> /dev/null"
+
+    member self.TakePicture() =
+        PostToShell <| 
+        let date = DateTime.Now
+        "v4l2grab -d \"/dev/video2\" -H 640 -W 480 -o trik-cam-" + date.ToString("yyMMdd-HH:mm:ss.jp\g") + " 2> /dev/null"
+
     
     member self.ButtonPad = new ButtonPad("/dev/input/event0") 
 

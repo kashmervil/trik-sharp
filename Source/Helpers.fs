@@ -19,7 +19,7 @@ module Measures =
 let isLinux = not <| Environment.OSVersion.VersionString.StartsWith "Microsoft"
 let inline trikSpecific f = if isLinux then f () else ()
 
-let SyscallShell cmd  = 
+let SendToShell cmd  = 
     let args = sprintf "-c '%s'" cmd
     //printfn "%s" args
     trikSpecific <| fun () ->
@@ -27,6 +27,8 @@ let SyscallShell cmd  =
         proc.WaitForExit()
         if proc.ExitCode  <> 0 then
             printf "Init script failed '%s'" cmd
+
+let PostToShell cmd = Async.Start <| async { SendToShell cmd }
 
 module I2C =
     [<DllImport("libconWrap.so.1.0.0", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)>]

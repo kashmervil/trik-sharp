@@ -6,7 +6,7 @@ type LineSensor(scriptPath, commandPath: string, sensorPath) =
     inherit StringFifoSensor<Location>(sensorPath)
     let mutable stream = null
     let mutable commandFifo: IO.StreamWriter = null
-    let script cmd = Helpers.SyscallShell <| scriptPath + " " + cmd
+    let script cmd = Helpers.SendToShell <| scriptPath + " " + cmd
     let mutable videoOut = true
     
     override self.Parse text =
