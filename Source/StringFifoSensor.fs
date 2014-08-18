@@ -27,6 +27,7 @@ type StringFifoSensor<'T>(path: string) as sens =
     abstract Parse: string -> 'T option
     
     member self.Read() = 
+        if cts.IsCancellationRequested then invalidOp "Calling Read() before Start()"
         Async.AwaitObservable notifier.Publish |> Async.RunSynchronously
 
     member self.Start() =

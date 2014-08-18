@@ -39,6 +39,7 @@ type BinaryFifoSensor<'T>(path, dataSize, bufSize, timeout) as sens =
     abstract Parse: byte[] * int -> 'T option
 
     member self.Read() = 
+        if cts.IsCancellationRequested then invalidOp "Calling Read() before Start()"
         Async.RunSynchronously(Async.AwaitObservable obs, timeout)
         
 
