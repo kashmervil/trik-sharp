@@ -81,6 +81,7 @@
     <Compile Include="PowerMotor.fs" />
     <Compile Include="LedStripe.fs" />
     <Compile Include="PadServer.fs" />
+    <Compile Include="FtpClient.fs" />
     <Compile Include="Led.fs" />
     <Compile Include="Model.fs" />
     <Compile Include="Junior.fs" />
