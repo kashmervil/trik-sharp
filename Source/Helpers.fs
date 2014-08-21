@@ -28,7 +28,8 @@ let SendToShell cmd  =
         if proc.ExitCode  <> 0 then
             printf "Init script failed '%s'" cmd
 
-let PostToShell cmd = Async.Start <| async { SendToShell cmd }
+let AsyncSendToShell cmd = async { SendToShell cmd }
+let PostToShell cmd = AsyncSendToShell cmd |> Async.Start
 
 module I2C =
     [<DllImport("libconWrap.so.1.0.0", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)>]

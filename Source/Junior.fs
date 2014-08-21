@@ -6,17 +6,26 @@ open Trik.Helpers
 
 [<NoEquality; NoComparison>]
 type Robot() as is =
-    
     static let mutable isRobotAlive = false
     do if isRobotAlive then invalidOp "Only single instance is allowed"
     do isRobotAlive <- true
-    let super = new Trik.Model()
-    let buttonPad = new ButtonPad("/dev/input/event0")
-    static let resources = new ResizeArray<_>()
-    
+
     let mutable isDisposed = false
     do AppDomain.CurrentDomain.ProcessExit.Add(fun _ -> if not isDisposed then (is :> IDisposable).Dispose())
     
+    let super = new Trik.Model()
+    static let resources = new ResizeArray<_>()
+    
+    let takePicture name = 
+        SendToShell <| "v4l2grab -d \"/dev/video2\" -H 640 -W 480 -o " + name + " 2> /dev/null"
+    let pictureName() = 
+        let date = DateTime.Now
+        "trik-cam-" + date.ToString("yyMMdd-HHmmss.jp\g")
+
+    let stopwatch = new System.Diagnostics.Stopwatch()
+    member val ButtonPad = new ButtonPad("/dev/input/event0")
+    member val Uploader = new FtpClient()
+
     member self.Led = super.Led
 
     member self.Motor = super.Motor.Values |> Seq.mapi (fun i x -> Ports.Motor.Values.[i], x) |> dict
@@ -48,16 +57,22 @@ type Robot() as is =
         
         PostToShell <|
         let date = DateTime.Now
-        "fbgrab trik-screenshot-" + date.ToString("yyMMdd-HH:mm:ss.pn\g") + " 2> /dev/null"
+        "fbgrab trik-screenshot-" + date.ToString("yyMMdd-HHmmss.pn\g") + " 2> /dev/null"
 
-    member self.TakePicture() =
-        PostToShell <| 
-        let date = DateTime.Now
-        "v4l2grab -d \"/dev/video2\" -H 640 -W 480 -o trik-cam-" + date.ToString("yyMMdd-HH:mm:ss.jp\g") + " 2> /dev/null"
-
+    member self.TakePicture() = pictureName() |> takePicture// |> Async.Start
     
-    member self.ButtonPad = buttonPad
-
+    member self.ShotAndUpload() = 
+            
+            let name = pictureName()
+            stopwatch.Restart()
+            do takePicture name
+            printfn "shooting took %d" stopwatch.ElapsedMilliseconds
+            stopwatch.Restart()
+            do self.Uploader.Upload name
+            printfn "uploading took %d" stopwatch.ElapsedMilliseconds
+             
+        //}  |> Async.RunSynchronously
+        
     static member RegisterResource(d: IDisposable) = lock resources <| fun () -> resources.Add(d)
 
     interface IDisposable with

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30501.0
+VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Demos", "Demos", "{3A613CE4-5E65-4A77-BC21-FB2B1802E9C4}"
 EndProject
@@ -53,6 +53,8 @@ EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Lesson4", "AYcamp\Lesson4\Lesson4.fsproj", "{9D8DD2EA-D050-42A3-9D30-5CF2754E05AF}"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Taking-Pictures", "AYcamp\Taking-Pictures\Taking-Pictures.fsproj", "{B4726C95-75C0-4B5E-AA20-650F84079C3C}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Ftp-Demo", "AYcamp\Ftp-Demo\Ftp-Demo.fsproj", "{28AC9762-4837-4B90-A857-27CD291357A3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -124,6 +126,10 @@ Global
 		{B4726C95-75C0-4B5E-AA20-650F84079C3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B4726C95-75C0-4B5E-AA20-650F84079C3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B4726C95-75C0-4B5E-AA20-650F84079C3C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{28AC9762-4837-4B90-A857-27CD291357A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{28AC9762-4837-4B90-A857-27CD291357A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{28AC9762-4837-4B90-A857-27CD291357A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{28AC9762-4837-4B90-A857-27CD291357A3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -144,5 +150,6 @@ Global
 		{3DD7765D-DB45-461E-A0F4-448827F64FD3} = {3A613CE4-5E65-4A77-BC21-FB2B1802E9C4}
 		{9D8DD2EA-D050-42A3-9D30-5CF2754E05AF} = {85F10031-AB00-49AD-87EA-3F7ADDB25A84}
 		{B4726C95-75C0-4B5E-AA20-650F84079C3C} = {85F10031-AB00-49AD-87EA-3F7ADDB25A84}
+		{28AC9762-4837-4B90-A857-27CD291357A3} = {85F10031-AB00-49AD-87EA-3F7ADDB25A84}
 	EndGlobalSection
 EndGlobal
