@@ -6,6 +6,7 @@ open System.Net
 type FtpClient() = 
     let bufferSize = 1024
     let uploader path host name (pass: string) = 
+        async {
             try
                 let localStream = new IO.FileStream(path, FileMode.Open
                                                       , FileAccess.Read
@@ -30,10 +31,11 @@ type FtpClient() =
                 
                 ftpStream.Close()
 
-            with e -> printfn "Upload failed: %s"<| e.ToString()
+            with e -> printfn "Upload failed: %s" <| e.ToString()
+        }
     member val Host = "" with get, set
     member val Login = "" with get, set
     member val Pass  = "" with get, set
 
-    member self.Upload(path: string) = uploader path self.Host self.Login self.Pass 
-    //member self.Upload(path : string) = self.AsyncUpload path |> Async.RunSynchronously
+    member self.AsyncUpload(path: string) = uploader path self.Host self.Login self.Pass 
+    member self.Upload(path : string) = self.AsyncUpload path |> Async.RunSynchronously
