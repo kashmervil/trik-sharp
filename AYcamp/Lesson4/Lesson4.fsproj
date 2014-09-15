@@ -12,6 +12,7 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <Name>Lesson4</Name>
     <ProductVersion>12.0.0</ProductVersion>
+    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -75,4 +76,7 @@
       <Name>Trik.Core</Name>
     </ProjectReference>
   </ItemGroup>
+  <PropertyGroup>
+    <PostBuildEvent>Copy "$(TargetDir)..\..\..\..\Source\BinaryComponents\libconWrap.so.1.0.0" "$(TargetDir)"</PostBuildEvent>
+  </PropertyGroup>
 </Project>

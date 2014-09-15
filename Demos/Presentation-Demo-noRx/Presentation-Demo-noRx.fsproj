@@ -13,6 +13,7 @@
     <Name>Presentation-Demo-noRx</Name>
     <TargetFrameworkProfile />
     <ProductVersion>12.0.0</ProductVersion>
+    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
