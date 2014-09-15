@@ -2,7 +2,7 @@
 open Trik.Junior
 open Trik.Ports
 
-//It might be useful to take several Debug printfn's in different point of your program.
+//It might be useful to take several Debug printfn's in different points of your program.
 // Just to make sure you're going right 
 printfn "Started"
 
@@ -29,7 +29,7 @@ for color in [LedColor.Red; LedColor.Orange; LedColor.Green] do
 printfn "Now Accel should be stopped"
 robot.Accel.Stop()
 //robot.Say("Hello")
-//If you want to pass successive result of function or method call
+//If you want to pass a successive result of function or method call
 // where are several possible variants
 printfn "Analog sensor A1 shows us this value %d" (robot.Sensor.[A1].Read())
 printfn "But A2 %d" <| robot.Sensor.[A2].Read()

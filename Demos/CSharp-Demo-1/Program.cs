@@ -1,7 +1,6 @@
 ﻿using System;
 using Trik;
 using Trik.Ports;
-
 using System.Threading;
 
 namespace CSharp_Demo_1
