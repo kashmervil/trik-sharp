@@ -141,7 +141,7 @@ type Model () as model =
 
     member self.LineSensor
         with get() = 
-            let lineSensorDefaultInit() = lineSensor <- Some <| new LineSensor(self.LineSensorConfig)
+            let lineSensorDefaultInit() = lineSensor <- Some <| let x,y,z = self.LineSensorConfig in new LineSensor(x, y, z)
             if lineSensor.IsNone then lineSensorDefaultInit()
             lineSensor.Value
     static member RegisterResource(d: IDisposable) = lock resources <| fun () -> resources.Add(d)

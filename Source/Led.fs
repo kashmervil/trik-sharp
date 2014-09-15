@@ -25,6 +25,8 @@ type Led(deviceFilePath: string) =
     ///Powers off the led
     member self.PowerOff() = self.SetColor LedColor.Off
 
+    new () = new Led("/sys/class/leds/")
+
     interface IObserver<LedColor> with
         member self.OnNext(c) = self.SetColor c
         member self.OnError(e) = self.PowerOff()

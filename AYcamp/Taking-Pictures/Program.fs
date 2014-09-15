@@ -10,6 +10,6 @@ while button <> ButtonEventCode.Menu do
     printfn "Taking a picture"
     let name = robot.TakePicture()
     printfn "Press any key to continue or Menu to exit\n"
-    button <- robot.ButtonPad.Read().Button
+    button <- let key = robot.ButtonPad.Read() in key.Button
     
     

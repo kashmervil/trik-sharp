@@ -47,7 +47,7 @@ type ButtonPad (deviceFilePath) as self=
                        if !isPressed then (!disp).Dispose() 
                        )
         isPressed
-
+    new () = new ButtonPad("/dev/input/event0")
     override self.Dispose() = 
         base.Dispose()
         let bytes = Emulations.buttonClick ButtonEventCode.Down 

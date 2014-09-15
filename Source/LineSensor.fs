@@ -38,6 +38,10 @@ type LineSensor(scriptPath, commandPath: string, sensorPath) =
                 commandFifo.WriteLine("video_out {0}", if command then 1 else 0) 
                 commandFifo.WriteLine("video_out {0}", if command then 1 else 0) 
                 videoOut <- command
+    
+    new () = new LineSensor("/etc/init.d/line-sensor-ov7670.sh"
+                            , "/run/line-sensor.in.fifo"
+                            , "/run/line-sensor.out.fifo")
             
     override self.Dispose() = 
         self.Stop()
