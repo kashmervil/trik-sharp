@@ -72,9 +72,17 @@ module Collections =
     let inline private parse x = Trik.Helpers.fastInt32Parse x
 
     [<Struct>]
-    type Location(x: int, crossroad: int, mass: int) = 
+    type LineLocation(x: int, crossroad: int, mass: int) = 
         member self.X = x
         member self.Crossroad = crossroad
         member self.Mass = mass
-        new(x: string, c: string, m: string) = new Location(parse x, parse c, parse m)
+        new(x: string, c: string, m: string) = new LineLocation(parse x, parse c, parse m)
         override self.ToString() = sprintf "loc: %d %d %d\n\n" self.X self.Crossroad self.Mass
+
+    [<Struct>]
+    type ObjectLocation(x: int, y: int, mass: int) = 
+        member self.X = x
+        member self.Y = y
+        member self.Mass = mass
+        new(x: string, y: string, m: string) = new ObjectLocation(parse x, parse y, parse m)
+        override self.ToString() = sprintf "loc: %d %d %d\n\n" self.X self.Y self.Mass

@@ -71,7 +71,9 @@
     <Compile Include="BinaryFifoSensor.fs" />
     <Compile Include="StringFifoSensor.fs" />
     <Compile Include="Sensor3d.fs" />
+    <Compile Include="VideoSensor.fs" />
     <Compile Include="LineSensor.fs" />
+    <Compile Include="ObjectSensor.fs" />
     <Compile Include="Buttons.fs" />
     <Compile Include="Gyroscope.fs" />
     <Compile Include="Accelerometer.fs" />
