@@ -1,6 +1,7 @@
-﻿namespace Trik
+﻿namespace Trik.Internals
 open System
 open System.Threading
+open Trik
 
 [<AbstractClass>]
 type BinaryFifoSensor<'T>(path, dataSize, bufSize, timeout) as sens = 
@@ -25,7 +26,7 @@ type BinaryFifoSensor<'T>(path, dataSize, bufSize, timeout) as sens =
                         |> Option.iter notifier.OnNext
                         offset <- offset + dataSize 
                 return! reading stream
-               }
+                }
              
         async {
             try
@@ -33,7 +34,7 @@ type BinaryFifoSensor<'T>(path, dataSize, bufSize, timeout) as sens =
                 let! _ = Async.StartChild(Async.TryCancelled(reading stream, notifier.OnCompleted))
                 ()
             with e ->  eprintfn "FifoSensor %s %A" path e; notifier.OnError e
-              }
+                }
     
     new (path, dataSize, bufSize) = new BinaryFifoSensor<'T>(path, dataSize, bufSize, -1)
     abstract Parse: byte[] * int -> 'T option

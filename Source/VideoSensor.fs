@@ -1,5 +1,6 @@
-﻿namespace Trik
+﻿namespace Trik.Internals
 open System
+open Trik
 
 [<AbstractClass>]
 type VideoSensor<'Parsed>(scriptPath, commandPath: string, sensorPath) = 

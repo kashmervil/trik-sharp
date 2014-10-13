@@ -1,6 +1,7 @@
-﻿namespace Trik
+﻿namespace Trik.Internals
 open System
 open System.Threading
+open Trik
 
 [<AbstractClass>]
 type StringFifoSensor<'T>(path: string) as sens = 
@@ -22,7 +23,7 @@ type StringFifoSensor<'T>(path: string) as sens =
                 let! _ = Async.StartChild(Async.TryCancelled(reading streamReader, notifier.OnCompleted))
                 ()
             with e ->  eprintfn "FifoSensor %s %A" path e; notifier.OnError e
-              }
+                }
 
     abstract Parse: string -> 'T option
     

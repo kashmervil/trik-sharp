@@ -4,7 +4,7 @@ open System.IO
 open Trik.Collections
 
 type ButtonPad (deviceFilePath) as self= 
-    inherit BinaryFifoSensor<ButtonEvent>(deviceFilePath, 16, 1024)
+    inherit Internals.BinaryFifoSensor<ButtonEvent>(deviceFilePath, 16, 1024)
     let emulatorStream = new FileStream(deviceFilePath, FileMode.Open, FileAccess.Write, FileShare.Read)
 
     static let () = Enum.GetValues(typeof<ButtonEventCode>) 

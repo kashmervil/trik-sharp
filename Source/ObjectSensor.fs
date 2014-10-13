@@ -3,7 +3,7 @@ open System
 
 [<Sealed>]
 type ObjectSensor(scriptPath, commandPath: string, sensorPath) = 
-    inherit VideoSensor<ObjectLocation>(scriptPath, commandPath, sensorPath)
+    inherit Internals.VideoSensor<ObjectLocation>(scriptPath, commandPath, sensorPath)
     
     override self.Parse text =
             let parsedLines = text.Split([|' '|], StringSplitOptions.RemoveEmptyEntries) 
