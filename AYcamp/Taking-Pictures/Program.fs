@@ -6,7 +6,7 @@ robot.ButtonPad.Start()
 printfn "Press any key to start"
 robot.ButtonPad.Read() |> ignore
 
-while button <> ButtonEventCode.Menu do
+while button <> ButtonEventCode.Esc do
     printfn "Taking a picture"
     let name = robot.TakePicture()
     printfn "Press any key to continue or Menu to exit\n"

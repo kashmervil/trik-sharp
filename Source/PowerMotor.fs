@@ -14,12 +14,13 @@ type PowerMotor(i2cCommandNumber) =
     
     new (port: Motor) = new PowerMotor(port.I2CNumber)
 
+    override self.Finalize() = (self :> IDisposable).Dispose()
+
     interface IObserver<int> with
         member self.OnNext(data) = self.SetPower data
         member self.OnError(e) = self.Stop()
         member self.OnCompleted() = self.Stop()
+    
     interface IDisposable with
         member self.Dispose() = 
             self.Stop()
-    
-   

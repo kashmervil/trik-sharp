@@ -60,5 +60,7 @@ type BinaryFifoSensor<'T>(path, dataSize, bufSize, timeout) as sens =
     abstract Dispose: unit -> unit
     default self.Dispose() = self.Stop()
 
+    override self.Finalize() = self.Dispose()
+
     interface IDisposable with
         member self.Dispose() = self.Dispose()

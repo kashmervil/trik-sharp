@@ -2,6 +2,7 @@
 open System
 
 type ServoMotor(servoPath: string, kind: ServoMotor.Kind) =
+    let mutable isDisposed = false
     let setOption target v = 
         IO.File.WriteAllText(sprintf "%s%c%s" servoPath IO.Path.DirectorySeparatorChar target, v)
     do [ ("0", "request") 
@@ -22,6 +23,8 @@ type ServoMotor(servoPath: string, kind: ServoMotor.Kind) =
                 fd.Write(duty)
             
     member self.Zero() = lock self <| fun () -> fd.Write(kind.zero)
+    
+    //override self.Finalize() = (self :> IDisposable).Dispose()
             
     interface IObserver<int> with
         member self.OnNext(command) = 
@@ -33,7 +36,8 @@ type ServoMotor(servoPath: string, kind: ServoMotor.Kind) =
 
     interface IDisposable with
         member self.Dispose() =
-            self.Zero()
-            (fd :> IDisposable).Dispose()
-            setOption "request" "0"
-    
+            if not isDisposed then
+                self.Zero()
+                (fd :> IDisposable).Dispose()
+                setOption "request" "0"
+            

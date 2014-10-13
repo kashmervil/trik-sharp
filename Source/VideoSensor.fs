@@ -1,20 +1,22 @@
 ﻿namespace Trik.Internals
 open System
+open System.IO
 open Trik
 
 [<AbstractClass>]
 type VideoSensor<'Parsed>(scriptPath, commandPath: string, sensorPath) = 
     inherit StringFifoSensor<'Parsed>(sensorPath)
     let mutable stream = null
-    let mutable commandFifo: IO.StreamWriter = null
+    let mutable commandFifo: StreamWriter = null
     let script cmd = Helpers.SendToShell <| scriptPath + " " + cmd
     let mutable videoOut = true
+    let mutable isDisposed = false
 
     member self.Start() = 
         script "start"; base.Start()
 
-        stream <- new IO.FileStream(commandPath, IO.FileMode.Open, IO.FileAccess.Write)
-        commandFifo <- new IO.StreamWriter(stream, Text.Encoding.UTF8, AutoFlush = true)
+        stream <- new FileStream(commandPath, FileMode.Open, FileAccess.Write)
+        commandFifo <- new StreamWriter(stream, Text.Encoding.UTF8, AutoFlush = true)
     
     //member self.Restart() = script "restart"
 
@@ -35,8 +37,9 @@ type VideoSensor<'Parsed>(scriptPath, commandPath: string, sensorPath) =
                 videoOut <- command
                
     override self.Dispose() = 
-        self.Stop()
-        commandFifo.Dispose()
-        stream.Dispose()
-        base.Dispose()
-            
+        if not isDisposed then
+            commandFifo.Dispose()
+            stream.Dispose()
+            base.Dispose()
+            self.Stop()
+            isDisposed <- true

@@ -27,6 +27,8 @@ type Led(deviceFilePath: string) =
 
     new () = new Led("/sys/class/leds/")
 
+    //override self.Finalize() = if isLedAlive then (self :> IDisposable).Dispose()
+
     interface IObserver<LedColor> with
         member self.OnNext(c) = self.SetColor c
         member self.OnError(e) = self.PowerOff()
@@ -34,10 +36,12 @@ type Led(deviceFilePath: string) =
 
     interface IDisposable with
         member self.Dispose() = 
-            self.PowerOff() 
-            (green:>IDisposable).Dispose()
-            (red:>IDisposable).Dispose()
-    
+            if isLedAlive then
+                self.PowerOff() 
+                (green:>IDisposable).Dispose()
+                (red:>IDisposable).Dispose()
+                isLedAlive <- false
+            
 
     
     

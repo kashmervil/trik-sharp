@@ -18,13 +18,14 @@ module Collections =
 
     type ButtonEventCode  = 
      | Sync  = 0
+     | Esc   = 1
      | Enter = 28 
      | Up    = 103 
      | Left  = 105 
      | Right = 106
      | Down  = 108
      | Power = 116
-     | Menu  = 139
+     //| Menu  = 139
       
     [<Struct>]
     type ButtonEvent(button: ButtonEventCode, isPressed: bool) = //, timeStamp: double) = 

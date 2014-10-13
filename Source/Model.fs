@@ -157,7 +157,7 @@ type Model () as model =
         with get() = 
             let objectSensorDefaultInit() = objectSensor <- Some <| let x,y,z = self.ObjectSensorConfig in new ObjectSensor(x, y, z)
             if objectSensor.IsNone then objectSensorDefaultInit()
-            lineSensor.Value
+            objectSensor.Value
 
     static member RegisterResource(d: IDisposable) = lock resources <| fun () -> resources.Add(d)
 

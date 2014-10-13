@@ -5,6 +5,7 @@ open Trik.Collections
 
 type ButtonPad (deviceFilePath) as self= 
     inherit Internals.BinaryFifoSensor<ButtonEvent>(deviceFilePath, 16, 1024)
+    let mutable isDisposed = false
     let emulatorStream = new FileStream(deviceFilePath, FileMode.Open, FileAccess.Write, FileShare.Read)
 
     static let () = Enum.GetValues(typeof<ButtonEventCode>) 
@@ -14,8 +15,8 @@ type ButtonPad (deviceFilePath) as self=
     
     do AppDomain.CurrentDomain.ProcessExit.Add(fun _ -> (self :> IDisposable).Dispose())
     static let state = new Collections.BitArray(256)
-    let testObserverDispose = 
-        self.ToObservable()
+    let testObserverDispose =  // All this magic is made for the first button press response time reducing  
+        self.ToObservable()    // (the subscription and notification routine is mostly JITed and loaded at the construction time)
             .Subscribe(fun (x: ButtonEvent) -> 
               if x.Button <> ButtonEventCode.Sync then () 
               else printfn "%A" "starting")
@@ -49,10 +50,15 @@ type ButtonPad (deviceFilePath) as self=
         isPressed
     new () = new ButtonPad("/dev/input/event0")
     override self.Dispose() = 
-        base.Dispose()
-        let bytes = Emulations.buttonClick ButtonEventCode.Down 
-        emulatorStream.Write(bytes, 0, bytes.Length)
-        emulatorStream.Flush(true)
-        emulatorStream.Dispose()
-        testObserverDispose.Dispose()
+        if not isDisposed then
+            base.Dispose()
+            let bytes = Emulations.buttonClick ButtonEventCode.Down 
+            emulatorStream.Write(bytes, 0, bytes.Length) // Hack for the last key press emulation 
+            emulatorStream.Flush(true)                   // (to make the program return from the last readline call). See BinaryFifoSensor's async read loop for details
+            emulatorStream.Dispose()                     // This decision was made after trying to access INOTIFY throw mono interface  
+            testObserverDispose.Dispose()                // And making attempts to pass cancelation token not just between binds in async. 
+            isDisposed <- true
+    
+    override self.Finalize() = self.Dispose()
+
         

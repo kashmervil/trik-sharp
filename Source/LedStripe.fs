@@ -14,11 +14,15 @@ type LedStripe(ports: LedStripePorts) =
     /// <summary> Powers off a stripe </summary>
     member x.PowerOff() = 
         x.SetPower(0,0,0)
-        Helpers.I2C.Send ports.Ground 0 1 
+        Helpers.I2C.Send ports.Ground 0 1
+    
+    override self.Finalize() = (self :> IDisposable).Dispose()
+         
     interface IObserver<int*int*int> with
         member x.OnNext((r,g,b) : int*int*int) = x.SetPower(r,b,g)
         member x.OnError(e) = x.PowerOff()
         member x.OnCompleted() = x.PowerOff()
+    
     interface IDisposable with 
         member x.Dispose() = 
             x.PowerOff()
