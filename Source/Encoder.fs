@@ -1,4 +1,4 @@
-﻿namespace Trik
+﻿namespace Trik.Sensors
 open System
 open Trik
 type Encoder(i2cCommandNumber) =

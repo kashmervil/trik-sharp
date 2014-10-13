@@ -29,7 +29,7 @@ if buttonPad.Read().Button = ButtonEventCode.Down then robot.LineSensor.VideoOut
 printfn "Press Enter to stop evaluating"
 let mutable error = 0.0
 
-let isEnterPressed = buttonPad.PressCheck ButtonEventCode.Enter  
+let isEnterPressed = buttonPad.CheckPressing ButtonEventCode.Enter  
 
 while not !isEnterPressed do    
     let current = robot.LineSensor.Read()

@@ -1,8 +1,9 @@
-namespace Trik
+namespace Trik.Internals
 open System
+open Trik
 
 type Sensor3d (min, max, devicePath) = 
-    inherit Internals.BinaryFifoSensor<Point>(devicePath, 16, 1024)
+    inherit BinaryFifoSensor<Point>(devicePath, 16, 1024)
     [<Literal>]
     let evAbs = 3us
     let last = Array.zeroCreate 3

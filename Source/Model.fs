@@ -1,6 +1,7 @@
 ﻿namespace Trik
 open System
 open System.Collections.Generic
+open Trik.Sensors
 
 type Model () as model = 
 
@@ -116,14 +117,14 @@ type Model () as model =
     member x.Gyro
         with get() = 
             let gyroDefaultInit() =
-                gyro <- Some(new Trik.Gyroscope(-32767, 32767, "/dev/input/by-path/platform-spi_davinci.1-event"))
+                gyro <- Some(new Gyroscope(-32767, 32767, "/dev/input/by-path/platform-spi_davinci.1-event"))
             if gyro.IsNone then gyroDefaultInit()
             gyro.Value
 
     member x.Accel
         with get() = 
             let accelDefaultInit() = 
-                accel <- Some(new Trik.Accelerometer(-32767, 32767, "/dev/input/event1"))
+                accel <- Some(new Accelerometer(-32767, 32767, "/dev/input/event1"))
             if accel.IsNone then accelDefaultInit()
             accel.Value
         

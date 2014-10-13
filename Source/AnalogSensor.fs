@@ -1,7 +1,6 @@
-﻿namespace Trik
-
+﻿namespace Trik.Sensors
 open System
-
+open Trik
 /// General analog sensor e.g IR. Output is value form 0 up to 1024
 type AnalogSensor(register) = 
     inherit Internals.PollingSensor<int>()

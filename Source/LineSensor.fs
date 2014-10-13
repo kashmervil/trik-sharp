@@ -1,5 +1,6 @@
-﻿namespace Trik
+﻿namespace Trik.Sensors
 open System
+open Trik
 
 [<Sealed>]
 type LineSensor(scriptPath, commandPath: string, sensorPath) = 

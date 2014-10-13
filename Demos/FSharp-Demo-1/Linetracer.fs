@@ -6,6 +6,7 @@ open System.Collections
 open System.Diagnostics
 open System.Threading
 open Trik
+open Trik.Sensors
 open Trik.Helpers
 
 
@@ -35,19 +36,19 @@ type LogFifo(path:string) =
             let logStruct = lines.[i].Split([| ' ' |], StringSplitOptions.RemoveEmptyEntries)
             //printfn "%s" logStruct.[0]
             if not wasLoc && logStruct.[0] = "loc:" then 
-                let x     = Helpers.fastInt32Parse logStruct.[1]
-                let angle = Helpers.fastInt32Parse logStruct.[2]
-                let mass  = Helpers.fastInt32Parse logStruct.[3]
+                let x     = fastInt32Parse logStruct.[1]
+                let angle = fastInt32Parse logStruct.[2]
+                let mass  = fastInt32Parse logStruct.[3]
                 wasLoc <- true
                 lineTargetDataParsed.Trigger(x, angle, mass)
                 //printfn "ltparsed"
             elif not wasHsv && logStruct.[0] = "hsv:" then
-                let hue    = Helpers.fastInt32Parse logStruct.[1]
-                let hueTol = Helpers.fastInt32Parse logStruct.[2]
-                let sat    = Helpers.fastInt32Parse logStruct.[3]
-                let satTol = Helpers.fastInt32Parse logStruct.[4]
-                let _val   = Helpers.fastInt32Parse logStruct.[5]
-                let valTol = Helpers.fastInt32Parse logStruct.[6]
+                let hue    = fastInt32Parse logStruct.[1]
+                let hueTol = fastInt32Parse logStruct.[2]
+                let sat    = fastInt32Parse logStruct.[3]
+                let satTol = fastInt32Parse logStruct.[4]
+                let _val   = fastInt32Parse logStruct.[5]
+                let valTol = fastInt32Parse logStruct.[6]
                 wasHsv <- true
                 lineColorDataParsed.Trigger(hue, hueTol, sat, satTol, _val, valTol)
             else ()
@@ -127,17 +128,17 @@ type Linetracer (model: Model) =
     //do System.Console.ReadKey |> ignore
     do sw.Restart()
     let localConfPath = "ltc.ini"
-    let conf = Helpers.loadIniConf localConfPath
+    let conf = loadIniConf localConfPath
     let elapsed = sw.ElapsedMilliseconds
     do eprintfn "Linetracer ctor: config parsed: %A ms" elapsed 
-    let min_mass = conf.["min_mass"] |> Helpers.fastInt32Parse
-    let power_base = conf.["power_base"] |> Helpers.fastInt32Parse
-    let motor_sign = conf.["motor_sign"] |> Helpers.fastInt32Parse
-    let rl_sign = conf.["rl_sign"] |> Helpers.fastInt32Parse
+    let min_mass = conf.["min_mass"] |> fastInt32Parse
+    let power_base = conf.["power_base"] |> fastInt32Parse
+    let motor_sign = conf.["motor_sign"] |> fastInt32Parse
+    let rl_sign = conf.["rl_sign"] |> fastInt32Parse
     let div_coefL = conf.["div_coefL"] |> Double.Parse
     let div_coefR = conf.["div_coefR"] |> Double.Parse
     let on_lost_coef = conf.["on_lost_coef"] |> Double.Parse
-    let turn_mode_coef = conf.["turn_mode_coef"] |> Helpers.fastInt32Parse
+    let turn_mode_coef = conf.["turn_mode_coef"] |> fastInt32Parse
     let elapsed = sw.ElapsedMilliseconds
     do eprintfn "Linetracer ctor: config parsed: %A ms" elapsed 
 

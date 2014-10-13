@@ -39,7 +39,7 @@ type ButtonPad (deviceFilePath) as self=
 
     ///returns you a bool ref by specified button event code. 
     ///It allows you to determine has specified button been pressed 
-    member self.PressCheck(button: ButtonEventCode) = 
+    member self.CheckPressing(button: ButtonEventCode) = 
         let isPressed = ref false
         let disp: IDisposable ref = ref null
         disp := self.ToObservable().Subscribe(fun (x: ButtonEvent) -> 
