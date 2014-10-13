@@ -12,7 +12,11 @@ type ObjectSensor(scriptPath, commandPath: string, sensorPath) =
                 | [| "hsv:"; _; _; _; _; _; _ |] -> let command = text.Replace(':', ' ') in base.SendCommand command; base.SendCommand command
                                                     None
                 | z -> printfn "none %A" z; None
-    
-    new () = new ObjectSensor("/etc/init.d/object-sensor-ov7670.sh"
-                              , "/run/object-sensor.in.fifo"
-                              , "/run/object-sensor.out.fifo")
+
+     new (videoSource) = 
+        let script = 
+            match videoSource with
+            | Ports.VideoSource.USB -> "/etc/init.d/object-sensor.sh"
+            | _                     -> "/etc/init.d/object-sensor-ov7670.sh"
+
+        new ObjectSensor(script, "/run/object-sensor.in.fifo", "/run/object-sensor.out.fifo")

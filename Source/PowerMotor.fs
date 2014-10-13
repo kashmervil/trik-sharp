@@ -12,7 +12,7 @@ type PowerMotor(i2cCommandNumber) =
     member self.SetPower(power) = I2C.Send i2cCommandNumber (limit -100 100 power) 1
     member self.Stop() = self.SetPower 0
     
-    new (port: Motor) = new PowerMotor(port.ToI2CNumber())
+    new (port: Motor) = new PowerMotor(port.I2CNumber)
 
     interface IObserver<int> with
         member self.OnNext(data) = self.SetPower data

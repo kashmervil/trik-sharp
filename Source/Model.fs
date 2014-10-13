@@ -19,6 +19,7 @@ type Model () as model =
     let mutable ledStripe = None
     let mutable servo = None
     let mutable lineSensor = None
+    let mutable objectSensor = None
     let mutable encoder = lazy (
         model.EncoderConfig 
         |> Array.map (fun (port, cnum) -> (port, new Encoder(cnum)))
@@ -68,6 +69,12 @@ type Model () as model =
         , "/run/line-sensor.in.fifo"
         , "/run/line-sensor.out.fifo")
          with get, set
+    member val ObjectSensorConfig = 
+        ("/etc/init.d/object-sensor-ov7670.sh"
+        , "/run/object-sensor.in.fifo"
+        , "/run/object-sensor.out.fifo")
+        with get, set
+
     member x.Motor
         with get() = 
             let motorInit() = 
@@ -144,6 +151,13 @@ type Model () as model =
             let lineSensorDefaultInit() = lineSensor <- Some <| let x,y,z = self.LineSensorConfig in new LineSensor(x, y, z)
             if lineSensor.IsNone then lineSensorDefaultInit()
             lineSensor.Value
+
+    member self.ObjectSensor
+        with get() = 
+            let objectSensorDefaultInit() = objectSensor <- Some <| let x,y,z = self.ObjectSensorConfig in new ObjectSensor(x, y, z)
+            if objectSensor.IsNone then objectSensorDefaultInit()
+            lineSensor.Value
+
     static member RegisterResource(d: IDisposable) = lock resources <| fun () -> resources.Add(d)
 
     interface IDisposable with
@@ -157,6 +171,7 @@ type Model () as model =
                         let inline disposeMap (devices: IDictionary<string, 'T> option when 'T :> IDisposable) = 
                             devices |> Option.iter (Seq.iter (fun x -> x.Value.Dispose()))
                         dispose lineSensor
+                        dispose objectSensor
                         dispose gyro
                         dispose accel
                         dispose led

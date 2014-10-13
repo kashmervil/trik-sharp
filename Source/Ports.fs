@@ -1,7 +1,7 @@
 ﻿namespace Trik.Ports
     ///<summary>Type representing Encoders ports</summary>
     type Encoder  = B2 | B3 | B4 with 
-        member self.ToI2cNumber() = 
+        member self.I2cNumber = 
             match self with 
                 | B2 -> 0x31 
                 | B4 -> 0x32 
@@ -10,7 +10,7 @@
 
     ///<summary>Type representing PowerMotor ports</summary>
     type Motor = M1 | M2 | M3 | M4 with
-        member self.ToI2CNumber() = 
+        member self.I2CNumber = 
             match self with 
             | M1 -> 0x14 
             | M2 -> 0x15
@@ -19,7 +19,7 @@
         static member Values = [| M1; M2; M3; M4 |]
 
     type Servo = E1 | E2 | E3 with
-        member self.Path() = 
+        member self.Path = 
             match self with 
             | E1 -> "/sys/class/pwm/ehrpwm.1:1" 
             | E2 -> "/sys/class/pwm/ehrpwm.1:0" 
@@ -28,7 +28,7 @@
 
     ///<summary>Type representing AnalogSensors ports</summary>
     type Sensor = A1 | A2 | A3 | A4 | A5 | A6 with
-        member self.ToI2CNumber() = 
+        member self.I2CNumber = 
             match self with 
             | A1 -> 0x25
             | A2 -> 0x24
@@ -38,3 +38,5 @@
             | A6 -> 0x20
         static member Values = [| A1; A2; A3; A4; A5; A6 |]
 
+
+    type VideoSource = USB = 0 | VP1 = 1 | VP2 = 2

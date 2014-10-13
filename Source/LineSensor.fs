@@ -13,6 +13,10 @@ type LineSensor(scriptPath, commandPath: string, sensorPath) =
                                                     None
                 | z -> printfn "none %A" z; None
     
-    new () = new LineSensor("/etc/init.d/line-sensor-ov7670.sh"
-                            , "/run/line-sensor.in.fifo"
-                            , "/run/line-sensor.out.fifo")
+    new (videoSource) = 
+        let script = 
+            match videoSource with
+            | Ports.VideoSource.USB -> "/etc/init.d/line-sensor.sh"
+            | _                     -> "/etc/init.d/line-sensor-ov7670.sh"
+
+        new LineSensor(script, "/run/line-sensor.in.fifo", "/run/line-sensor.out.fifo")
