@@ -87,3 +87,20 @@ module Collections =
         member self.Mass = mass
         new(x: string, y: string, m: string) = new ObjectLocation(parse x, parse y, parse m)
         override self.ToString() = sprintf "loc: %d %d %d\n\n" self.X self.Y self.Mass
+
+    [<Struct>]
+    type HSV(hue: int, hueTolerance: int, saturation: int, saturationTolerance: int, value: int, valueTolerance: int) =
+        member self.Hue = hue
+        member self.HueTolerance = hueTolerance
+        member self.Saturation = saturation
+        member self.SaturationTolerance = saturationTolerance
+        member self.Value = value
+        member self.ValueTolerance = valueTolerance
+        new (hue: string, hueTolerance: string
+            , saturation: string, saturationTolerance: string
+            , value: string, valueTolerance: string) = new HSV(parse hue
+                                                        , parse hueTolerance, parse saturation
+                                                        , parse saturationTolerance, parse value
+                                                        , parse valueTolerance)
+
+        override self.ToString() = String.Format("hsv {0} {1} {2} {3} {4} {5}", hue, hueTolerance, saturation, saturationTolerance, value, valueTolerance)

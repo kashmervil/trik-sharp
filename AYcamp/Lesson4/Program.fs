@@ -20,7 +20,7 @@ robot.Led.SetColor LedColor.Orange
 printfn "Press any key to detect"
 let d = buttonPad.Read()
 
-robot.LineSensor.DetectAndSet()
+robot.LineSensor.Detect()
 
 printfn "Detected; press Down to turn on video streaming"
 

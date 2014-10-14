@@ -18,10 +18,10 @@ type LineSensor(scriptPath, commandPath: string, sensorPath) =
             let parsedLines = text.Split([|' '|], StringSplitOptions.RemoveEmptyEntries) 
             match parsedLines with
                 | [| "loc:"; x; y; z |] -> Some (LineLocation(x, y, z))
-                | [| "hsv:"; _; _; _; _; _; _ |] -> let command = text.Replace(':', ' ') in base.SendCommand command; base.SendCommand command
-                                                    None
-                | z -> printfn "none %A" z; None
-    
+                | [| "hsv:"; h; s; v; ht; st; vt |] -> base.Detect(HSV(h,s,v,ht,st,vt))
+                                                       None
+                | z -> printfn "object sensor parse error! None %A" z; None
+   
     override self.Dispose() = base.Dispose()
 
     override self.Finalize() = self.Dispose()

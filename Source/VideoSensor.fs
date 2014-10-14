@@ -10,6 +10,7 @@ type VideoSensor<'Parsed>(scriptPath, commandPath: string, sensorPath) =
     let mutable commandFifo: StreamWriter = null
     let script cmd = Helpers.SendToShell <| scriptPath + " " + cmd
     let mutable videoOut = true
+    let mutable currentHSV = HSV()
     let mutable isDisposed = false
 
     member self.Start() = 
@@ -22,20 +23,28 @@ type VideoSensor<'Parsed>(scriptPath, commandPath: string, sensorPath) =
 
     member self.Stop() = base.Stop(); commandFifo.Close(); script "stop"
     
-    member self.DetectAndSet() = 
+    /// Starts to detect a new color by setting the most visible color from sensor to active
+    member self.Detect() = 
         if commandFifo = null then invalidOp "missing Start() before call"
         commandFifo.WriteLine("detect");commandFifo.WriteLine("detect")
-
+    
+    /// Starts to detect the specified color value
+    member self.Detect(hsv) = 
+        if currentHSV <> hsv then
+                self.SendCommand <| hsv.ToString()
+                self.SendCommand <| hsv.ToString()
+                lock self (fun _ -> currentHSV <- hsv)
+    
     member self.SendCommand(command: string) = commandFifo.WriteLine command
 
     member self.VideoOut
         with get() = videoOut
         and set command = 
             if command <> videoOut then
-                commandFifo.WriteLine("video_out {0}", if command then 1 else 0) 
-                commandFifo.WriteLine("video_out {0}", if command then 1 else 0) 
+                self.SendCommand <| "video_out" + if command then "1" else "0" 
+                self.SendCommand <| "video_out" + if command then "1" else "0" 
                 videoOut <- command
-               
+            
     override self.Dispose() = 
         if not isDisposed then
             commandFifo.Dispose()
