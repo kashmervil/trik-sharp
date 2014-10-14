@@ -25,7 +25,7 @@ type ServoMotor(servoPath: string, kind: ServoMotor.Kind) =
     member self.Zero() = lock self <| fun () -> fd.Write(kind.zero)
     
     //override self.Finalize() = (self :> IDisposable).Dispose()
-    member self.Release = self.SetPower kind.stop
+    member self.Release() = lock self <| fun () -> fd.Write kind.stop
             
     interface IObserver<int> with
         member self.OnNext(command) = 
