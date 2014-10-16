@@ -19,7 +19,7 @@ type ObjectSensor(scriptPath, commandPath: string, sensorPath) =
             let parsedLines = text.Split([|' '|], StringSplitOptions.RemoveEmptyEntries) 
             match parsedLines with
                 | [| "loc:"; x; y; z |] -> Some (ObjectLocation(x, y, z))
-                | [| "hsv:"; h; s; v; ht; st; vt |] -> base.Detect(HSV(h,s,v,ht,st,vt))
+                | [| "hsv:"; h; s; v; ht; st; vt |] -> base.Detect(DetectTarget(h,s,v,ht,st,vt))
                                                        None
                 | z -> printfn "object sensor parse error! None %A" z; None
 

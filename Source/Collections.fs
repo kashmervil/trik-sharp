@@ -89,7 +89,7 @@ module Collections =
         override self.ToString() = sprintf "loc: %d %d %d\n\n" self.X self.Y self.Mass
 
     [<Struct>]
-    type HSV(hue: int, hueTolerance: int, saturation: int, saturationTolerance: int, value: int, valueTolerance: int) =
+    type DetectTarget(hue: int, hueTolerance: int, saturation: int, saturationTolerance: int, value: int, valueTolerance: int) =
         member self.Hue = hue
         member self.HueTolerance = hueTolerance
         member self.Saturation = saturation
@@ -98,7 +98,7 @@ module Collections =
         member self.ValueTolerance = valueTolerance
         new (hue: string, hueTolerance: string
             , saturation: string, saturationTolerance: string
-            , value: string, valueTolerance: string) = new HSV(parse hue
+            , value: string, valueTolerance: string) = new DetectTarget(parse hue
                                                         , parse hueTolerance, parse saturation
                                                         , parse saturationTolerance, parse value
                                                         , parse valueTolerance)

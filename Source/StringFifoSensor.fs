@@ -29,7 +29,8 @@ type StringFifoSensor<'T>(path: string) as sens =
     
     member self.Read() = 
         if cts.IsCancellationRequested then invalidOp "Calling Read() before Start()"
-        Async.AwaitObservable notifier.Publish |> Async.RunSynchronously
+        let computation = Async.AwaitObservable notifier.Publish
+        Async.RunSynchronously(computation, cancellationToken = cts.Token)
 
     member self.Start() =
         if not cts.IsCancellationRequested then invalidOp "Second call of Start() without Stop()"
@@ -44,6 +45,7 @@ type StringFifoSensor<'T>(path: string) as sens =
 
     abstract Dispose: unit -> unit 
     default self.Dispose() = 
+        notifier.OnCompleted()
         cts.Cancel()
 
     interface IDisposable with
