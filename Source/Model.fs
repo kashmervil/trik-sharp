@@ -65,15 +65,9 @@ type Model () as model =
           ("A5", 0x21)
           ("A6", 0x20)
         |] with get, set
-    member val LineSensorConfig = 
-        ("/etc/init.d/line-sensor-ov7670.sh"
-        , "/run/line-sensor.in.fifo"
-        , "/run/line-sensor.out.fifo")
+    member val LineSensorConfig = Ports.VideoSource.VP1
          with get, set
-    member val ObjectSensorConfig = 
-        ("/etc/init.d/object-sensor-ov7670.sh"
-        , "/run/object-sensor.in.fifo"
-        , "/run/object-sensor.out.fifo")
+    member val ObjectSensorConfig = Ports.VideoSource.VP1
         with get, set
 
     member x.Motor
@@ -149,13 +143,13 @@ type Model () as model =
 
     member self.LineSensor
         with get() = 
-            let lineSensorDefaultInit() = lineSensor <- Some <| let x,y,z = self.LineSensorConfig in new LineSensor(x, y, z)
+            let lineSensorDefaultInit() = lineSensor <- Some <| new LineSensor(self.LineSensorConfig)
             if lineSensor.IsNone then lineSensorDefaultInit()
             lineSensor.Value
 
     member self.ObjectSensor
         with get() = 
-            let objectSensorDefaultInit() = objectSensor <- Some <| let x,y,z = self.ObjectSensorConfig in new ObjectSensor(x, y, z)
+            let objectSensorDefaultInit() = objectSensor <- Some <| new ObjectSensor(self.ObjectSensorConfig)
             if objectSensor.IsNone then objectSensorDefaultInit()
             objectSensor.Value
 

@@ -9,7 +9,7 @@ type LineSensor(scriptPath, commandPath: string, sensorPath) =
     new (videoSource) = 
         let script = 
             match videoSource with
-            | Ports.VideoSource.USB -> "/etc/init.d/line-sensor.sh"
+            | Ports.VideoSource.USB -> "/etc/init.d/line-sensor-webcam.sh"
             | _                     -> "/etc/init.d/line-sensor-ov7670.sh"
 
         new LineSensor(script, "/run/line-sensor.in.fifo", "/run/line-sensor.out.fifo")
