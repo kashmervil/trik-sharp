@@ -77,7 +77,7 @@ module Collections =
         member self.X = x
         member self.Crossroad = crossroad
         member self.Mass = mass
-        new(x: string, c: string, m: string) = new LineLocation(parse x, parse c, parse m)
+        new(x: string, c: string, m: string) = new LineLocation(parse x, parse c, int m)
         override self.ToString() = sprintf "loc: %d %d %d\n\n" self.X self.Crossroad self.Mass
 
     [<Struct>]
@@ -104,3 +104,13 @@ module Collections =
                                                         , parse valueTolerance)
 
         override self.ToString() = String.Format("hsv {0} {1} {2} {3} {4} {5}", hue, hueTolerance, saturation, saturationTolerance, value, valueTolerance)
+
+    type VideoSensorOutput<'Location> = 
+            Location of 'Location
+            | Target of DetectTarget with 
+        member self.TryGetLocation = match self with
+                                     | Location l -> Some l
+                                     | Target _ -> None
+        member self.TryGetTarget = match self with
+                                   | Location _ -> None
+                                   | Target t -> Some t

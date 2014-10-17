@@ -10,7 +10,7 @@ printfn "Waiting for end"
 
 open System.Threading
 
-let _ = new Timer(new TimerCallback(fun _ -> model.LineSensor.Detect()
-                                             printfn "\n\n\n\n\n\n\n"),null, 20000, 20000)
+let _ = new Timer(new TimerCallback(fun _ -> let d = model.LineSensor.Detect()
+                                             printfn "\n\n\n\n\n\n\n %A" d),null, 20000, 20000)
 
 System.Console.ReadLine() |> ignore

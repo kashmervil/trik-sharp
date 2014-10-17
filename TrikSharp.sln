@@ -58,6 +58,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Ftp-Demo", "AYcamp\Ftp-Demo
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Empty-Demo", "Demos\Empty-Demo\Empty-Demo.fsproj", "{DCFF1F9E-250F-40A0-A1F6-338D9923EF43}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Chameleon-Demo", "Demos\Chameleon-Demo\Chameleon-Demo.fsproj", "{6DB0E4A9-24B9-4763-AE32-F6420C42C45D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -136,6 +138,10 @@ Global
 		{DCFF1F9E-250F-40A0-A1F6-338D9923EF43}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DCFF1F9E-250F-40A0-A1F6-338D9923EF43}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DCFF1F9E-250F-40A0-A1F6-338D9923EF43}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6DB0E4A9-24B9-4763-AE32-F6420C42C45D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6DB0E4A9-24B9-4763-AE32-F6420C42C45D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6DB0E4A9-24B9-4763-AE32-F6420C42C45D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6DB0E4A9-24B9-4763-AE32-F6420C42C45D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -158,5 +164,6 @@ Global
 		{B4726C95-75C0-4B5E-AA20-650F84079C3C} = {85F10031-AB00-49AD-87EA-3F7ADDB25A84}
 		{28AC9762-4837-4B90-A857-27CD291357A3} = {85F10031-AB00-49AD-87EA-3F7ADDB25A84}
 		{DCFF1F9E-250F-40A0-A1F6-338D9923EF43} = {3A613CE4-5E65-4A77-BC21-FB2B1802E9C4}
+		{6DB0E4A9-24B9-4763-AE32-F6420C42C45D} = {3A613CE4-5E65-4A77-BC21-FB2B1802E9C4}
 	EndGlobalSection
 EndGlobal

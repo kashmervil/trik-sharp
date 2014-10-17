@@ -20,7 +20,7 @@ robot.Led.SetColor LedColor.Orange
 printfn "Press any key to detect"
 let d = buttonPad.Read()
 
-robot.LineSensor.Detect()
+let target = robot.LineSensor.Detect()
 
 printfn "Detected; press Down to turn on video streaming"
 
@@ -31,8 +31,9 @@ let mutable error = 0.0
 
 let isEnterPressed = buttonPad.CheckPressing ButtonEventCode.Enter  
 
-while not !isEnterPressed do    
-    let current = robot.LineSensor.Read()
+#nowarn "25"
+while not !isEnterPressed do
+    let (Location current) = robot.LineSensor.Read()
     System.Console.WriteLine("{0} {1} {2}", current.X, current.Crossroad, current.Mass)
     error <- error + 0.1
 

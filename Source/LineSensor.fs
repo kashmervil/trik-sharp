@@ -17,9 +17,8 @@ type LineSensor(scriptPath, commandPath: string, sensorPath) =
     override self.Parse text =
             let parsedLines = text.Split([|' '|], StringSplitOptions.RemoveEmptyEntries) 
             match parsedLines with
-                | [| "loc:"; x; y; z |] -> Some (LineLocation(x, y, z))
-                | [| "hsv:"; h; s; v; ht; st; vt |] -> base.Detect(DetectTarget(h,s,v,ht,st,vt))
-                                                       None
+                | [| "loc:"; x; y; z |] -> LineLocation(x, y, z) |> Location |> Some
+                | [| "hsv:"; h; s; v; ht; st; vt |] -> DetectTarget(h,s,v,ht,st,vt) |> Target |> Some
                 | z -> printfn "object sensor parse error! None %A" z; None
    
     override self.Dispose() = base.Dispose()
