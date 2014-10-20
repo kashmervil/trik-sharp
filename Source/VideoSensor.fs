@@ -31,7 +31,6 @@ type VideoSensor<'Parsed>(scriptPath, commandPath: string, sensorPath) =
     member self.Detect() = 
         if commandFifo = null then invalidOp "missing Start() before call"
         commandFifo.WriteLine("detect");commandFifo.WriteLine("detect")
-        printfn "From VideoSensor Detect"
  
     /// Makes the sensor detect the specified target value
     member self.SetDetectTarget(target: DetectTarget) = 
