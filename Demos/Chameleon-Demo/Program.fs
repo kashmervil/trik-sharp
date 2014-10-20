@@ -3,6 +3,7 @@ open System.Threading
 
 [<EntryPoint>]
 let main _ =
+    let exit = new EventWaitHandle(false, EventResetMode.AutoReset)
     let model = new Model(ObjectSensorConfig = Ports.VideoSource.USB)
     let sensor = model.ObjectSensor
     sensor.Start()
@@ -35,9 +36,10 @@ let main _ =
     
     use upButtonDispose = buttons.ToObservable()
                             |> Observable.filter (fun x -> ButtonEventCode.Up = x.Button)
-                            |> Observable.subscribe (fun _ -> printfn "Exiting..."; System.Environment.Exit 0)
+                            |> Observable.subscribe (fun _ -> printfn "Exiting..."; exit.Set() |> ignore)
 
     use timerSetterDisposable = Observable.Interval(System.TimeSpan.FromSeconds 7.0) 
                                 |> Observable.subscribe (fun _ -> printfn "Usual Detect by timer"; sensor.Detect())
-    Thread.Sleep Timeout.Infinite
+    
+    exit.WaitOne() |> ignore
     0

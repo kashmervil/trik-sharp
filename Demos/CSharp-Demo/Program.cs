@@ -17,14 +17,14 @@ namespace Demo_cs
             model.AnalogSensor["A1"].ToObservable().Scan((acc, x) =>
             {
                 System.Console.WriteLine(x.ToString());
-                return (x > 35) ? 0 : 100;
+                return (x < 350) ? 0 : 100;
             }
                 ).DistinctUntilChanged().Subscribe(rWheel);
             
             model.AnalogSensor["A1"].ToObservable().Scan((acc, x) =>
             {
                 System.Console.WriteLine(x.ToString());
-                return (x > 35) ? 0 : 72;
+                return (x < 350) ? 0 : 100;
             }
                 ).DistinctUntilChanged().Subscribe(lWheel);
         }
