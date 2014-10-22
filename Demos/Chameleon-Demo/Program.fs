@@ -37,22 +37,19 @@ let main _ =
 
     let sensorOutput = sensor.ToObservable()
     
-    let targetStream = sensorOutput  
-                       |> Observable.choose (fun o -> o.TryGetTarget) 
+    let targetStream = sensorOutput |> Observable.choose (fun o -> o.TryGetTarget) 
 
-    let setterDisposable = targetStream 
-                           |> Observable.subscribe sensor.SetDetectTarget
+    use setterDisposable = targetStream |> Observable.subscribe sensor.SetDetectTarget
 
-    let colorStream = targetStream 
-                      |> Observable.map (fun x -> conversion x)
+    let colorStream = targetStream |> Observable.map (fun x -> conversion x)
 
-    let ledstripeDisposable = colorStream.Subscribe model.LedStripe
+    use ledstripeDisposable = colorStream.Subscribe model.LedStripe
 
     let locationStream = sensorOutput  
                          |> Observable.choose (fun o -> o.TryGetLocation) 
                          |> Observable.map (fun o -> (changePos o.X, o.Mass))
 
-    let motorDispose = locationStream.Subscribe (fun (_, y) -> if y > minMass then model.Servo.["E1"].SetPower (-turnH))
+    use servoDispose = locationStream.Subscribe (fun (_, y) -> if y > minMass then model.Servo.["E1"].SetPower (-turnH))
 
     use downButtonDispose = buttons.ToObservable() 
                             |> Observable.filter (fun x -> ButtonEventCode.Down = x.Button) 
