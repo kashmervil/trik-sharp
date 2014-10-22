@@ -6,15 +6,13 @@ let maxAngle = 40
 let minMass = 5
 let deepPink = (255, 20, 147)
 
-let mutable turnH = 0
+//let mutable turnH = 0
 
-let angleRotate x = (Trik.Helpers.limit (-maxAngle) maxAngle x) / 10
-
-let changePos del = 
-    match del with  
-        | x when x > 10 && x < 90 && turnH < 90 -> turnH <- turnH + angleRotate x 
-        | x when x < - 10 && x > -90 && turnH > -90 -> turnH <- turnH + angleRotate x  
-        | _ -> ()
+let updatePosition x acc = 
+    let scale x = (Trik.Helpers.limit (-maxAngle) maxAngle x) / 10
+    if (x > 10 && x < 90 && acc < 90) || (x < - 10 && x > -90 && acc > -90) 
+    then scale x + acc 
+    else acc
 
 let conversion (x : DetectTarget) = 
     let (r, g, b) = HSVtoRGB(float x.Hue, (float x.Saturation) / 100.0, (float x.Value) / 100.0)
@@ -45,11 +43,12 @@ let main _ =
 
     use ledstripeDisposable = colorStream.Subscribe model.LedStripe
 
-    let locationStream = sensorOutput  
-                         |> Observable.choose (fun o -> o.TryGetLocation) 
-                         |> Observable.map (fun o -> (changePos o.X, o.Mass))
-
-    use servoDispose = locationStream.Subscribe (fun (_, y) -> if y > minMass then model.Servo.["E1"].SetPower (-turnH))
+    let powerSetterDisposable = 
+             model.ObjectSensor.ToObservable()  
+             |> Observable.choose (fun o -> o.TryGetLocation)
+             |> Observable.filter (fun l -> l.Mass > 5) 
+             |> Observable.scan (fun acc l -> updatePosition l.X acc) 0
+             |> Observable.subscribe (fun x -> model.Servo.["E1"].SetPower -x)
 
     use downButtonDispose = buttons.ToObservable() 
                             |> Observable.filter (fun x -> ButtonEventCode.Down = x.Button) 
@@ -63,3 +62,4 @@ let main _ =
 //                                |> Observable.subscribe (fun _ -> (*printfn "Usual Detect by timer";*) sensor.Detect())
     exit.WaitOne() |> ignore
     0
+
