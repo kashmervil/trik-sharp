@@ -20,6 +20,8 @@ let conversion (x : DetectTarget) =
     let (r, g, b) = HSVtoRGB(float x.Hue, (float x.Saturation) / 100.0, (float x.Value) / 100.0)
     (int (r * 255.0), int (g * 255.0), int (b * 255.0))
 
+let exit = new EventWaitHandle(false, EventResetMode.AutoReset)
+
 [<EntryPoint>]
 let main _ =
     let model = new Model(ObjectSensorConfig = Ports.VideoSource.USB)
@@ -58,10 +60,9 @@ let main _ =
     
     use upButtonDispose = buttons.ToObservable()
                           |> Observable.filter (fun x -> ButtonEventCode.Up = x.Button)
-                          |> Observable.subscribe (fun _ -> printfn "Exiting..."; System.Environment.Exit 0)
+                          |> Observable.subscribe (fun _ -> printfn "Exiting..."; exit.Set() |> ignore)
 
 //    use timerSetterDisposable = Observable.Interval(System.TimeSpan.FromSeconds 7.0) 
 //                                |> Observable.subscribe (fun _ -> (*printfn "Usual Detect by timer";*) sensor.Detect())
-
-    Thread.Sleep Timeout.Infinite
+    exit.WaitOne() |> ignore
     0
