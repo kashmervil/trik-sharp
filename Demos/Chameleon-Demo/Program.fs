@@ -1,4 +1,5 @@
 ﻿open Trik
+open Trik.Helpers
 open System.Threading
 
 let maxAngle = 40
@@ -14,23 +15,6 @@ let changePos del =
         | x when x > 10 && x < 90 && turnH < 90 -> turnH <- turnH + angleRotate x 
         | x when x < - 10 && x > -90 && turnH > -90 -> turnH <- turnH + angleRotate x  
         | _ -> ()
-
-let HSVtoRGB (h, s, v) =
-    if s = 0.0 then (v, v, v) 
-    else
-        let hs = h / 60.0
-        let i = floor (hs)
-        let f = hs - i
-        let p = v * ( 1.0 - s )
-        let q = v * ( 1.0 - s * f )
-        let t = v * ( 1.0 - s * ( 1.0 - f ))
-        match int i with
-            | 0 -> (v, t, p)
-            | 1 -> (q, v, p)
-            | 2 -> (p, v, t)
-            | 3 -> (p, q, v)
-            | 4 -> (t, p, v)
-            | _ -> (v, p, q)
 
 let conversion (x : DetectTarget) = 
     let (r, g, b) = HSVtoRGB(float x.Hue, (float x.Saturation) / 100.0, (float x.Value) / 100.0)
@@ -70,11 +54,11 @@ let main _ =
 
     use downButtonDispose = buttons.ToObservable() 
                             |> Observable.filter (fun x -> ButtonEventCode.Down = x.Button) 
-                            |> Observable.subscribe (fun _ -> (*printfn "Detect by pressing Down";*) sensor.Detect())
+                            |> Observable.subscribe (fun _ -> sensor.Detect())
     
     use upButtonDispose = buttons.ToObservable()
-                            |> Observable.filter (fun x -> ButtonEventCode.Up = x.Button)
-                            |> Observable.subscribe (fun _ -> (*printfn "Exiting...";*) System.Environment.Exit 0)
+                          |> Observable.filter (fun x -> ButtonEventCode.Up = x.Button)
+                          |> Observable.subscribe (fun _ -> printfn "Exiting..."; System.Environment.Exit 0)
 
 //    use timerSetterDisposable = Observable.Interval(System.TimeSpan.FromSeconds 7.0) 
 //                                |> Observable.subscribe (fun _ -> (*printfn "Usual Detect by timer";*) sensor.Detect())

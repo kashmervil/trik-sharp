@@ -79,3 +79,20 @@ let inline milliseconds x = 1<ms>*x
 let inline permil min max v = 
     let v' = limit min max v
     (1000<permil> * (v' - min))/(max - min)
+
+let HSVtoRGB (h, s, v) =
+    if s = 0.0 then (v, v, v) 
+    else
+        let hs = h / 60.0
+        let i = floor (hs)
+        let f = hs - i
+        let p = v * ( 1.0 - s )
+        let q = v * ( 1.0 - s * f )
+        let t = v * ( 1.0 - s * ( 1.0 - f ))
+        match int i with
+            | 0 -> (v, t, p)
+            | 1 -> (q, v, p)
+            | 2 -> (p, v, t)
+            | 3 -> (p, q, v)
+            | 4 -> (t, p, v)
+            | _ -> (v, p, q)
