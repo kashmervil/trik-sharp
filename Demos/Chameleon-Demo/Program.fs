@@ -3,20 +3,21 @@ open Trik.Helpers
 open System.Threading
 
 let maxAngle = 40
+let scaleConst = 10
+let RGBdepth = 255.
+let SVscale = 100.
 let minMass = 5
 let deepPink = (255, 20, 147)
 
-//let mutable turnH = 0
-
 let updatePosition x acc = 
-    let scale x = (Trik.Helpers.limit (-maxAngle) maxAngle x) / 10
+    let scale x = (Trik.Helpers.limit (-maxAngle) maxAngle x) / scaleConst
     if (x > 10 && x < 90 && acc < 90) || (x < - 10 && x > -90 && acc > -90) 
     then scale x + acc 
     else acc
 
 let conversion (x : DetectTarget) = 
-    let (r, g, b) = HSVtoRGB(float x.Hue, (float x.Saturation) / 100.0, (float x.Value) / 100.0)
-    (int (r * 255.0), int (g * 255.0), int (b * 255.0))
+    let (r, g, b) = HSVtoRGB(float x.Hue, (float x.Saturation) / SVscale, (float x.Value) / SVscale)
+    (int (r * RGBdepth), int (g * RGBdepth), int (b * RGBdepth))
 
 let exit = new EventWaitHandle(false, EventResetMode.AutoReset)
 
@@ -62,4 +63,3 @@ let main _ =
 //                                |> Observable.subscribe (fun _ -> (*printfn "Usual Detect by timer";*) sensor.Detect())
     exit.WaitOne() |> ignore
     0
-
