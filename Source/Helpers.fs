@@ -80,6 +80,7 @@ let inline permil min max v =
     let v' = limit min max v
     (1000<permil> * (v' - min))/(max - min)
 
+//Takes H from [0..359], S & V from [0..1]. Returns R, G, B from [0..1] each
 let HSVtoRGB (h, s, v) =
     if s = 0.0 then (v, v, v) 
     else
@@ -96,3 +97,17 @@ let HSVtoRGB (h, s, v) =
             | 3 -> (p, q, v)
             | 4 -> (t, p, v)
             | _ -> (v, p, q)
+
+//Takes R, G, B from [0..1] each. Returns H from [0..359], S & V from [0..1]
+let RGBtoHSV (r, g, b) =
+    let (m : float) = min r (min g b)
+    let (M : float) = max r (max g b)
+    let delta = M - m
+    let posh (h : float) = if h < 0.0 then h + 360.0 else h
+    let deltaf (f : float) (s : float) = (f - s) / delta
+    if M = 0.0 then (-1.0, 0.0, M) 
+    else
+        let s = (M - m) / M
+        if r = M then (posh(60.0 * (deltaf g b)), s, M)
+        elif g = M then (posh(60.0 * (2.0 + (deltaf b r))), s, M)
+        else (posh(60.0 * (4.0 + (deltaf r g))), s, M)
