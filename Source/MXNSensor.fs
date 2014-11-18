@@ -6,19 +6,24 @@ open Trik
 open Trik.Internals
 
 [<Sealed>]
-type MXNSensor(scriptPath, commandPath: string, sensorPath) as mxn = 
+type MXNSensor(scriptPath, commandPath: string, sensorPath) = 
     inherit StringFifoSensor<int[]>(scriptPath)
+
     let mutable stream = null
     let mutable commandFifo: StreamWriter = null
-    let script cmd = Helpers.SendToShell <| scriptPath + " " + cmd
-    let resize (x : int) (y : int) = Helpers.SendToShell <| "echo " + """"mxn """ + (string x) + " " + (string y) + """" > """ + commandPath
     let mutable isDisposed = false
     let mutable sizeX = 3
     let mutable sizeY = 3
 
+    let script cmd = Helpers.SendToShell <| scriptPath + " " + cmd
+
     member self.Size 
         with get () = (sizeX, sizeY)
-        and set (v1, v2) = sizeX <- v1; sizeY <- v2; resize v1 v2
+        and set (v1, v2) = 
+            sizeX <- v1
+            sizeY <- v2
+            if commandFifo = null then invalidOp "missing Start() before call"
+            commandFifo.WriteLine("mxn " + (string v1) + " " + (string v2))
 
     member self.Start() = 
         script "start"; base.Start()
@@ -37,10 +42,11 @@ type MXNSensor(scriptPath, commandPath: string, sensorPath) as mxn =
         new MXNSensor(script, "/run/mxn-sensor.in.fifo", "/run/mxn-sensor.out.fifo")
 
     override self.Parse text =
-            let parsedLines = text.Split([|' '|], StringSplitOptions.RemoveEmptyEntries)
-            let parse x = Trik.Helpers.fastInt32Parse x
-            parsedLines.[0].Remove |> ignore
-            Array.map parse parsedLines |> Some
+        let parse x = Trik.Helpers.fastInt32Parse x
+        let parsedLines = text.Split([|' '|], StringSplitOptions.RemoveEmptyEntries)
+
+        parsedLines.[0].Remove |> ignore
+        Array.map parse parsedLines |> Some
 
     override self.Dispose() = 
         if not isDisposed then
