@@ -77,7 +77,7 @@ module Collections =
         member self.X = x
         member self.Crossroad = crossroad
         member self.Mass = mass
-        new(x: string, c: string, m: string) = new LineLocation(parse x, parse c, int m)
+        new(x: string, c: string, m: string) = new LineLocation(parse x, parse c, parse m)
         override self.ToString() = sprintf "loc: %d %d %d\n\n" self.X self.Crossroad self.Mass
 
     [<Struct>]
