@@ -7,14 +7,16 @@ open Trik.Internals
 
 [<Sealed>]
 type MXNSensor(scriptPath, commandPath: string, sensorPath) = 
-    inherit StringFifoSensor<int[]>(scriptPath)
+    inherit StringFifoSensor<int []>(sensorPath)
 
     let mutable stream = null
     let mutable commandFifo: StreamWriter = null
     let mutable isDisposed = false
+    let cts = new CancellationTokenSource()
     let mutable sizeX = 3
     let mutable sizeY = 3
 
+    let parse x = Trik.Helpers.fastInt32Parse x
     let script cmd = Helpers.SendToShell <| scriptPath + " " + cmd
 
     member self.Size 
@@ -23,6 +25,7 @@ type MXNSensor(scriptPath, commandPath: string, sensorPath) =
             sizeX <- v1
             sizeY <- v2
             if commandFifo = null then invalidOp "missing Start() before call"
+            commandFifo.WriteLine("mxn " + (string v1) + " " + (string v2))
             commandFifo.WriteLine("mxn " + (string v1) + " " + (string v2))
 
     member self.Start() = 
@@ -42,14 +45,12 @@ type MXNSensor(scriptPath, commandPath: string, sensorPath) =
         new MXNSensor(script, "/run/mxn-sensor.in.fifo", "/run/mxn-sensor.out.fifo")
 
     override self.Parse text =
-        let parse x = Trik.Helpers.fastInt32Parse x
         let parsedLines = text.Split([|' '|], StringSplitOptions.RemoveEmptyEntries)
-
-        parsedLines.[0].Remove |> ignore
-        Array.map parse parsedLines |> Some
+        parsedLines.[1..] |> Array.map parse |> Some
 
     override self.Dispose() = 
         if not isDisposed then
+            cts.Cancel()
             commandFifo.Dispose()
             stream.Dispose()
             base.Dispose()
