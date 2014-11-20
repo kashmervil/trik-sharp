@@ -5,14 +5,14 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>1db6f767-1359-4d55-a0d1-46fe3f7d1ac0</ProjectGuid>
+    <ProjectGuid>25646883-83a1-4613-9487-3a165bd540e6</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>MXN_Sensor_Demo</RootNamespace>
-    <AssemblyName>MXN_Sensor_Demo</AssemblyName>
+    <RootNamespace>MxN_Sensor_Demo</RootNamespace>
+    <AssemblyName>MxN_Sensor_Demo</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFSharpCoreVersion>4.3.1.0</TargetFSharpCoreVersion>
-    <Name>MXN-Sensor-Demo</Name>
+    <Name>MxN-Sensor-Demo</Name>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -23,7 +23,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <DocumentationFile>bin\Debug\MXN_Sensor_Demo.XML</DocumentationFile>
+    <DocumentationFile>bin\Debug\MxN_Sensor_Demo.XML</DocumentationFile>
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -34,7 +34,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <DocumentationFile>bin\Release\MXN_Sensor_Demo.XML</DocumentationFile>
+    <DocumentationFile>bin\Release\MxN_Sensor_Demo.XML</DocumentationFile>
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
@@ -46,7 +46,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
     <Reference Include="Trik.Core">
-      <HintPath>..\Source\bin\Release\Trik.Core.dll</HintPath>
+      <HintPath>..\..\Source\bin\Release\Trik.Core.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

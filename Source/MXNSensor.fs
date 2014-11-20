@@ -7,7 +7,7 @@ open Trik.Internals
 
 [<Sealed>]
 type MXNSensor(scriptPath, commandPath: string, sensorPath) = 
-    inherit StringFifoSensor<int[]>(sensorPath)
+    inherit StringFifoSensor<int []>(sensorPath)
 
     let mutable stream = null
     let mutable commandFifo: StreamWriter = null
@@ -46,7 +46,7 @@ type MXNSensor(scriptPath, commandPath: string, sensorPath) =
 
     override self.Parse text =
         let parsedLines = text.Split([|' '|], StringSplitOptions.RemoveEmptyEntries)
-        parsedLines |> Array.filter (fun x -> x <> "color:") |> Array.map parse |> Some
+        parsedLines.[1..] |> Array.map parse |> Some
 
     override self.Dispose() = 
         if not isDisposed then
