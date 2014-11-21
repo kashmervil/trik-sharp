@@ -21,6 +21,7 @@ type Model () as model =
     let mutable servo = None
     let mutable lineSensor = None
     let mutable objectSensor = None
+    let mutable mxnSensor = None
     let mutable encoder = lazy (
         model.EncoderConfig 
         |> Array.map (fun (port, cnum) -> (port, new Encoder(cnum)))
@@ -65,9 +66,11 @@ type Model () as model =
           ("A5", 0x21)
           ("A6", 0x20)
         |] with get, set
-    member val LineSensorConfig = Ports.VideoSource.VP1
+    member val LineSensorConfig = Ports.VideoSource.VP2
          with get, set
-    member val ObjectSensorConfig = Ports.VideoSource.VP1
+    member val ObjectSensorConfig = Ports.VideoSource.VP2
+        with get, set
+    member val MXNSensorConfig = Ports.VideoSource.VP2
         with get, set
 
     member x.Motor
@@ -153,6 +156,12 @@ type Model () as model =
             if objectSensor.IsNone then objectSensorDefaultInit()
             objectSensor.Value
 
+    member self.MXNSensor
+        with get() = 
+            let mxnSensorDefaultInit() = mxnSensor <- Some <| new MXNSensor(self.ObjectSensorConfig)
+            if mxnSensor.IsNone then mxnSensorDefaultInit()
+            mxnSensor.Value
+
     static member RegisterResource(d: IDisposable) = lock resources <| fun () -> resources.Add(d)
 
     interface IDisposable with
@@ -167,6 +176,7 @@ type Model () as model =
                             devices |> Option.iter (Seq.iter (fun x -> x.Value.Dispose()))
                         dispose lineSensor
                         dispose objectSensor
+                        dispose mxnSensor
                         dispose gyro
                         dispose accel
                         dispose led

@@ -5,25 +5,36 @@ open System.Threading
 open Trik
 open Trik.Internals
 
+//This sensor is gives you an array of dominant colors in M x N zones of screen
+//The returning values for each zone is an integer, from which we can easily get
+//a color in RGB representation
+// (x && 0xFF)         - Blue
+// ((x >> 8) && 0xFF)  - Green
+// ((x >> 16) && oxFF) - Red 
+// where x is an element of our array
+
 [<Sealed>]
 type MXNSensor(scriptPath, commandPath: string, sensorPath) = 
-    inherit StringFifoSensor<int[]>(scriptPath)
+    inherit StringFifoSensor<int []>(sensorPath)
 
     let mutable stream = null
     let mutable commandFifo: StreamWriter = null
     let mutable isDisposed = false
-    let mutable sizeX = 3
-    let mutable sizeY = 3
+    let cts = new CancellationTokenSource()
+    let mutable (sizeM, sizeN) = (3, 3)
 
+    let parse x = Trik.Helpers.fastInt32Parse x
     let script cmd = Helpers.SendToShell <| scriptPath + " " + cmd
 
+    //This property can be used to change amount of zones
     member self.Size 
-        with get () = (sizeX, sizeY)
-        and set (v1, v2) = 
-            sizeX <- v1
-            sizeY <- v2
+        with get () = (sizeM, sizeN)
+        and set (m, n) = 
+            sizeM <- m
+            sizeN <- n
             if commandFifo = null then invalidOp "missing Start() before call"
-            commandFifo.WriteLine("mxn " + (string v1) + " " + (string v2))
+            commandFifo.WriteLine("mxn " + (string m) + " " + (string n))
+            commandFifo.WriteLine("mxn " + (string m) + " " + (string n))
 
     member self.Start() = 
         script "start"; base.Start()
@@ -42,14 +53,12 @@ type MXNSensor(scriptPath, commandPath: string, sensorPath) =
         new MXNSensor(script, "/run/mxn-sensor.in.fifo", "/run/mxn-sensor.out.fifo")
 
     override self.Parse text =
-        let parse x = Trik.Helpers.fastInt32Parse x
         let parsedLines = text.Split([|' '|], StringSplitOptions.RemoveEmptyEntries)
-
-        parsedLines.[0].Remove |> ignore
-        Array.map parse parsedLines |> Some
+        parsedLines.[1..] |> Array.map parse |> Some
 
     override self.Dispose() = 
         if not isDisposed then
+            cts.Cancel()
             commandFifo.Dispose()
             stream.Dispose()
             base.Dispose()
