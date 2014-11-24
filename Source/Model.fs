@@ -31,19 +31,25 @@ type Model () as model =
     let mutable isDisposed = false
     do AppDomain.CurrentDomain.ProcessExit.Add(fun _ -> (model :> IDisposable).Dispose())
 
-    member val PadConfigPort = 3333 with get, set
+    member val PadConfigPort = 4444 with get, set
     member val ServoConfig = 
         [| 
           ("E1", "/sys/class/pwm/ehrpwm.1:1", 
-            { stop = 0; zero = 1450000; min = 1200000; max = 1800000; period = 20000000 } )
+            { stop = 0; zero = 1600000; min = 800000; max = 2400000; period = 20000000 } )
           ("E2", "/sys/class/pwm/ehrpwm.1:0", 
-            { stop = 0; zero = 1450000; min = 1200000; max = 1800000; period = 20000000 } )
+            { stop = 0; zero = 1600000; min = 800000; max = 2400000; period = 20000000 } )
           ("E3", "/sys/class/pwm/ehrpwm.0:1", 
-            { stop = 0; zero = 1450000; min = 1200000; max = 1800000; period = 20000000 } )
-            
+            { stop = 0; zero = 1600000; min = 800000; max = 2400000; period = 20000000 } )
+          ("C1", "/sys/class/pwm/ecap.0", 
+            { stop = 0; zero = 0; min = 0; max = 2000000; period = 2000000 } )
+          ("C2", "/sys/class/pwm/ecap.1", 
+            { stop = 0; zero = 0; min = 0; max = 2000000; period = 2000000 } )
+          ("C3", "/sys/class/pwm/ecap.2", 
+            { stop = 0; zero = 0; min = 0; max = 2000000; period = 2000000 } )
          |] with get, set
     member val EncoderConfig =
         [| 
+          ("B1", 0x30)
           ("B2", 0x31)
           ("B4", 0x32)
           ("B3", 0x33)
@@ -52,10 +58,10 @@ type Model () as model =
         [| 
           ("M1", 0x14)
           ("M2", 0x15)
-          ("M3", 0x16)
-          ("M4", 0x17)
+          ("M4", 0x16)
+          ("M3", 0x17)
          |] with get, set
-    member val LedStripeConfig = {Red = 0x14; Green = 0x15; Blue = 0x16; Ground = 0x17;}
+    member val LedStripeConfig = { Red = 0x14; Green = 0x15; Blue = 0x17; Ground = 0x16 }
          with get, set
     member val AnalogSensorConfig = 
         [| 
