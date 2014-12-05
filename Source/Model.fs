@@ -21,6 +21,7 @@ type Model () as model =
     let mutable servo = None
     let mutable lineSensor = None
     let mutable objectSensor = None
+    let mutable mxnSensor = None
     let mutable encoder = lazy (
         model.EncoderConfig 
         |> Array.map (fun (port, cnum) -> (port, new Encoder(cnum)))
@@ -30,16 +31,21 @@ type Model () as model =
     let mutable isDisposed = false
     do AppDomain.CurrentDomain.ProcessExit.Add(fun _ -> (model :> IDisposable).Dispose())
 
-    member val PadConfigPort = 3333 with get, set
+    member val PadConfigPort = 4444 with get, set
     member val ServoConfig = 
         [| 
           ("E1", "/sys/class/pwm/ehrpwm.1:1", 
-            { stop = 0; zero = 1450000; min = 1200000; max = 1800000; period = 20000000 } )
+            { stop = 0; zero = 1600000; min = 800000; max = 2400000; period = 20000000 } )
           ("E2", "/sys/class/pwm/ehrpwm.1:0", 
-            { stop = 0; zero = 1450000; min = 1200000; max = 1800000; period = 20000000 } )
+            { stop = 0; zero = 1600000; min = 800000; max = 2400000; period = 20000000 } )
           ("E3", "/sys/class/pwm/ehrpwm.0:1", 
-            { stop = 0; zero = 1450000; min = 1200000; max = 1800000; period = 20000000 } )
-            
+            { stop = 0; zero = 1600000; min = 800000; max = 2400000; period = 20000000 } )
+          ("C1", "/sys/class/pwm/ecap.0", 
+            { stop = 0; zero = 0; min = 0; max = 2000000; period = 2000000 } )
+          ("C2", "/sys/class/pwm/ecap.1", 
+            { stop = 0; zero = 0; min = 0; max = 2000000; period = 2000000 } )
+          ("C3", "/sys/class/pwm/ecap.2", 
+            { stop = 0; zero = 0; min = 0; max = 2000000; period = 2000000 } )
          |] with get, set
     member val EncoderConfig =
         [| 
@@ -55,7 +61,7 @@ type Model () as model =
           ("M3", 0x17)
           ("M4", 0x16)
          |] with get, set
-    member val LedStripeConfig = {Red = 0x14; Green = 0x15; Blue = 0x16; Ground = 0x17;}
+    member val LedStripeConfig = { Red = 0x14; Green = 0x15; Blue = 0x17; Ground = 0x16 }
          with get, set
     member val AnalogSensorConfig = 
         [| 
@@ -66,9 +72,11 @@ type Model () as model =
           ("A5", 0x21)
           ("A6", 0x20)
         |] with get, set
-    member val LineSensorConfig = Ports.VideoSource.VP1
+    member val LineSensorConfig = Ports.VideoSource.VP2
          with get, set
-    member val ObjectSensorConfig = Ports.VideoSource.VP1
+    member val ObjectSensorConfig = Ports.VideoSource.VP2
+        with get, set
+    member val MXNSensorConfig = Ports.VideoSource.VP2
         with get, set
 
     member x.Motor
@@ -154,6 +162,12 @@ type Model () as model =
             if objectSensor.IsNone then objectSensorDefaultInit()
             objectSensor.Value
 
+    member self.MXNSensor
+        with get() = 
+            let mxnSensorDefaultInit() = mxnSensor <- Some <| new MXNSensor(self.ObjectSensorConfig)
+            if mxnSensor.IsNone then mxnSensorDefaultInit()
+            mxnSensor.Value
+
     static member RegisterResource(d: IDisposable) = lock resources <| fun () -> resources.Add(d)
 
     interface IDisposable with
@@ -168,6 +182,7 @@ type Model () as model =
                             devices |> Option.iter (Seq.iter (fun x -> x.Value.Dispose()))
                         dispose lineSensor
                         dispose objectSensor
+                        dispose mxnSensor
                         dispose gyro
                         dispose accel
                         dispose led
