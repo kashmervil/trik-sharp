@@ -84,9 +84,7 @@ type  Observable =
                   }
         triggering cts.Token |> Async.Start
         notifier.Publish
-
     static member mergeList xs = List.reduce Observable.merge xs
-
     static member Subscribe(source : IObservable<'T>, observer: IObserver<'T>) = source.Subscribe(observer)
     static member Subscribe(source : IObservable<'T>, callback : 'T -> unit)= source.Subscribe(callback)
     static member Subscribe(source : IObservable<'T>, callback : Func<'T,unit>)= source.Subscribe(callback.Invoke)

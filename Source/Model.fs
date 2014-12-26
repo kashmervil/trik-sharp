@@ -51,15 +51,15 @@ type Model () as model =
         [| 
           ("B1", 0x30)
           ("B2", 0x31)
-          ("B4", 0x32)
-          ("B3", 0x33)
+          ("B3", 0x32)
+          ("B4", 0x33)
          |] with get, set
     member val MotorConfig = 
         [| 
           ("M1", 0x14)
           ("M2", 0x15)
-          ("M4", 0x16)
           ("M3", 0x17)
+          ("M4", 0x16)
          |] with get, set
     member val LedStripeConfig = { Red = 0x14; Green = 0x15; Blue = 0x17; Ground = 0x16 }
          with get, set
