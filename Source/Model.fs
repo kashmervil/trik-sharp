@@ -41,25 +41,25 @@ type Model () as model =
           ("E3", "/sys/class/pwm/ehrpwm.0:1", 
             { stop = 0; zero = 1600000; min = 800000; max = 2400000; period = 20000000 } )
           ("C1", "/sys/class/pwm/ecap.0", 
-            { stop = 0; zero = 0; min = 0; max = 2000000; period = 2000000 } )
+            { stop = 0; zero = 1600000; min = 800000; max = 2400000; period = 20000000 } )
           ("C2", "/sys/class/pwm/ecap.1", 
-            { stop = 0; zero = 0; min = 0; max = 2000000; period = 2000000 } )
+            { stop = 0; zero = 1600000; min = 800000; max = 2400000; period = 20000000 } )
           ("C3", "/sys/class/pwm/ecap.2", 
-            { stop = 0; zero = 0; min = 0; max = 2000000; period = 2000000 } )
+            { stop = 0; zero = 1600000; min = 800000; max = 2400000; period = 20000000 } )
          |] with get, set
     member val EncoderConfig =
         [| 
           ("B1", 0x30)
           ("B2", 0x31)
-          ("B3", 0x32)
-          ("B4", 0x33)
+          ("B4", 0x32)
+          ("B3", 0x33)
          |] with get, set
     member val MotorConfig = 
         [| 
           ("M1", 0x14)
           ("M2", 0x15)
-          ("M3", 0x17)
           ("M4", 0x16)
+          ("M3", 0x17)
          |] with get, set
     member val LedStripeConfig = { Red = 0x14; Green = 0x15; Blue = 0x17; Ground = 0x16 }
          with get, set

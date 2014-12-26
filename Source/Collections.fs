@@ -49,8 +49,9 @@ module Collections =
             stop: int
             period:int
             }
-        let Servo1 = {stop = 0; zero = 1500000; min = 1200000; max = 1800000; period = 20000000} 
-        let Servo2 = {Servo1 with stop =1}
+        let Servo180 = { stop = 0; zero = 1600000; min = 800000; max = 2400000; period = 20000000 }
+        let Servo2   = { Servo180 with zero = 1700000; min = 900000; max = 2300000 } 
+        let LEDControllerServo = { stop = 0; zero = 0; min = 0; max = 2000000; period = 2000000 }
         let observerEps = 100
     
     /// Numbers of I2C ports associated with Stripe  
