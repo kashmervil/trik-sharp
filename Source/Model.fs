@@ -1,14 +1,14 @@
 ﻿namespace Trik
 open System
 open System.Collections.Generic
+open Trik.Collections
 open Trik.Sensors
 
 type Model () as model = 
 
-    static do Helpers.trikSpecific <| fun () -> 
-            Helpers.I2C.Init "/dev/i2c-2" 0x48 1
-            IO.File.WriteAllText("/sys/class/gpio/gpio62/value", "1")
-            Helpers.SendToShell (String.Concat(List.map (sprintf "i2cset -y 2 0x48 %d 0x1000 w; ") [0x10 .. 0x13]))
+    static do Helpers.I2C.Init "/dev/i2c-2" 0x48 1
+              IO.File.WriteAllText("/sys/class/gpio/gpio62/value", "1")
+              Helpers.SendToShell (String.Concat(List.map (sprintf "i2cset -y 2 0x48 %d 0x1000 w; ") [0x10 .. 0x13]))
                                                 
     static let resources = new ResizeArray<_>()
 

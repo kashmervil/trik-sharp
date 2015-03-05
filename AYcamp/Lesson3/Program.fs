@@ -1,4 +1,5 @@
 ﻿open Trik        // These namespaces and modules should be opened
+open Trik.Collections
 open Trik.Junior
 open Trik.Ports
 

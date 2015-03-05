@@ -1,18 +1,18 @@
 ﻿module Program
 
 open System
+open System.Threading
 open System.Collections.Generic
 open System.Reactive.Linq
 open Trik
-open System.Threading
+open Trik.Collections
 
 type Distance =  Far | Middle | Near
 
 let log s = printfn s
 
-let buttonPad = new ButtonPad("/dev/input/event0")  
+let buttonPad = new ButtonPad()  
 buttonPad.Start() 
-
 
 let testMainWaitHandle = new EventWaitHandle(false, EventResetMode.AutoReset)
 let testSensorsWaitHandle = new EventWaitHandle(false, EventResetMode.AutoReset)
@@ -104,7 +104,7 @@ let main _ =
                                 { stop = 0; zero = 1310000; min = 1200000; max = 1420000; period = 20000000 } )
                               ("JE2", "/sys/class/pwm/ehrpwm.1:0", 
                                 { stop = 0; zero = 1550000; min =  800000; max = 2250000; period = 20000000 } )
-                             |])
+                             |], EncoderConfig = null)
     model.Gyro.Start()
     log "Loaded model"
     let demoList() = 

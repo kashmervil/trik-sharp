@@ -1,7 +1,7 @@
 ﻿namespace Trik
 open System
-
-type ServoMotor(servoPath: string, kind: ServoMotor.Kind) =
+open Trik.Collections
+type ServoMotor(servoPath: string, kind: ServoKind) =
     let mutable isDisposed = false
     let setOption target v = 
         IO.File.WriteAllText(sprintf "%s%c%s" servoPath IO.Path.DirectorySeparatorChar target, v)
@@ -29,7 +29,7 @@ type ServoMotor(servoPath: string, kind: ServoMotor.Kind) =
             
     interface IObserver<int> with
         member self.OnNext(command) = 
-            if Math.Abs(lastCommand - command) > ServoMotor.observerEps
+            if Math.Abs(lastCommand - command) > Defaults.ServoEps
             then lastCommand <- command; self.SetPower command
             
         member self.OnError e = self.SetPower kind.stop
@@ -39,6 +39,6 @@ type ServoMotor(servoPath: string, kind: ServoMotor.Kind) =
         member self.Dispose() =
             if not isDisposed then
                 self.Zero()
-                (fd :> IDisposable).Dispose()
                 setOption "request" "0"
+                (fd :> IDisposable).Dispose()
             

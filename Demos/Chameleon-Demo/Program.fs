@@ -1,5 +1,6 @@
 ﻿open Trik
 open Trik.Helpers
+open Trik.Collections
 open System.Threading
 
 let maxAngle = 40

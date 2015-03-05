@@ -3,6 +3,7 @@ open System
 open System.IO
 open System.Threading
 open Trik
+open Trik.Collections
 
 [<AbstractClass>]
 type VideoSensor<'Parsed>(scriptPath, commandPath: string, sensorPath) = 

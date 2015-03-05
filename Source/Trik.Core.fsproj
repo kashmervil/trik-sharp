@@ -90,6 +90,7 @@
     <Compile Include="Model.fs" />
     <Compile Include="Junior.fs" />
     <Compile Include="Parallel.fs" />
+    <Compile Include="CSharpBindings.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />

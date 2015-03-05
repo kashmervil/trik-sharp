@@ -22,7 +22,7 @@ type StringFifoSensor<'T>(path: string) as sens =
                 let streamReader = new IO.StreamReader(stream)
                 let! _ = Async.StartChild(Async.TryCancelled(reading streamReader, notifier.OnCompleted))
                 ()
-            with e ->  eprintfn "FifoSensor %s %A" path e; notifier.OnError e
+            with e ->  System.Console.WriteLine("FifoSensor {0} {1}", path, e.Message); notifier.OnError e
                 }
 
     abstract Parse: string -> 'T option

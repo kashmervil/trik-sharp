@@ -16,17 +16,13 @@ module Measures =
     [<Measure>] type rad 
 
 
-let isLinux = not <| Environment.OSVersion.VersionString.StartsWith "Microsoft"
-let inline trikSpecific f = if isLinux then f () else ()
-
-let SendToShell cmd  = 
+let SendToShell cmd = 
     let args = sprintf "-c '%s'" cmd
     //printfn "%s" args
-    trikSpecific <| fun () ->
-        let proc = System.Diagnostics.Process.Start("/bin/sh", args)
-        proc.WaitForExit()
-        if proc.ExitCode  <> 0 then
-            printf "Init script failed '%s'" cmd
+    let proc = System.Diagnostics.Process.Start("/bin/sh", args)
+    proc.WaitForExit()
+    if proc.ExitCode  <> 0 then
+        printf "Init script failed '%s'" cmd
 
 let AsyncSendToShell cmd = async { SendToShell cmd }
 let PostToShell cmd = AsyncSendToShell cmd |> Async.Start
@@ -42,8 +38,7 @@ module I2C =
     let private I2CLockObj = new Object()
 
     let I2CLockCall f args : 'T = 
-        if isLinux then lock I2CLockObj <| fun () -> f args
-        else Unchecked.defaultof<'T>
+        lock I2CLockObj <| fun () -> f args
 
     let inline Init string deviceId forced = I2CLockCall wrap_I2c_init (string, deviceId, forced)
     let inline Send command data len = I2CLockCall wrap_I2c_SendData (command, data, len)  

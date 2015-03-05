@@ -1,4 +1,5 @@
 ﻿open Trik
+open Trik.Collections
 open System.Threading
 
 let led = new Led()

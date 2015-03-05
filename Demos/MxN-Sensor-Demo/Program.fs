@@ -1,6 +1,7 @@
-﻿open Trik
-open System
+﻿open System
 open System.Threading
+open Trik
+open Trik.Collections
 
 let exit = new EventWaitHandle(false, EventResetMode.AutoReset)
 

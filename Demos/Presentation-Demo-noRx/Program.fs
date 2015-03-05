@@ -1,4 +1,6 @@
 ﻿open Trik
+open Trik.Collections
+
 [<EntryPoint>]
 let main _ = 
     use model = new Model()

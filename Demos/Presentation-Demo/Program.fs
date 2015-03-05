@@ -1,4 +1,5 @@
 ﻿open Trik
+open Trik.Collections
 open System.Reactive.Linq
 [<EntryPoint>]
 let main _ = 

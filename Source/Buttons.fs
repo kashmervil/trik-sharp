@@ -3,28 +3,12 @@ open System
 open System.IO
 open Trik.Collections
 
-type ButtonPad (deviceFilePath) as self= 
+type ButtonPad (deviceFilePath) = 
     inherit Internals.BinaryFifoSensor<ButtonEvent>(deviceFilePath, 16, 1024)
+    static let state = new Collections.BitArray(256)
     let mutable isDisposed = false
     let emulatorStream = new FileStream(deviceFilePath, FileMode.Open, FileAccess.Write, FileShare.Read)
-
-    static let () = Enum.GetValues(typeof<ButtonEventCode>) 
-                    |> Seq.cast<ButtonEventCode> 
-                    |> Seq.tryFind  (fun x -> int x  < 0  || 255 < int x) 
-                    |> Option.iter (fun x -> invalidArg (x.ToString()) "Button code out of bounds 0..255")
-    
-    do AppDomain.CurrentDomain.ProcessExit.Add(fun _ -> (self :> IDisposable).Dispose())
-    static let state = new Collections.BitArray(256)
-    let testObserverDispose =  // All this magic is made for the first button press response time reducing  
-        self.ToObservable()    // (the subscription and notification routine is mostly JITed and loaded at the construction time)
-            .Subscribe(fun (x: ButtonEvent) -> 
-              if x.Button <> ButtonEventCode.Sync then () 
-              else printfn "%A" "starting")
-
-    let mutable clicksOnly = true
-    member self.ClicksOnly 
-        with get() = clicksOnly
-        and set f = clicksOnly <- f
+    member val ClicksOnly = false with get, set
         
     override self.Parse (bytes, offset) =
         //let evTime  = BitConverter.ToDouble(bytes, offset)
@@ -56,7 +40,7 @@ type ButtonPad (deviceFilePath) as self=
             emulatorStream.Write(bytes, 0, bytes.Length) // Hack for the last key press emulation 
             emulatorStream.Flush(true)                   // (to make the program return from the last readline call). See BinaryFifoSensor's async read loop for details
             emulatorStream.Dispose()                     // This decision was made after trying to access INOTIFY throw mono interface  
-            testObserverDispose.Dispose()                // And making attempts to pass cancelation token not just between binds in async. 
+            //testObserverDispose.Dispose()                // And making attempts to pass cancelation token not just between binds in async. 
             isDisposed <- true
     
     override self.Finalize() = self.Dispose()

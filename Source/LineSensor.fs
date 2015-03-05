@@ -1,6 +1,7 @@
 ﻿namespace Trik.Sensors
 open System
 open Trik
+open Trik.Collections
 
 [<Sealed>]
 type LineSensor(scriptPath, commandPath: string, sensorPath) = 
@@ -19,7 +20,7 @@ type LineSensor(scriptPath, commandPath: string, sensorPath) =
             match parsedLines with
                 | [| "loc:"; x; y; z |] -> LineLocation(x, y, z) |> Location |> Some
                 | [| "hsv:"; h; s; v; ht; st; vt |] -> DetectTarget(h,s,v,ht,st,vt) |> Target |> Some
-                | z -> printfn "object sensor parse error! None %A" z; None
+                | z -> System.Console.WriteLine("object sensor parse error! None {0}", z); None
    
     override self.Dispose() = base.Dispose()
 
