@@ -17,6 +17,7 @@ type Model () as model =
 
     let propertyInit config ctor = config |> Array.map (fun (key, params') -> (key, ctor params')) |> dict
 
+    let buttonPad =    lazy new ButtonPad() 
     let gyro =         lazy new Gyroscope(-32767, 32767, "/dev/input/by-path/platform-spi_davinci.1-event")
     let accel =        lazy new Accelerometer(-32767, 32767, "/dev/input/event1")
     let led =          lazy new Led()
@@ -53,6 +54,7 @@ type Model () as model =
 
     member x.Motor with get() = motor.Force()
     member x.Servo with get() = servo.Force()
+    member x.ButtonPad with get() = buttonPad.Force()
     member x.AnalogSensor with get() = analogSensor.Force()
     member x.Encoder with get() = encoder.Force()
     member x.Gyro with get() = gyro.Force()
@@ -80,5 +82,5 @@ type Model () as model =
                 dispose lineSensor; dispose objectSensor; dispose mxnSensor; 
                 dispose gyro; dispose accel; dispose led; dispose pad;
                 dispose ledStripe; disposeMap motor; disposeMap servo; 
-                disposeMap analogSensor
+                disposeMap analogSensor; dispose buttonPad
                 isDisposed <- true

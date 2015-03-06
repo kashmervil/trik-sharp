@@ -11,9 +11,6 @@ type Distance =  Far | Middle | Near
 
 let log s = printfn s
 
-let buttonPad = new ButtonPad()  
-buttonPad.Start() 
-
 let testMainWaitHandle = new EventWaitHandle(false, EventResetMode.AutoReset)
 let testSensorsWaitHandle = new EventWaitHandle(false, EventResetMode.AutoReset)
 let testStripeWaitHandle = new EventWaitHandle(false, EventResetMode.AutoReset)
@@ -102,6 +99,8 @@ let main _ =
     use model = new Model(ServoConfig = [| (E1, ("/sys/class/pwm/ehrpwm.1:1", Defaults.Servo4))
                                            (E2, ("/sys/class/pwm/ehrpwm.1:0", Defaults.Servo4)) |], EncoderConfig = null)
     model.Gyro.Start()
+    let buttonPad = model.ButtonPad
+    buttonPad.Start()
     log "Loaded model"
     let demoList() = 
         printfn "1. testMain\n2. testSensors\n3. testStripe"

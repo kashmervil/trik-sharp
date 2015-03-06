@@ -29,9 +29,9 @@ let main _ =
     Helpers.SendToShell """v4l2-ctl -d "/dev/video2" --set-ctrl white_balance_temperature_auto=1""" //option for better color reproduction
 
     let sensor = model.ObjectSensor
-    let buttons = new ButtonPad()
+    let buttonPad = model.ButtonPad
 
-    buttons.Start()
+    buttonPad.Start()
     sensor.Start()
     model.LedStripe.SetPower deepPink
 
@@ -52,11 +52,11 @@ let main _ =
              |> Observable.scan (fun acc l -> updatePosition l.X acc) 0
              |> Observable.subscribe (fun x -> model.Servo.[E1].SetPower -x)
 
-    use downButtonDispose = buttons.ToObservable() 
+    use downButtonDispose = buttonPad.ToObservable() 
                             |> Observable.filter (fun x -> ButtonEventCode.Down = x.Button) 
                             |> Observable.subscribe (fun _ -> sensor.Detect())
     
-    use upButtonDispose = buttons.ToObservable()
+    use upButtonDispose = buttonPad.ToObservable()
                           |> Observable.filter (fun x -> ButtonEventCode.Up = x.Button)
                           |> Observable.subscribe (fun _ -> printfn "Exiting..."; exit.Set() |> ignore)
 
