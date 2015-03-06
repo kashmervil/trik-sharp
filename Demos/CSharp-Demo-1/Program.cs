@@ -18,6 +18,7 @@ namespace CSharp_Demo_1
                 for (int i = 1; i < 4; i++)
                 {
                     robot.Led.SetColor((LedColor) i);
+                    motor.SetPower(i*20);
                     Thread.Sleep(500);
                 }
                 counter++;

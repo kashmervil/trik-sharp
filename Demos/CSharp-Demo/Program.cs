@@ -14,14 +14,14 @@ namespace Demo_cs
             var model = new Model();
             var rWheel = model.Motor[Motor.M1];
             var lWheel = model.Motor[Motor.M2];
-            model.AnalogSensor[Sensor.A1].ToObservable().Scan((acc, x) =>
+            model.AnalogSensor[Sensor.A1].ToObservable().Select( x =>
             {
                 System.Console.WriteLine(x.ToString());
                 return (x < 350) ? 0 : 100;
             }
                 ).DistinctUntilChanged().Subscribe(rWheel);
             
-            model.AnalogSensor[Sensor.A1].ToObservable().Scan((acc, x) =>
+            model.AnalogSensor[Sensor.A1].ToObservable().Select(x =>
             {
                 System.Console.WriteLine(x.ToString());
                 return (x < 350) ? 0 : 100;
