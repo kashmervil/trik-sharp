@@ -25,7 +25,7 @@ let exit = new EventWaitHandle(false, EventResetMode.AutoReset)
 [<EntryPoint>]
 let main _ =
     let model = new Model(ObjectSensorConfig = Ports.VideoSource.USB)
-    model.ServoConfig.[0] <- ("E1", "/sys/class/pwm/ehrpwm.1:1", { stop = 0; zero = 1600000; min = 800000; max = 2400000; period = 20000000 })
+    model.ServoConfig.[0] <- ("E1", ("/sys/class/pwm/ehrpwm.1:1", Defaults.Servo3))
     Helpers.SendToShell """v4l2-ctl -d "/dev/video2" --set-ctrl white_balance_temperature_auto=1""" //option for better color reproduction
 
     let sensor = model.ObjectSensor

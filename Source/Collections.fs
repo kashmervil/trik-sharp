@@ -46,16 +46,6 @@ type ServoKind = {
     period:int
     }
 
-[<AbstractClass;Sealed>]
-type Defaults() =
-    let observerEps = 100
-    /// {stop = 0; zero = 1500000; min = 1200000; max = 1800000; period = 20000000}
-    static member val Servo1 = {stop = 0; zero = 1500000; min = 1200000; max = 1800000; period = 20000000} 
-    /// {stop = 1; zero = 1500000; min = 1200000; max = 1800000; period = 20000000}
-    static member val Servo2 = {Defaults.Servo1 with stop =1}
-
-    static member val ServoEps = 100
-    
 /// Numbers of I2C ports associated with Stripe  
 type LedStripePorts = {
     Red: int
@@ -63,6 +53,31 @@ type LedStripePorts = {
     Blue: int
     Ground: int
     }
+
+[<AbstractClass;Sealed>]
+type Defaults() =
+    let observerEps = 100
+    /// {stop = 0; zero = 1500000; min = 1200000; max = 1800000; period = 20000000}
+    static member val Servo1 = {stop = 0; zero = 1500000; min = 1200000; max = 1800000; period = 20000000} 
+    /// {stop = 1; zero = 1500000; min = 1200000; max = 1800000; period = 20000000}
+    static member val Servo2 = {Defaults.Servo1 with stop =1}
+    //{ stop = 0; zero = 1600000; min = 800000; max = 2400000; period = 20000000 }
+    static member val Servo3 = { stop = 0; zero = 1600000; min = 800000; max = 2400000; period = 20000000 }
+    ///{ stop = 0; zero = 0; min = 0; max = 2000000; period = 2000000 }
+    static member val Servo4 = { stop = 0; zero = 0; min = 0; max = 2000000; period = 2000000 }
+    //{ stop = 0; zero = 1310000; min = 1200000; max = 1420000; period = 20000000 }
+    static member val Servo5 = { stop = 0; zero = 1310000; min = 1200000; max = 1420000; period = 20000000 }
+    ///{ stop = 0; zero = 1550000; min =  800000; max = 2250000; period = 20000000 }
+    static member val Servo6 = { stop = 0; zero = 1550000; min =  800000; max = 2250000; period = 20000000 }
+    ///{ stop = 0; zero = 1500000; min = 800000; max = 2400000; period = 20000000 }
+    static member val Servo7 = { stop = 0; zero = 1500000; min = 800000; max = 2400000; period = 20000000 }
+
+    ///{ Red = 0x14; Green = 0x15; Blue = 0x17; Ground = 0x16 }
+    static member val LedSripe = { Red = 0x14; Green = 0x15; Blue = 0x17; Ground = 0x16 }
+
+    static member val ServoEps = 100
+    
+
 [<RequireQualifiedAccess>]
 type PadEvent = 
     | Pad of int * ( int * int ) option

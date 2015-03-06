@@ -12,40 +12,34 @@ type Model () as model =
                                                 
     static let resources = new ResizeArray<_>()
 
-    let mutable gyro = None
-    let mutable accel = None
-    let mutable led = None
-    let mutable pad = None
-    let mutable motor = None
-    let mutable ledStripe = None
-    let mutable servo = None
-    let mutable lineSensor = None
-    let mutable objectSensor = None
-    let mutable mxnSensor = None
-    let mutable encoder = lazy (
-        model.EncoderConfig 
-        |> Array.map (fun (port, cnum) -> (port, new Encoder(cnum)))
-        |> dict
-    )
-    let mutable analogSensor = None
+    let lazyPropertyInit config ctor = lazy(config |> Array.map (fun (key, params') -> (key, ctor params')) |> dict)
+
+    let mutable gyro =         lazy new Gyroscope(-32767, 32767, "/dev/input/by-path/platform-spi_davinci.1-event")
+    let mutable accel =        lazy new Accelerometer(-32767, 32767, "/dev/input/event1")
+    let mutable led =          lazy new Led()
+    let mutable pad =          lazy new PadServer(model.PadConfigPort)
+    let mutable ledStripe =    lazy new LedStripe(model.LedStripeConfig)
+    let mutable lineSensor =   lazy new LineSensor(model.LineSensorConfig)
+    let mutable objectSensor = lazy new ObjectSensor(model.ObjectSensorConfig)  
+    let mutable mxnSensor =    lazy new MXNSensor(model.ObjectSensorConfig)
+    let mutable servo =        lazyPropertyInit model.ServoConfig        (fun x -> new ServoMotor(x))
+    let mutable motor =        lazyPropertyInit model.MotorConfig        (fun (cnum:int) -> new PowerMotor(cnum))
+    let mutable encoder =      lazyPropertyInit model.EncoderConfig      (fun cnum -> new Encoder(cnum))
+    let mutable analogSensor = lazyPropertyInit model.AnalogSensorConfig (fun (cnum:int) -> new AnalogSensor(cnum))
+    
     let mutable isDisposed = false
+    
     do AppDomain.CurrentDomain.ProcessExit.Add(fun _ -> (model :> IDisposable).Dispose())
 
     member val PadConfigPort = 4444 with get, set
     member val ServoConfig = 
         [| 
-          ("E1", "/sys/class/pwm/ehrpwm.1:1", 
-            { stop = 0; zero = 1600000; min = 800000; max = 2400000; period = 20000000 } )
-          ("E2", "/sys/class/pwm/ehrpwm.1:0", 
-            { stop = 0; zero = 1600000; min = 800000; max = 2400000; period = 20000000 } )
-          ("E3", "/sys/class/pwm/ehrpwm.0:1", 
-            { stop = 0; zero = 1600000; min = 800000; max = 2400000; period = 20000000 } )
-          ("C1", "/sys/class/pwm/ecap.0", 
-            { stop = 0; zero = 0; min = 0; max = 2000000; period = 2000000 } )
-          ("C2", "/sys/class/pwm/ecap.1", 
-            { stop = 0; zero = 0; min = 0; max = 2000000; period = 2000000 } )
-          ("C3", "/sys/class/pwm/ecap.2", 
-            { stop = 0; zero = 0; min = 0; max = 2000000; period = 2000000 } )
+          ("E1", ("/sys/class/pwm/ehrpwm.1:1", Defaults.Servo3 ))
+          ("E2", ("/sys/class/pwm/ehrpwm.1:0", Defaults.Servo3 ))
+          ("E3", ("/sys/class/pwm/ehrpwm.0:1", Defaults.Servo3 ))
+          ("C1", ("/sys/class/pwm/ecap.0", Defaults.Servo4 ))
+          ("C2", ("/sys/class/pwm/ecap.1", Defaults.Servo4 ))
+          ("C3", ("/sys/class/pwm/ecap.2", Defaults.Servo4 ))
          |] with get, set
     member val EncoderConfig =
         [| 
@@ -61,8 +55,7 @@ type Model () as model =
           ("M3", 0x17)
           ("M4", 0x16)
          |] with get, set
-    member val LedStripeConfig = { Red = 0x14; Green = 0x15; Blue = 0x17; Ground = 0x16 }
-         with get, set
+    member val LedStripeConfig = Defaults.LedSripe with get, set
     member val AnalogSensorConfig = 
         [| 
           ("A1", 0x25)
@@ -79,94 +72,29 @@ type Model () as model =
     member val MXNSensorConfig = Ports.VideoSource.VP2
         with get, set
 
-    member x.Motor
-        with get() = 
-            let motorInit() = 
-                motor <- 
-                    x.MotorConfig
-                    |> Array.map (fun (port, cnum)  -> (port, new PowerMotor(cnum)))             
-                    |> dict
-                    |> Some
-            if motor.IsNone then motorInit() 
-            motor.Value
- 
+    member x.Motor with get() = motor.Force()
          
-    member x.Servo
-        with get() = 
-            let servoInit() = 
-                servo <- 
-                    x.ServoConfig
-                    |> Array.map (fun (port, path, kind) ->  (port, new ServoMotor(path, kind)))             
-                    |> dict
-                    |> Some
-            if servo.IsNone then servoInit() 
-            servo.Value
+    member x.Servo with get() = servo.Force()
+    
+    member x.AnalogSensor with get() = analogSensor.Force()
+    
+    member x.Encoder with get() = encoder.Force()
+
+    member x.Gyro with get() = gyro.Force()
+
+    member x.Accel with get() = accel.Force()
         
+    member x.Led with get() = led.Force()
+
+    member x.LedStripe with get() = ledStripe.Force()
     
-    member x.AnalogSensor
-        with get() = 
-            let analogSensorDefaultInit() = 
-                analogSensor <-
-                    x.AnalogSensorConfig
-                    |> Array.map (fun (port, cnum) -> (port, new AnalogSensor(cnum)))
-                    |> dict
-                    |> Some
-            if analogSensor.IsNone then analogSensorDefaultInit()
-            analogSensor.Value
-    
-    member x.Encoder
-        with get() = encoder.Force()
+    member x.Pad with get() = pad.Force()
 
-    member x.Gyro
-        with get() = 
-            let gyroDefaultInit() =
-                gyro <- Some(new Gyroscope(-32767, 32767, "/dev/input/by-path/platform-spi_davinci.1-event"))
-            if gyro.IsNone then gyroDefaultInit()
-            gyro.Value
+    member self.LineSensor with get() = lineSensor.Force()
 
-    member x.Accel
-        with get() = 
-            let accelDefaultInit() = 
-                accel <- Some(new Accelerometer(-32767, 32767, "/dev/input/event1"))
-            if accel.IsNone then accelDefaultInit()
-            accel.Value
-        
-    member x.Led 
-        with get() = 
-            let ledDefaultInit() =
-                led <- Some(new Trik.Led("/sys/class/leds/"))
-            if led.IsNone then ledDefaultInit()
-            led.Value
-    member x.LedStripe
-        with get() = 
-            if ledStripe.IsNone then
-                ledStripe <- Some(new Trik.LedStripe(x.LedStripeConfig))
-            ledStripe.Value
-    
-    member x.Pad 
-        with get() = 
-            let padDefaultInit() =
-                pad <- Some(new Trik.PadServer(x.PadConfigPort))
-            if pad.IsNone then padDefaultInit()
-            pad.Value
+    member self.ObjectSensor with get() = objectSensor.Force()
 
-    member self.LineSensor
-        with get() = 
-            let lineSensorDefaultInit() = lineSensor <- Some <| new LineSensor(self.LineSensorConfig)
-            if lineSensor.IsNone then lineSensorDefaultInit()
-            lineSensor.Value
-
-    member self.ObjectSensor
-        with get() = 
-            let objectSensorDefaultInit() = objectSensor <- Some <| new ObjectSensor(self.ObjectSensorConfig)
-            if objectSensor.IsNone then objectSensorDefaultInit()
-            objectSensor.Value
-
-    member self.MXNSensor
-        with get() = 
-            let mxnSensorDefaultInit() = mxnSensor <- Some <| new MXNSensor(self.ObjectSensorConfig)
-            if mxnSensor.IsNone then mxnSensorDefaultInit()
-            mxnSensor.Value
+    member self.MXNSensor with get() = mxnSensor.Force()
 
     static member RegisterResource(d: IDisposable) = lock resources <| fun () -> resources.Add(d)
 
@@ -176,10 +104,10 @@ type Model () as model =
             <| fun () -> 
                    if not isDisposed then
                         resources.ForEach(fun x -> x.Dispose()) 
-                        let inline dispose (device: 'T option when 'T :> IDisposable) = 
-                             device |> Option.iter (fun x -> x.Dispose())
-                        let inline disposeMap (devices: IDictionary<string, 'T> option when 'T :> IDisposable) = 
-                            devices |> Option.iter (Seq.iter (fun x -> x.Value.Dispose()))
+                        let inline dispose (device: Lazy<'T> when 'T :> IDisposable) = 
+                             if device.IsValueCreated then device.Force().Dispose()
+                        let inline disposeMap (devices: Lazy<IDictionary<'TKey, 'T>> when 'T :> IDisposable) = 
+                            if devices.IsValueCreated then devices.Force().Values |> (Seq.iter (fun x -> x.Dispose()))
                         dispose lineSensor
                         dispose objectSensor
                         dispose mxnSensor

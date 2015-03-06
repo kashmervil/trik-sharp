@@ -1,6 +1,7 @@
 ﻿open System
 open System.Collections.Generic
 open Trik
+open Trik.Collections
 open System.Threading
 
 let exit = new EventWaitHandle(false, EventResetMode.AutoReset)
@@ -9,12 +10,8 @@ let exit = new EventWaitHandle(false, EventResetMode.AutoReset)
 let main argv = 
     printfn "Started"
     Helpers.I2C.Init "/dev/i2c-2" 0x48 1
-    use model = new Model(ServoConfig = [| 
-                              ("E1", "/sys/class/pwm/ehrpwm.1:1", 
-                                { stop = 0; zero = 1500000; min = 800000; max = 2400000; period = 20000000 } )
-                              ("E2", "/sys/class/pwm/ehrpwm.1:0", 
-                                { stop = 0; zero = 1500000; min = 800000; max = 2400000; period = 20000000 } )
-                             |], PadConfigPort = 4444)
+    use model = new Model(ServoConfig = [| ("E1", ("/sys/class/pwm/ehrpwm.1:1", Defaults.Servo7))
+                                           ("E2", ("/sys/class/pwm/ehrpwm.1:0", Defaults.Servo7)) |])
    
     let servo1 = model.Servo.["E2"]
     let servo2 = model.Servo.["E1"]
