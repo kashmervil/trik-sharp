@@ -26,6 +26,25 @@ let SendToShell cmd =
 
 let AsyncSendToShell cmd = async { SendToShell cmd }
 let PostToShell cmd = AsyncSendToShell cmd |> Async.Start
+let say text = PostToShell <| "espeak -v russian_test -s 100 \"" + text + "\" 2> /dev/null"
+    
+let playFile (file:string) = 
+        PostToShell <| 
+        if   file.EndsWith(".wav") then "aplay --quiet &quot;" + file + "&quot; &amp;"
+        elif file.EndsWith(".mp3") then "cvlc  --quiet &quot;" + file + "&quot; &amp;"
+        else invalidArg "file" "Incorrect filename"
+
+
+let takeScreenshot() = PostToShell <| let date = DateTime.Now in
+                                      "fbgrab trik-screenshot-"
+                                      + date.ToString("yyMMdd-HHmmss.pn\g")
+                                      + " 2> /dev/null"
+
+let defaultName() = 
+    let date = DateTime.Now
+    "trik-cam-" + date.ToString("yyMMdd-HHmmss.jp\g")
+
+let takePicture() = "v4l2grab -d \"/dev/video2\" -H 640 -W 480 -o " + defaultName() + " 2> /dev/null"
 
 module I2C =
     [<DllImport("libconWrap.so.1.0.0", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)>]

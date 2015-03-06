@@ -1,4 +1,4 @@
-﻿namespace Trik
+﻿namespace Trik.Devices
 open System
 open Trik.Collections
 ///Type representing on-board light emitting diode

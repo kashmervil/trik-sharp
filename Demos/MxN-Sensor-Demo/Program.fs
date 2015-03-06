@@ -1,6 +1,7 @@
 ﻿open System
 open System.Threading
 open Trik
+open Trik.Devices
 open Trik.Collections
 
 let exit = new EventWaitHandle(false, EventResetMode.AutoReset)
@@ -9,9 +10,8 @@ let exit = new EventWaitHandle(false, EventResetMode.AutoReset)
 let main _ = 
     let model = new Model()
     let buttons = new ButtonPad()
-    use sensor = new Trik.Sensors.MXNSensor(VideoSource.VP2)
-
-
+    use sensor = model.MXNSensor
+    
     buttons.Start()
     sensor.Start()
 

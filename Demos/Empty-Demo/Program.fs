@@ -1,4 +1,5 @@
 ﻿open Trik
+open Trik.Devices
 open Trik.Collections
 open System.Threading
 

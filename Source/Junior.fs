@@ -2,6 +2,7 @@
 
 open System
 open Trik
+open Trik.Network
 open Trik.Helpers
 
 [<NoEquality; NoComparison>]

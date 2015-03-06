@@ -1,4 +1,4 @@
-﻿namespace Trik
+﻿namespace Trik.Network
 open System
 open System.IO
 open System.Net

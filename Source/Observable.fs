@@ -1,9 +1,10 @@
 ﻿namespace Trik
 open System
 open System.Threading
+open System.Runtime.CompilerServices
 
 [<Sealed>]
-type Notifier<'T>() =
+type internal Notifier<'T>() =
     let observers = new ResizeArray<IObserver<'T> >()
     let source = { new IObservable<'T> with
         member self.Subscribe observer =  
@@ -34,7 +35,7 @@ type Notifier<'T>() =
     
 
 
-[<AbstractClass; Sealed>]
+[<Extension>]
 type  Observable =   
 
     static member Create(subscription: Func<IObserver<'T>,IDisposable>) = 
@@ -101,6 +102,7 @@ module internal M =
 
 #nowarn "21"
 #nowarn "40"
+[<Extension>]
 type Async =
     static member AwaitObservable(ev:IObservable<'T>) =
       M.synchronize (fun f ->

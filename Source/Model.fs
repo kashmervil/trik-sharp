@@ -3,6 +3,8 @@ open System
 open System.Collections.Generic
 open Trik.Collections
 open Trik.Sensors
+open Trik.Devices
+open Trik.Network
 
 type Model () as model = 
 

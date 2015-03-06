@@ -1,6 +1,7 @@
-﻿namespace Trik
+﻿namespace Trik.Devices
 open System
 open System.IO
+open Trik
 open Trik.Collections
 
 type ButtonPad (deviceFilePath) = 
@@ -8,7 +9,7 @@ type ButtonPad (deviceFilePath) =
     static let state = new Collections.BitArray(256)
     let mutable isDisposed = false
     let emulatorStream = new FileStream(deviceFilePath, FileMode.Open, FileAccess.Write, FileShare.Read)
-    member val ClicksOnly = false with get, set
+    member val ClicksOnly = true with get, set
         
     override self.Parse (bytes, offset) =
         //let evTime  = BitConverter.ToDouble(bytes, offset)

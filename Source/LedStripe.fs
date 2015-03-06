@@ -1,5 +1,6 @@
-﻿namespace Trik
+﻿namespace Trik.Devices
 open System
+open Trik
 open Trik.Collections
 
 ///<summary>Provides methods for working with Light Emitting Diode Stripe
