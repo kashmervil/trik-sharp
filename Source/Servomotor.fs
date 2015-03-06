@@ -1,5 +1,6 @@
-﻿namespace Trik
+﻿namespace Trik.Devices
 open System
+open Trik
 open Trik.Collections
 type ServoMotor(servoPath: string, kind: ServoKind) =
     let mutable isDisposed = false

@@ -10,13 +10,13 @@ let exit = new EventWaitHandle(false, EventResetMode.AutoReset)
 let main argv = 
     printfn "Started"
     Helpers.I2C.Init "/dev/i2c-2" 0x48 1
-    use model = new Model(ServoConfig = [| ("E1", ("/sys/class/pwm/ehrpwm.1:1", Defaults.Servo7))
-                                           ("E2", ("/sys/class/pwm/ehrpwm.1:0", Defaults.Servo7)) |])
+    use model = new Model(ServoConfig = [| (E1, ("/sys/class/pwm/ehrpwm.1:1", Defaults.Servo7))
+                                           (E2, ("/sys/class/pwm/ehrpwm.1:0", Defaults.Servo7)) |])
    
-    let servo1 = model.Servo.["E2"]
-    let servo2 = model.Servo.["E1"]
-    let p1 = model.Motor.["M2"]
-    let p2 = model.Motor.["M3"]
+    let servo1 = model.Servo.[E2]
+    let servo2 = model.Servo.[E1]
+    let p1 = model.Motor.[M2]
+    let p2 = model.Motor.[M3]
     let pad = model.Pad
     use dbtn = pad.Buttons.Subscribe (function 
         | x when x = 5 -> 

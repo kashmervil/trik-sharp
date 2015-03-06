@@ -11,7 +11,7 @@ type ObjectSensor(scriptPath, commandPath: string, sensorPath) =
     new (videoSource) = 
         let script = 
             match videoSource with
-            | Ports.VideoSource.USB -> "/etc/init.d/object-sensor-webcam.sh"
+            | VideoSource.USB -> "/etc/init.d/object-sensor-webcam.sh"
             | _                     -> "/etc/init.d/object-sensor-ov7670.sh"
 
         new ObjectSensor(script, "/run/object-sensor.in.fifo", "/run/object-sensor.out.fifo")

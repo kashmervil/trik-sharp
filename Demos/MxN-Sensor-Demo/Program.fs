@@ -9,7 +9,7 @@ let exit = new EventWaitHandle(false, EventResetMode.AutoReset)
 let main _ = 
     let model = new Model()
     let buttons = new ButtonPad()
-    use sensor = new Trik.Sensors.MXNSensor(Ports.VideoSource.VP2)
+    use sensor = new Trik.Sensors.MXNSensor(VideoSource.VP2)
 
 
     buttons.Start()

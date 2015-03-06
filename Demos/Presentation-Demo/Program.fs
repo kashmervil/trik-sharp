@@ -4,10 +4,10 @@ open System.Reactive.Linq
 [<EntryPoint>]
 let main _ = 
     let model = new Model()
-    let motorL = model.Motor.["M2"]//Two ports in the controller's behind
-    let motorR = model.Motor.["M1"]//you can change ports to any of the range M1 .. M4 
+    let motorL = model.Motor.[M2]//Two ports in the controller's behind
+    let motorR = model.Motor.[M1]//you can change ports to any of the range M1 .. M4 
     //for full ports description go http://goo.gl/jRWJ4j
-    let power = model.AnalogSensor.["A1"].ToObservable().Select(fun d -> //second port in front 
+    let power = model.AnalogSensor.[A1].ToObservable().Select(fun d -> //second port in front 
                             if d < 450 then 100 elif d > 550 then -100 else 0).DistinctUntilChanged()
      
     let l_disp = power.Subscribe(motorL)

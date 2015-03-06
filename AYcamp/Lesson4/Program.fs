@@ -1,7 +1,6 @@
 ﻿open Trik
 open Trik.Junior
 open Trik.Collections
-open Trik.Ports
 
 robot.Led.PowerOff()
 

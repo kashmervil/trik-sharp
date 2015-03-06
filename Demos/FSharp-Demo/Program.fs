@@ -22,8 +22,8 @@ let testSensorsRunning = ref false
 let testStripeRunning = ref false
 
 let testPad (model:Model) = 
-    let servo1 = model.Servo.["E2"]
-    let servo2 = model.Servo.["E1"]
+    let servo1 = model.Servo.[E2]
+    let servo2 = model.Servo.[E1]
     let prX1, prY1, prX2, prY2 = ref -1, ref -1, ref -1, ref -1
     let pad = model.Pad
     use dbtn = pad.Buttons.Subscribe (fun num ->  printfn "%A" num)
@@ -53,9 +53,9 @@ let testMain (model:Model) =
                         | Middle -> 0
                         | Far -> 100
 
-    let rightWheel = model.Motor.["M2"]
-    let leftWheel = model.Motor.["M1"]
-    let frontSensor = model.AnalogSensor.["A1"].ToObservable().Select(rawToDist)
+    let rightWheel = model.Motor.[M2]
+    let leftWheel = model.Motor.[M1]
+    let frontSensor = model.AnalogSensor.[A1].ToObservable().Select(rawToDist)
     let motorActions = frontSensor.Select(fun x ->    //printfn "%A" x;
                                                       distToSpeed x).DistinctUntilChanged()
 
@@ -99,8 +99,8 @@ let testSensors (model:Model) =
 let main _ = 
     log "Started"
     Helpers.I2C.Init "/dev/i2c-2" 0x48 1
-    use model = new Model(ServoConfig = [| ("E1", ("/sys/class/pwm/ehrpwm.1:1", Defaults.Servo4))
-                                           ("E2", ("/sys/class/pwm/ehrpwm.1:0", Defaults.Servo4)) |], EncoderConfig = null)
+    use model = new Model(ServoConfig = [| (E1, ("/sys/class/pwm/ehrpwm.1:1", Defaults.Servo4))
+                                           (E2, ("/sys/class/pwm/ehrpwm.1:0", Defaults.Servo4)) |], EncoderConfig = null)
     model.Gyro.Start()
     log "Loaded model"
     let demoList() = 

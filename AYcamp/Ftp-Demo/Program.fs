@@ -1,7 +1,6 @@
 ﻿open Trik
 open Trik.Junior
 open Trik.Collections
-open Trik.Ports
 
 printfn "Press any key to start"
 robot.Uploader.Host <- "8.8.8.8" // Enter your configuration of ftp profile

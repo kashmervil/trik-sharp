@@ -1,7 +1,7 @@
-﻿namespace Trik
+﻿namespace Trik.Devices
 open System
+open Trik
 open Trik.Helpers
-open Trik.Ports
 
 type PowerMotor(i2cCommandNumber) =
     ///Sends power in range -100 100 to specified PowerMotor.

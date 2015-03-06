@@ -27,10 +27,10 @@ type Robot() as is =
 
     member val Led = super.Led
 
-    member val Encoder = super.Encoder.Values |> Seq.mapi (fun i x -> Ports.Encoder.Values.[i], x) |> dict
-    member val Motor = super.Motor.Values |> Seq.mapi (fun i x -> Ports.Motor.Values.[i], x) |> dict
-    member val Sensor = super.AnalogSensor.Values |> Seq.mapi (fun i x -> Ports.Sensor.Values.[i], x) |> dict
-    member val Servo = super.Servo.Values |> Seq.mapi (fun i x -> Ports.Servo.Values.[i], x) |> dict
+    member val Encoder = super.Encoder
+    member val Motor = super.Motor
+    member val Sensor = super.AnalogSensor
+    member val Servo = super.Servo
    
     member val Gyro = super.Gyro
     

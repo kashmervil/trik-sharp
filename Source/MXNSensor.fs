@@ -47,7 +47,7 @@ type MXNSensor(scriptPath, commandPath: string, sensorPath) =
     new (videoSource) = 
         let script = 
             match videoSource with
-            | Ports.VideoSource.USB -> "/etc/init.d/mxn-sensor-webcam.sh"
+            | VideoSource.USB -> "/etc/init.d/mxn-sensor-webcam.sh"
             | _                     -> "/etc/init.d/mxn-sensor-ov7670.sh"
 
         new MXNSensor(script, "/run/mxn-sensor.in.fifo", "/run/mxn-sensor.out.fifo")

@@ -1,7 +1,6 @@
 ﻿open Trik
 open Trik.Collections
 open Trik.Junior
-open Trik.Ports
 open Trik.Junior.Parallel
 
 printfn "Starting"

@@ -89,7 +89,7 @@ type CmdFifo(path:string) as self =
         member x.Dispose() = fd.Dispose()
 
 
-type MotorControler (motor: Trik.PowerMotor, enc: Encoder, sign) = 
+type MotorControler (motor: Trik.Devices.PowerMotor, enc: Encoder, sign) = 
     [<Literal>]
     let max_ppms = 23.833f
     [<DefaultValue>]
@@ -142,9 +142,9 @@ type Linetracer (model: Model) =
     let elapsed = sw.ElapsedMilliseconds
     do eprintfn "Linetracer ctor: config parsed: %A ms" elapsed 
 
-    let motorL = new MotorControler(model.Motor.["M1"], model.Encoder.["B2"], motor_sign, PowerBase = power_base)
-    let motorR = new MotorControler(model.Motor.["M3"], model.Encoder.["B3"], motor_sign * -1, PowerBase = power_base)
-    let frontSensor = model.AnalogSensor.["A2"]
+    let motorL = new MotorControler(model.Motor.[M1], model.Encoder.[B2], motor_sign, PowerBase = power_base)
+    let motorR = new MotorControler(model.Motor.[M3], model.Encoder.[B3], motor_sign * -1, PowerBase = power_base)
+    let frontSensor = model.AnalogSensor.[A2]
     do eprintfn "Linetracer ctor: Motor controllers created"
     let mutable last_pow_add = 0
     let mutable (stopAutoMode: IDisposable) = null
