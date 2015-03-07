@@ -2,9 +2,9 @@
 //Thanks for Dima Soldatov for implementation
 let model = new Model()
 
-let sensor = model.AnalogSensor.[A3]
-let rWheel = model.Motor.[M4]
-let lWheel = model.Motor.[M3]
+let sensor = model.AnalogSensors.[A3]
+let rWheel = model.Motors.[M4]
+let lWheel = model.Motors.[M3]
 
 let zeroD = 701.
 let minPow = 2.

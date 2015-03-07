@@ -7,8 +7,8 @@ open Trik
 type Robot() =
 
     let super = new Trik.Model()
-    let motors = super.Motor
-    let sensors = super.AnalogSensor
+    let motors = super.Motors
+    let sensors = super.AnalogSensors
 
     member self.Led = super.Led
 

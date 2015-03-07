@@ -28,10 +28,10 @@ type Robot() as is =
 
     member val Led = super.Led
 
-    member val Encoder = super.Encoder
-    member val Motor = super.Motor
-    member val Sensor = super.AnalogSensor
-    member val Servo = super.Servo
+    member val Encoder = super.Encoders
+    member val Motor = super.Motors
+    member val Sensor = super.AnalogSensors
+    member val Servo = super.Servos
    
     member val Gyro = super.Gyro
     

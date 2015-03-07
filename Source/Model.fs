@@ -28,10 +28,10 @@ type Model () as model =
     let lineSensor =   lazy new LineSensor(model.LineSensorConfig)
     let objectSensor = lazy new ObjectSensor(model.ObjectSensorConfig)  
     let mxnSensor =    lazy new MXNSensor(model.ObjectSensorConfig)
-    let servo =        lazy propertyInit model.ServoConfig        (fun x -> new Devices.ServoMotor(x))
-    let motor =        lazy propertyInit model.MotorConfig        (fun (cnum:int) -> new Devices.PowerMotor(cnum))
-    let encoder =      lazy propertyInit model.EncoderConfig      (fun cnum -> new Sensors.Encoder(cnum))
-    let analogSensor = lazy propertyInit model.AnalogSensorConfig (fun (cnum:int) -> new Sensors.AnalogSensor(cnum))
+    let servo =        lazy propertyInit model.ServosConfig        (fun x -> new Devices.ServoMotor(x))
+    let motor =        lazy propertyInit model.MotorsConfig        (fun (cnum:int) -> new Devices.PowerMotor(cnum))
+    let encoder =      lazy propertyInit model.EncodersConfig      (fun cnum -> new Sensors.Encoder(cnum))
+    let analogSensor = lazy propertyInit model.AnalogSensorsConfig (fun (cnum:int) -> new Sensors.AnalogSensor(cnum))
     
     member val PadConfigPort =      4444 with get, set
     member val LineSensorConfig =   VideoSource.VP2 with get, set
@@ -39,26 +39,27 @@ type Model () as model =
     member val MXNSensorConfig =    VideoSource.VP2 with get, set
     member val LedStripeConfig =    Defaults.LedSripe with get, set
 
-    member val ServoConfig = 
+    member val ServosConfig = 
         [| (E1, (E1.Path, Defaults.Servo3))
            (E2, (E2.Path, Defaults.Servo3))
            (E3, (E3.Path, Defaults.Servo3))
            (C1, (C1.Path, Defaults.Servo4))
            (C2, (C2.Path, Defaults.Servo4))
            (C3, (C3.Path, Defaults.Servo4)) |] with get, set
-    member val EncoderConfig =
+    member val EncodersConfig =
         [| (B1, 0x30); (B2, 0x31); (B3, 0x32); (B4, 0x33) |] with get, set
-    member val MotorConfig = 
+    member val MotorsConfig = 
         [| (M1, 0x14); (M2, 0x15); (M3, 0x17); (M4, 0x16) |] with get, set
-    member val AnalogSensorConfig = 
+    member val AnalogSensorsConfig = 
         [| (A1, 0x25); (A2, 0x24); (A3, 0x23); 
            (A4, 0x22); (A5, 0x21); (A6, 0x20) |] with get, set
-
-    member x.Motor with get() = motor.Force()
-    member x.Servo with get() = servo.Force()
+    
+    member x.Motors with get() = motor.Force()
+    member x.Servos with get() = servo.Force()
+    member x.AnalogSensors with get() = analogSensor.Force()
+    member x.Encoders with get() = encoder.Force()
+    
     member x.ButtonPad with get() = buttonPad.Force()
-    member x.AnalogSensor with get() = analogSensor.Force()
-    member x.Encoder with get() = encoder.Force()
     member x.Gyro with get() = gyro.Force()
     member x.Accel with get() = accel.Force()
     member x.Led with get() = led.Force()
