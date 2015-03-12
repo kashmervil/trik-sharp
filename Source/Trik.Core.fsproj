@@ -80,6 +80,7 @@
     <Compile Include="Accelerometer.fs" />
     <Compile Include="PollingSensor.fs" />
     <Compile Include="AnalogSensor.fs" />
+    <Compile Include="Battery.fs" />
     <Compile Include="Encoder.fs" />
     <Compile Include="ServoMotor.fs" />
     <Compile Include="PowerMotor.fs" />

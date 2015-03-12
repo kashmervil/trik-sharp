@@ -54,20 +54,22 @@ type Model () as model =
         [| (A1, 0x25); (A2, 0x24); (A3, 0x23); 
            (A4, 0x22); (A5, 0x21); (A6, 0x20) |] with get, set
     
-    member x.Motors with get() = motor.Force()
-    member x.Servos with get() = servo.Force()
-    member x.AnalogSensors with get() = analogSensor.Force()
-    member x.Encoders with get() = encoder.Force()
+    member self.Motors with get() = motor.Force()
+    member self.Servos with get() = servo.Force()
+    member self.AnalogSensors with get() = analogSensor.Force()
+    member self.Encoders with get() = encoder.Force()
     
-    member x.ButtonPad with get() = buttonPad.Force()
-    member x.Gyro with get() = gyro.Force()
-    member x.Accel with get() = accel.Force()
-    member x.Led with get() = led.Force()
-    member x.LedStripe with get() = ledStripe.Force()
-    member x.Pad with get() = pad.Force()
+    member self.ButtonPad with get() = buttonPad.Force()
+    member self.Gyro with get() = gyro.Force()
+    member self.Accel with get() = accel.Force()
+    member self.Led with get() = led.Force()
+    member self.LedStripe with get() = ledStripe.Force()
+    member self.Pad with get() = pad.Force()
     member self.LineSensor with get() = lineSensor.Force()
     member self.ObjectSensor with get() = objectSensor.Force()
     member self.MXNSensor with get() = mxnSensor.Force()
+
+    member val Battery = new Battery() 
 
     static member RegisterResource(d: IDisposable) = lock resources <| fun () -> resources.Add(d)
 

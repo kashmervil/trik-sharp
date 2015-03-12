@@ -56,12 +56,12 @@ module I2C =
     
     let private I2CLockObj = new Object()
 
-    let I2CLockCall f args : 'T = 
+    let private I2CLockCall f args : 'T = 
         lock I2CLockObj <| fun () -> f args
 
-    let inline Init string deviceId forced = I2CLockCall wrap_I2c_init (string, deviceId, forced)
-    let inline Send command data len = I2CLockCall wrap_I2c_SendData (command, data, len)  
-    let inline Receive (command: int) = I2CLockCall wrap_I2c_ReceiveData command
+    let Init string deviceId forced = I2CLockCall wrap_I2c_init (string, deviceId, forced)
+    let Send command data len = I2CLockCall wrap_I2c_SendData (command, data, len)  
+    let Receive (command: int) = I2CLockCall wrap_I2c_ReceiveData command
 
 let loadIniConf path = 
     IO.File.ReadAllLines (path)
