@@ -4,7 +4,7 @@ open System.IO
 open Trik
 open Trik.Collections
 
-type ButtonPad (deviceFilePath) = 
+type Buttons (deviceFilePath) = 
     inherit Internals.BinaryFifoSensor<ButtonEvent>(deviceFilePath, 16, 1024)
     static let state = new Collections.BitArray(256)
     let mutable isDisposed = false
@@ -33,7 +33,7 @@ type ButtonPad (deviceFilePath) =
                        if !isPressed then (!disp).Dispose() 
                        )
         isPressed
-    new () = new ButtonPad("/dev/input/event0")
+    new () = new Buttons("/dev/input/event0")
     override self.Dispose() = 
         if not isDisposed then
             base.Dispose()

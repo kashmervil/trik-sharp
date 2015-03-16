@@ -9,7 +9,7 @@ let exit = new EventWaitHandle(false, EventResetMode.AutoReset)
 [<EntryPoint>]
 let main _ = 
     let model = new Model()
-    let buttons = new ButtonPad()
+    let buttons = model.Buttons
     use sensor = model.MXNSensor
     
     buttons.Start()

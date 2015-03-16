@@ -99,15 +99,15 @@ let main _ =
     use model = new Model(ServosConfig = [| (E1, ("/sys/class/pwm/ehrpwm.1:1", Defaults.Servo4))
                                             (E2, ("/sys/class/pwm/ehrpwm.1:0", Defaults.Servo4)) |], EncodersConfig = null)
     model.Gyro.Start()
-    let buttonPad = model.ButtonPad
-    buttonPad.Start()
+    let buttons = model.Buttons
+    buttons.Start()
     log "Loaded model"
     let demoList() = 
         printfn "1. testMain\n2. testSensors\n3. testStripe"
     demoList()
     let exit = new EventWaitHandle(false, EventResetMode.AutoReset)
     use disp = 
-        buttonPad.ToObservable() 
+        buttons.ToObservable() 
         |> Observable.map(fun x -> printfn "recv %A" x;  x)
         |> Observable.subscribe(fun x -> 
             match x.AsTuple with

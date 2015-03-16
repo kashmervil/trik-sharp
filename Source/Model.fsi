@@ -9,7 +9,7 @@
       member AnalogSensors : IDictionary<Sensor,Sensors.AnalogSensor>
       member AnalogSensorsConfig : (Sensor * int) []
       member Battery : Devices.Battery
-      member ButtonPad : Devices.ButtonPad
+      member Buttons : Devices.Buttons
       /// Use Encoders[Encoder.B1] for accessing B1 Encoder 
       member Encoders : IDictionary<Encoder,Sensors.Encoder>
       member EncodersConfig : (Encoder * int) []

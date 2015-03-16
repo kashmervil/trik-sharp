@@ -23,7 +23,7 @@ type Robot() as is =
         let date = DateTime.Now
         "trik-cam-" + date.ToString("yyMMdd-HHmmss.jp\g")
 
-    member val ButtonPad = super.ButtonPad
+    member val Buttons = super.Buttons
     member val Uploader = new FtpClient()
 
     member val Led = super.Led
