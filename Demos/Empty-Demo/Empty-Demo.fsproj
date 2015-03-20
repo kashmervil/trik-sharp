@@ -5,14 +5,15 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>dcff1f9e-250f-40a0-a1f6-338d9923ef43</ProjectGuid>
+    <ProjectGuid>DCFF1F9E-250F-40A0-A1F6-338D9923EF43</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>Empty_Demo</RootNamespace>
     <AssemblyName>Empty_Demo</AssemblyName>
-    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFSharpCoreVersion>4.3.1.0</TargetFSharpCoreVersion>
     <Name>Empty-Demo</Name>
+    <ProductVersion>12.0.0</ProductVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -49,8 +50,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Source\Trik.Core.fsproj">
       <Name>Trik.Core</Name>
-      <Project>{b3c7b4ed-ead9-4044-b37b-5f5660bd6a14}</Project>
-      <Private>True</Private>
+      <Project>B3C7B4ED-EAD9-4044-B37B-5F5660BD6A14</Project>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
