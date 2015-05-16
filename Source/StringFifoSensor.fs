@@ -2,7 +2,7 @@
 open System
 open System.Threading
 open Trik
-
+open Trik.Reactive
 [<AbstractClass>]
 type StringFifoSensor<'T>(path: string) as sens = 
     let notifier = new Notifier<'T>()

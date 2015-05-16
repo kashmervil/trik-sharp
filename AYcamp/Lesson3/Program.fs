@@ -49,7 +49,7 @@ for motorPort in Motor.Values do // "for x in xs" is an alternative for "for i=s
 // For example this won't be compiled robot.Sensor.[A7].Read()
 // Servos and Motors have the same indexing structure in robot
 
-printfn "Everything is seemed to be alright"
+printfn "Everything seems to be alright"
 
 //You can make aliases for on-robot devices just like this
 let servo1 = robot.Servo.[E1]

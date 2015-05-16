@@ -1,5 +1,5 @@
 ﻿open Trik
-//Thanks for Dima Soldatov for implementation
+//Thanks to Dmitry Soldatov for PID-coefficients 
 let model = new Model()
 
 let sensor = model.AnalogSensors.[A3]

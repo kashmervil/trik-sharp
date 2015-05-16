@@ -2,6 +2,7 @@
 open System
 open System.Threading
 open Trik
+open Trik.Reactive
 
 [<AbstractClass>]
 type BinaryFifoSensor<'T>(path, dataSize, bufSize, timeout) as sens = 

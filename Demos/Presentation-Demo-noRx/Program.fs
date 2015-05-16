@@ -1,6 +1,6 @@
 ﻿open Trik
 open Trik.Collections
-
+open Trik.Reactive
 [<EntryPoint>]
 let main _ = 
     use model = new Model()
@@ -9,7 +9,7 @@ let main _ =
     //for full ports description go http://goo.gl/jRWJ4j
     let power = model.AnalogSensors.[A1].ToObservable() 
                 |> Observable.map (fun d -> if d < 450 then 100 elif d > 550 then -100 else 0) 
-                |> Observable.DistinctUntilChanged
+                |> Observable.distinctUntilChanged
 
     use l_disp = power.Subscribe(motorL)
     use r_disp = power.Subscribe(motorR)
