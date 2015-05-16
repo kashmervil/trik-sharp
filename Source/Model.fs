@@ -18,6 +18,7 @@ type Model () as model =
     do AppDomain.CurrentDomain.ProcessExit.Add(fun _ -> (model :> IDisposable).Dispose())
 
     let propertyInit config ctor = config |> Array.map (fun (key, params') -> (key, ctor params')) |> dict
+    let propertyInit1 config ctor = config |> Array.map (fun (key, params') -> (key, ctor params')) |> dict
 
     let buttons =      lazy new Buttons() 
     let gyro =         lazy new Gyroscope(-32767, 32767, "/dev/input/by-path/platform-spi_davinci.1-event")
@@ -28,10 +29,13 @@ type Model () as model =
     let lineSensor =   lazy new LineSensor(model.LineSensorConfig)
     let objectSensor = lazy new ObjectSensor(model.ObjectSensorConfig)  
     let mxnSensor =    lazy new MXNSensor(model.MXNSensorConfig)
-    let servo =        lazy propertyInit model.ServosConfig        (fun x -> new Devices.ServoMotor(x))
-    let motor =        lazy propertyInit model.MotorsConfig        (fun (cnum:int) -> new Devices.PowerMotor(cnum))
-    let encoder =      lazy propertyInit model.EncodersConfig      (fun cnum -> new Sensors.Encoder(cnum))
-    let analogSensor = lazy propertyInit model.AnalogSensorsConfig (fun (cnum:int) -> new Sensors.AnalogSensor(cnum))
+
+    let servo =        lazy (let ss = model.ServosConfig 
+                             ss.Keys |> Seq.map (fun x -> (x, new ServoMotor(x.Path, ss.[x]))) |> dict)
+    
+    let motor =        lazy propertyInit model.MotorsConfig        (fun (cnum:int) -> new PowerMotor(cnum))
+    let encoder =      lazy propertyInit model.EncodersConfig      (fun cnum -> new Encoder(cnum))
+    let analogSensor = lazy propertyInit model.AnalogSensorsConfig (fun (cnum:int) -> new AnalogSensor(cnum))
     
     member val PadConfigPort =      4444 with get, set
     member val LineSensorConfig =   VideoSource.VP2 with get, set
@@ -39,13 +43,13 @@ type Model () as model =
     member val MXNSensorConfig =    VideoSource.VP2 with get, set
     member val LedStripeConfig =    Defaults.LedSripe with get, set
 
-    member val ServosConfig = 
-        [| (E1, (E1.Path, Defaults.Servo3))
-           (E2, (E2.Path, Defaults.Servo3))
-           (E3, (E3.Path, Defaults.Servo3))
-           (C1, (C1.Path, Defaults.Servo4))
-           (C2, (C2.Path, Defaults.Servo4))
-           (C3, (C3.Path, Defaults.Servo4)) |] with get, set
+    member val ServosConfig : IDictionary<IServoKey,ServoKind> = 
+        [| (E1, Defaults.Servo3)
+           (E2, Defaults.Servo3)
+           (E3, Defaults.Servo3)
+           (C1, Defaults.Servo4)
+           (C2, Defaults.Servo4)
+           (C3, Defaults.Servo4) |] |> dict :?> IDictionary<_,_> with get, set
     member val EncodersConfig =
         [| (B1, 0x30); (B2, 0x31); (B3, 0x32); (B4, 0x33) |] with get, set
     member val MotorsConfig = 

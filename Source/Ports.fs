@@ -18,17 +18,20 @@
             | M3 -> 0x16
             | M4 -> 0x17
         static member Values = [| M1; M2; M3; M4 |]
-
-    type Servo = E1 | E2 | E3 | C1 | C2 | C3 with
-        member self.Path = 
-            match self with 
-            | E1 -> "/sys/class/pwm/ehrpwm.1:1" 
-            | E2 -> "/sys/class/pwm/ehrpwm.1:0" 
-            | E3 -> "/sys/class/pwm/ehrpwm.0:1"             
-            | C1 -> "/sys/class/pwm/ecap.0" 
-            | C2 -> "/sys/class/pwm/ecap.1" 
-            | C3 -> "/sys/class/pwm/ecap.2" 
-        static member Values = [| E1; E2; E3 |]
+    
+    type IServoKey =
+        abstract member Path : string
+        //static member Values : Array<IServoKey>
+    type ServoKey = E1 | E2 | E3 | C1 | C2 | C3 with
+        interface IServoKey with
+            member self.Path = 
+                match self with 
+                | E1 -> "/sys/class/pwm/ehrpwm.1:1" 
+                | E2 -> "/sys/class/pwm/ehrpwm.1:0" 
+                | E3 -> "/sys/class/pwm/ehrpwm.0:1"             
+                | C1 -> "/sys/class/pwm/ecap.0" 
+                | C2 -> "/sys/class/pwm/ecap.1" 
+                | C3 -> "/sys/class/pwm/ecap.2" 
 
     ///<summary>Type representing AnalogSensors ports</summary>
     type Sensor = A1 | A2 | A3 | A4 | A5 | A6 with

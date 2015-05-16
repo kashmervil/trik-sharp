@@ -10,8 +10,9 @@ let exit = new EventWaitHandle(false, EventResetMode.AutoReset)
 let main argv = 
     printfn "Started"
     Helpers.I2C.Init "/dev/i2c-2" 0x48 1
-    use model = new Model(ServosConfig = [| (E1, ("/sys/class/pwm/ehrpwm.1:1", Defaults.Servo7))
-                                            (E2, ("/sys/class/pwm/ehrpwm.1:0", Defaults.Servo7)) |])
+    use model = new Model()
+    model.ServosConfig.[E1] <- Defaults.Servo7
+    model.ServosConfig.[E2] <- Defaults.Servo7
    
     let servo1 = model.Servos.[E2]
     let servo2 = model.Servos.[E1]

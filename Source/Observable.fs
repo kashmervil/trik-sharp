@@ -586,8 +586,3 @@ type ObservableExtensions private () =
         source |> Observable.distinctUntilChanged
 
     static member Interval(timeSpan: System.TimeSpan) = Observable.interval timeSpan
-        
-    [<Extension>]
-    static member Subscribe(source : IObservable<'T>, observer: IObserver<'T>) = source.Subscribe(observer)
-    [<Extension>]
-    static member Subscribe(source : IObservable<'T>, callback : Func<'T,unit>)= source.Subscribe(callback.Invoke)

@@ -29,10 +29,8 @@
       member Pad : Network.PadServer
       member PadConfigPort : int
       /// Use Servos[Servo.E1] for accessing E1 servo motor
-      member Servos : IDictionary<Servo,Devices.ServoMotor>
-      member
-        Servos : IDictionary<Servo,Devices.ServoMotor>
-      member ServosConfig : (Servo * (string * Collections.ServoKind)) []
+      member Servos : IDictionary<IServoKey,Devices.ServoMotor>
+      member ServosConfig : IDictionary<IServoKey,Collections.ServoKind> with get, set
       member AnalogSensorsConfig : (Sensor * int) [] with set
       member EncodersConfig : (Encoder * int) [] with set
       member LedStripeConfig : Collections.LedStripePorts with set
@@ -41,7 +39,5 @@
       member MotorsConfig : (Motor * int) [] with set
       member ObjectSensorConfig : VideoSource with set
       member PadConfigPort : int with set
-      member
-        ServosConfig : (Servo * (string * Collections.ServoKind)) [] with set
       static member RegisterResource : d:System.IDisposable -> unit
     end

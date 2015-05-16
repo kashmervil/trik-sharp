@@ -96,8 +96,7 @@ let testSensors (model:Model) =
 let main _ = 
     log "Started"
     Helpers.I2C.Init "/dev/i2c-2" 0x48 1
-    use model = new Model(ServosConfig = [| (E1, ("/sys/class/pwm/ehrpwm.1:1", Defaults.Servo4))
-                                            (E2, ("/sys/class/pwm/ehrpwm.1:0", Defaults.Servo4)) |], EncodersConfig = null)
+    use model = new Model(ServosConfig = dict [| upcast E1, Defaults.Servo4; upcast E2, Defaults.Servo4 |])
     model.Gyro.Start()
     let buttons = model.Buttons
     buttons.Start()
