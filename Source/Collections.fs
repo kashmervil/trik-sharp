@@ -1,7 +1,7 @@
 ﻿namespace Trik.Collections
 open System
 open Trik.Helpers
-    
+
 [<Struct>]
 type Point(x: int, y: int, z: int) =
     member self.X = x
@@ -61,21 +61,21 @@ type Defaults() =
     static member val Servo1 = {stop = 0; zero = 1500000; min = 1200000; max = 1800000; period = 20000000} 
     /// {stop = 1; zero = 1500000; min = 1200000; max = 1800000; period = 20000000}
     static member val Servo2 = {Defaults.Servo1 with stop =1}
-    //{ stop = 0; zero = 1600000; min = 800000; max = 2400000; period = 20000000 }
+    // { stop = 0; zero = 1600000; min = 800000; max = 2400000; period = 20000000 }
     static member val Servo3 = { stop = 0; zero = 1600000; min = 800000; max = 2400000; period = 20000000 }
-    ///{ stop = 0; zero = 0; min = 0; max = 2000000; period = 2000000 }
+    /// { stop = 0; zero = 0; min = 0; max = 2000000; period = 2000000 }
     static member val Servo4 = { stop = 0; zero = 0; min = 0; max = 2000000; period = 2000000 }
-    //{ stop = 0; zero = 1310000; min = 1200000; max = 1420000; period = 20000000 }
+    // { stop = 0; zero = 1310000; min = 1200000; max = 1420000; period = 20000000 }
     static member val Servo5 = { stop = 0; zero = 1310000; min = 1200000; max = 1420000; period = 20000000 }
-    ///{ stop = 0; zero = 1550000; min =  800000; max = 2250000; period = 20000000 }
+    /// { stop = 0; zero = 1550000; min =  800000; max = 2250000; period = 20000000 }
     static member val Servo6 = { stop = 0; zero = 1550000; min =  800000; max = 2250000; period = 20000000 }
-    ///{ stop = 0; zero = 1500000; min = 800000; max = 2400000; period = 20000000 }
+    /// { stop = 0; zero = 1500000; min = 800000; max = 2400000; period = 20000000 }
     static member val Servo7 = { stop = 0; zero = 1500000; min = 800000; max = 2400000; period = 20000000 }
 
-    ///{ Red = 0x14; Green = 0x15; Blue = 0x17; Ground = 0x16 }
+    /// { Red = 0x14; Green = 0x15; Blue = 0x17; Ground = 0x16 }
     static member val LedSripe = { Red = 0x14; Green = 0x15; Blue = 0x17; Ground = 0x16 }
 
-    static member val ServoEps = 100
+    static member val ServoEps = 5
     
 
 [<RequireQualifiedAccess>]
@@ -126,9 +126,19 @@ type DetectTarget(hue: int, hueTolerance: int, saturation: int, saturationTolera
 type VideoSensorOutput<'Location> = 
         Location of 'Location
         | Target of DetectTarget with 
+    ///Safe location getter
     member self.TryGetLocation = match self with
                                     | Location l -> Some l
                                     | Target _ -> None
+    ///Safe target getter
     member self.TryGetTarget = match self with
                                 | Location _ -> None
                                 | Target t -> Some t
+    ///Consider what property throws an exception when SensorOutput is Location
+    member self.GetTarget = 
+        let t = self.TryGetTarget
+        if t.IsSome then t.Value else invalidOp "SensorOutput is not a Target"
+    ///Consider what property throws an exception when SensorOutput is Target
+    member self.GetLocation = 
+        let t = self.TryGetLocation
+        if t.IsSome then t.Value else invalidOp "SensorOutput is not a Location"

@@ -29,14 +29,20 @@ namespace TRIK_Hunter
             var buttons = model.Buttons;
             var exit = new EventWaitHandle(false, EventResetMode.AutoReset);
 
-            var targetStream = sensorOutput
-                .Where(o => o.IsTarget).Select(o => o.TryGetTarget.Value);
+            var targetStream = from data in sensorOutput
+                               where data.IsTarget
+                               select data.GetTarget;
 
             var setterDisposable = targetStream.Subscribe(sensor.SetDetectTarget);
 
-            var locationStream = sensor.ToObservable()
-                .Where(o => o.IsLocation).Select(o => o.TryGetLocation.Value)
-                .Where(loc => loc.Mass > Constants.MinMass);
+            var locationStream = from data in sensorOutput
+                                 where data.IsLocation
+                                 let loc = data.GetLocation
+                                 where loc.Mass > Constants.MinMass
+                                 select loc;
+            //var locationStream = sensor.ToObservable()
+            //                    .Where(o => o.IsLocation).Select(o => o.GetLocation)
+            //                    .Where(loc => loc.Mass > Constants.MinMass);
 
             var xPowerSetter = locationStream
                 .Select(loc => loc.X)
