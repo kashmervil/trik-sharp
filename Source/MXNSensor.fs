@@ -3,6 +3,7 @@ open System
 open System.IO
 open System.Threading
 open Trik
+open Trik.Helpers
 open Trik.Internals
 
 //This sensor is gives you an array of dominant colors in M x N zones of screen
@@ -23,8 +24,8 @@ type MXNSensor(scriptPath, commandPath: string, sensorPath) =
     let cts = new CancellationTokenSource()
     let mutable (sizeM, sizeN) = (3, 3)
 
-    let parse x = Trik.Helpers.fastInt32Parse x
-    let script cmd = Helpers.SendToShell <| scriptPath + " " + cmd
+    let parse x = fastInt32Parse x
+    let script cmd = Shell.send <| scriptPath + " " + cmd
 
     //This property can be used to change amount of zones
     member self.Size 

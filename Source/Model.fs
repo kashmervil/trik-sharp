@@ -5,22 +5,21 @@ open Trik.Collections
 open Trik.Sensors
 open Trik.Devices
 open Trik.Network
+open Trik.Helpers
 
 type Model () as model = 
 
-    static do Helpers.I2C.Init "/dev/i2c-2" 0x48 1
+    static do I2C.init "/dev/i2c-2" 0x48 1
               IO.File.WriteAllText("/sys/class/gpio/gpio62/value", "1")
-              Helpers.SendToShell (String.Concat(List.map (sprintf "i2cset -y 2 0x48 %d 0x1000 w; ") [0x10 .. 0x13]))
+              Shell.send (String.Concat(List.map (sprintf "i2cset -y 2 0x48 %d 0x1000 w; ") [0x10 .. 0x13]))
                                                 
     static let resources = new ResizeArray<_>()
     
     let mutable isDisposed = false
     do AppDomain.CurrentDomain.ProcessExit.Add(fun _ -> (model :> IDisposable).Dispose())
-
     let propertyInit config ctor = config |> Array.map (fun (key, params') -> (key, ctor params')) |> dict
-    let propertyInit1 config ctor = config |> Array.map (fun (key, params') -> (key, ctor params')) |> dict
 
-    let buttons =      lazy new Buttons() 
+    let buttons =      lazy new Buttons()
     let gyro =         lazy new Gyroscope(-32767, 32767, "/dev/input/by-path/platform-spi_davinci.1-event")
     let accel =        lazy new Accelerometer(-32767, 32767, "/dev/input/event1")
     let led =          lazy new Led()
@@ -30,8 +29,7 @@ type Model () as model =
     let objectSensor = lazy new ObjectSensor(model.ObjectSensorConfig)  
     let mxnSensor =    lazy new MXNSensor(model.MXNSensorConfig)
 
-    let servo =        lazy (let ss = model.ServosConfig 
-                             ss.Keys |> Seq.map (fun x -> (x, new ServoMotor(x.Path, ss.[x]))) |> dict)
+    let servo =        lazy (model.ServosConfig |> Seq.map (fun x -> (x.Key, new ServoMotor(x.Key.Path, x.Value))) |> dict)
     
     let motor =        lazy propertyInit model.MotorsConfig        (fun (cnum:int) -> new PowerMotor(cnum))
     let encoder =      lazy propertyInit model.EncodersConfig      (fun cnum -> new Encoder(cnum))
@@ -43,13 +41,13 @@ type Model () as model =
     member val MXNSensorConfig =    VideoSource.VP2 with get, set
     member val LedStripeConfig =    Defaults.LedSripe with get, set
 
-    member val ServosConfig : IDictionary<IServoKey,ServoKind> = 
+    member val ServosConfig: IDictionary<IServoKey,ServoKind> = 
         [| (E1, Defaults.Servo3)
            (E2, Defaults.Servo3)
            (E3, Defaults.Servo3)
            (C1, Defaults.Servo4)
            (C2, Defaults.Servo4)
-           (C3, Defaults.Servo4) |] |> dict :?> IDictionary<_,_> with get, set
+           (C3, Defaults.Servo4) |] |> dict :?> IDictionary<IServoKey,ServoKind> with get, set
     member val EncodersConfig =
         [| (B1, 0x30); (B2, 0x31); (B3, 0x32); (B4, 0x33) |] with get, set
     member val MotorsConfig = 

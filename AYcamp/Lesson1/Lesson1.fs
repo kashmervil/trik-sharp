@@ -21,7 +21,7 @@ type Robot() =
 
     member self.Sleep(sec: float) = System.Threading.Thread.Sleep(int <| sec * 1000.)
     member self.Sleep(millisec: int) = System.Threading.Thread.Sleep(millisec)
-    member self.Say(text) = Helpers.PostToShell <| "espeak -v russian_test -s 100 " + text
+    member self.Say(text) = Helpers.Shell.post <| "espeak -v russian_test -s 100 " + text
     
     interface IDisposable with
         member self.Dispose() = (super :> IDisposable).Dispose()

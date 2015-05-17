@@ -18,7 +18,7 @@ type Robot() as is =
     static let resources = new ResizeArray<_>()
     
     let takePicture name = 
-        SendToShell <| "v4l2grab -d \"/dev/video2\" -H 640 -W 480 -o " + name + " 2> /dev/null"
+        Shell.send <| "v4l2grab -d \"/dev/video2\" -H 640 -W 480 -o " + name + " 2> /dev/null"
     let defaultName() = 
         let date = DateTime.Now
         "trik-cam-" + date.ToString("yyMMdd-HHmmss.jp\g")
@@ -46,16 +46,16 @@ type Robot() as is =
     member self.Sleep(millisec: int) = System.Threading.Thread.Sleep(millisec)
     
     member self.Say(text) = 
-        PostToShell <| "espeak -v russian_test -s 100 \"" + text + "\" 2> /dev/null"
+        Shell.post <| "espeak -v russian_test -s 100 \"" + text + "\" 2> /dev/null"
     
     member self.PlayFile(file:string) = 
-        PostToShell <| 
+        Shell.post <| 
             if file.EndsWith(".wav") then "aplay --quiet &quot;" + file + "&quot; &amp;"
             elif file.EndsWith(".mp3") then "cvlc --quiet &quot;" + file + "&quot; &amp;"
             else invalidArg "file" "Incorrect filename"
 
     member self.TakeScreenshot() = 
-        PostToShell <|
+        Shell.post <|
         let date = DateTime.Now
         "fbgrab trik-screenshot-" + date.ToString("yyMMdd-HHmmss.pn\g") + " 2> /dev/null"
 

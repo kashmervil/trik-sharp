@@ -3,6 +3,7 @@ open System
 open System.IO
 open System.Threading
 open Trik
+open Trik.Helpers
 open Trik.Collections
 
 [<AbstractClass>]
@@ -10,7 +11,7 @@ type VideoSensor<'Parsed>(scriptPath, commandPath: string, sensorPath) =
     inherit StringFifoSensor<VideoSensorOutput<'Parsed>>(sensorPath)
     let mutable stream = null
     let mutable commandFifo: StreamWriter = null
-    let script cmd = Helpers.SendToShell <| scriptPath + " " + cmd
+    let script cmd = Shell.send <| scriptPath + " " + cmd
     let mutable videoOut = true
     let mutable isDisposed = false
     let cts = new CancellationTokenSource()

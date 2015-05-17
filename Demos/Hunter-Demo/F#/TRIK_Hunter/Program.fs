@@ -1,6 +1,7 @@
-﻿open Trik
+﻿open System.Threading
+open Trik
 open Trik.Collections
-open System.Threading
+open Trik.Helpers
 
 let maxAngleX = 60
 let maxAngleY = 60
@@ -47,7 +48,7 @@ let colorProcessor (r, g, b) =
 
 let conversion (x : DetectTarget) = 
     let (r, g, b) = 
-        Trik.Helpers.HSVtoRGB(float x.Hue, (float x.Saturation) / 100. , (float x.Value) / 100.)
+        ColorSpaces.HSVtoRGB(float x.Hue, (float x.Saturation) / 100. , (float x.Value) / 100.)
     colorProcessor (int (r * RGBdepth), int (g * RGBdepth), int (b * RGBdepth))
 
 let exit = new EventWaitHandle(false, EventResetMode.AutoReset)
@@ -98,7 +99,7 @@ let main _ =
     
     buttons.Start()
     sensor.Start()
-    Trik.Helpers.SendToShell """v4l2-ctl -d "/dev/video2" --set-ctrl white_balance_temperature_auto=1"""
+    Shell.send """v4l2-ctl -d "/dev/video2" --set-ctrl white_balance_temperature_auto=1"""
 
     model.LedStripe.SetPower (75, 20, 20)
 

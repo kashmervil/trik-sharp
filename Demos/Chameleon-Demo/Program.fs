@@ -17,7 +17,7 @@ let updatePosition x acc =
     else acc
 
 let conversion (x : DetectTarget) = 
-    let (r, g, b) = HSVtoRGB(float x.Hue, (float x.Saturation) / SVscale, (float x.Value) / SVscale)
+    let (r, g, b) = ColorSpaces.HSVtoRGB(float x.Hue, (float x.Saturation) / SVscale, (float x.Value) / SVscale)
     (int (r * RGBdepth), int (g * RGBdepth), int (b * RGBdepth))
 
 let exit = new EventWaitHandle(false, EventResetMode.AutoReset)
@@ -26,7 +26,7 @@ let exit = new EventWaitHandle(false, EventResetMode.AutoReset)
 let main _ =
     let model = new Model(ObjectSensorConfig = VideoSource.USB)
     model.ServosConfig.[E1] <- Defaults.Servo3
-    Helpers.SendToShell """v4l2-ctl -d "/dev/video2" --set-ctrl white_balance_temperature_auto=1""" //option for better color reproduction
+    Shell.send """v4l2-ctl -d "/dev/video2" --set-ctrl white_balance_temperature_auto=1""" //option for better color reproduction
 
     let sensor = model.ObjectSensor
     let buttons = model.Buttons

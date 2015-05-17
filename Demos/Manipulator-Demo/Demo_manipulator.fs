@@ -9,7 +9,6 @@ let exit = new EventWaitHandle(false, EventResetMode.AutoReset)
 [<EntryPoint>]
 let main argv = 
     printfn "Started"
-    Helpers.I2C.Init "/dev/i2c-2" 0x48 1
     use model = new Model()
     model.ServosConfig.[E1] <- Defaults.Servo7
     model.ServosConfig.[E2] <- Defaults.Servo7

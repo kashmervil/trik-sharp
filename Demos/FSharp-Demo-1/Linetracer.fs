@@ -10,6 +10,17 @@ open Trik.Sensors
 open Trik.Helpers
 
 
+let loadIniConf path = 
+    IO.File.ReadAllLines (path)
+        |> Seq.choose(fun s -> 
+            if s.Length > 0 then 
+                let parts = 
+                    s.Split ([| '=' |], StringSplitOptions.RemoveEmptyEntries) 
+                    |> Array.map(fun s -> s.Trim([| ' '; '\r' |]) )
+                Some(parts.[0], parts.[1]) 
+            else None)
+        |> dict
+
 let logFifoPath = @"/tmp/dsp-detector.out.fifo"
 let cmdFifoPath = @"/tmp/dsp-detector.in.fifo"
 
