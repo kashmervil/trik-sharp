@@ -1,50 +1,40 @@
-﻿open System.Threading
-open Trik
-open Trik.Collections
+﻿open Trik
 open Trik.Helpers
+open Trik.Collections
+open Trik.Reactive
+open System.Threading
 
-let maxAngleX = 60
-let maxAngleY = 60
+let maxAcc      = 90
+let maxAngleX   = 60
+let maxAngleY   = 60
 let scaleConstX = 20
 let scaleConstY = 20
-let RGBdepth = 100.
-let minMass = 5
+let RGBdepth    = 100.
+let minMass     = 5
 
-let red = (100, 0, 0)
-let green = (0, 100, 0)
-let blue = (0, 0, 100)
-let brown = (65, 17, 17)
+let red    = (100, 0, 0)
+let green  = (0, 100, 0)
+let blue   = (0, 0, 100)
+let brown  = (65, 17, 17)
 let orange = (100, 65, 0)
 let yellow = (100, 100, 0)
-let teal = (0, 50, 50)
+let teal   = (0, 50, 50)
 let purple = (63, 13, 94)
-let pink = (100, 75, 80)
+let pink   = (100, 75, 80)
 let colors = 
     [red; green; blue; brown; orange; yellow; teal; purple; pink]
 
-let scale var mA sC  = (Trik.Helpers.limit (-mA) mA var) / sC
+let scale var border  = limit (-border) border var
 
-let updatePositionX x acc = 
-    if (x > 15 && x <= 100 && acc < 90) || (x < -15 && x >= -100 && acc > -90) 
-    then acc + scale x maxAngleX scaleConstX
-    else acc
+let updatePositionX x = (scale x maxAngleX) / scaleConstX
 
-let updatePositionY y acc =
-    if (y > 5 && y <= 100 && acc < 30) || (y < -5 && y >= -100 && acc > -30) 
-    then acc + scale y maxAngleY scaleConstY
-    else acc
+let updatePositionY y = (scale y maxAngleY) / scaleConstY
 
 let colorProcessor (r, g, b) = 
     let del (x, y, z) = (x - r) * (x - r) + (g - y) * (g - y) + (b - z) * (b - z)
-    let rec loop (x :: xs) acc =
-        let sup = del x
-        let accDelta = del acc
-        match (x :: xs) with
-        | [t] -> printfn "t : %A ;; acc : %A" t acc; if del t < accDelta then t else acc 
-        | x :: xs when sup < accDelta -> loop xs x
-        | x :: xs when sup >= accDelta -> loop xs acc   
-        | _ -> failwith "no way" 
-    loop colors red
+    colors |> List.fold (fun acc x -> let xDelta = del x
+                                      let accDelta = del acc 
+                                      if xDelta < accDelta then x else acc) red
 
 let conversion (x : DetectTarget) = 
     let (r, g, b) = 
@@ -64,8 +54,6 @@ let main _ =
 
     use sensor  = model.ObjectSensor
     use buttons = model.Buttons
-    use xServo  = model.Servos.[C1]
-    use yServo  = model.Servos.[C2]
 
     let sensorOutput = sensor.ToObservable()
     
@@ -77,13 +65,19 @@ let main _ =
 
     use ledstripeDisposable = colorStream.Subscribe model.LedStripe
 
-    use powerSetterDisposable = 
-             model.ObjectSensor.ToObservable()  
-             |> Observable.choose (fun o -> o.TryGetLocation)
-             |> Observable.filter (fun loc -> loc.Mass > minMass) 
-             |> Observable.scan (fun (accX, accY) loc -> (updatePositionX loc.X accX, updatePositionY loc.Y accY)) (0, 0)
-             |> Observable.subscribe (fun (a, b) -> xServo.SetPower -a
-                                                    yServo.SetPower b)
+    let locationStream = sensor.ToObservable()  
+                         |> Observable.choose (fun o -> o.TryGetLocation)
+                         |> Observable.filter (fun loc -> loc.Mass > minMass)
+
+    use xPowerSetter = locationStream 
+                       |> Observable.map (fun loc -> -loc.X)
+                       |> Observable.scan (fun acc loc -> scale maxAcc acc + updatePositionX loc) 0
+                       |> Observable.subscribe model.Servos.[C1].SetPower
+
+    use yPowerSetter = locationStream
+                       |> Observable.map (fun loc -> loc.Y)
+                       |> Observable.scan (fun acc loc -> scale maxAcc acc + updatePositionY loc) 0
+                       |> Observable.subscribe model.Servos.[C2].SetPower
     
     let observableButtons = buttons.ToObservable()
     use downButtonDispose = observableButtons
@@ -94,12 +88,12 @@ let main _ =
                           |> Observable.filter (fun x -> ButtonEventCode.Up = x.Button)
                           |> Observable.subscribe (fun _ -> exit.Set() |> ignore)
 
-//    use timerSetterDisposable = Observable (System.TimeSpan.FromSeconds 40.0) 
-//                                |> Observable.subscribe (fun _ -> sensor.Detect())
+    use timerSetterDisposable = Observable.interval (System.TimeSpan.FromSeconds 40.0) 
+                                |> Observable.subscribe (fun _ -> sensor.Detect())
     
     buttons.Start()
     sensor.Start()
-    Shell.send """v4l2-ctl -d "/dev/video2" --set-ctrl white_balance_temperature_auto=1"""
+    Helpers.Shell.send  """v4l2-ctl -d "/dev/video2" --set-ctrl white_balance_temperature_auto=1"""
 
     model.LedStripe.SetPower (75, 20, 20)
 
