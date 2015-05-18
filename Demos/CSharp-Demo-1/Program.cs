@@ -11,8 +11,8 @@ namespace CSharp_Demo_1
         {
             var robot = new Trik.Junior.Robot();
             int counter = 0;
-            Console.WriteLine(robot.Sensor[Sensor.A1].Read()); 
-            var motor = new Trik.Devices.PowerMotor(Motor.M1);
+            Console.WriteLine(robot.Sensor[SensorPort.A1].Read()); 
+            var motor = new Trik.Devices.PowerMotor(MotorPort.M1);
             while (counter < 10)
             {
                 for (int i = 1; i < 4; i++)

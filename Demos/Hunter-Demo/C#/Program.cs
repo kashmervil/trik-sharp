@@ -21,8 +21,8 @@ namespace TRIK_Hunter
         static void Main()
         {
             var model = new Model{ ObjectSensorConfig = VideoSource.USB };
-            model.ServosConfig[ServoKey.C1] = Defaults.Servo3;
-            model.ServosConfig[ServoKey.C2] = Defaults.Servo3;
+            model.ServosConfig[ServoPort.C1] = Defaults.Servo3;
+            model.ServosConfig[ServoPort.C2] = Defaults.Servo3;
 
             var sensor = model.ObjectSensor;
             var sensorOutput = sensor.ToObservable();
@@ -47,12 +47,12 @@ namespace TRIK_Hunter
             var xPowerSetter = locationStream
                 .Select(loc => loc.X)
                 .Scan(0, (acc, x) => Helpers.Limit(-90, 90, acc) + ScaleXValue(x))
-                .Subscribe(model.Servos[ServoKey.C1]);
+                .Subscribe(model.Servos[ServoPort.C1]);
 
             var yPowerSetter = locationStream
                 .Select(loc => loc.Y)
                 .Scan(0, (acc, y) => Helpers.Limit(-90, 90, acc) + ScaleYValue(y))
-                .Subscribe(model.Servos[ServoKey.C2]);
+                .Subscribe(model.Servos[ServoPort.C2]);
 
             var observableButtons = buttons.ToObservable();
 

@@ -12,7 +12,7 @@ type PowerMotor(i2cCommandNumber) =
     member self.SetPower(power) = I2C.send i2cCommandNumber (limit -100 100 power) 1
     member self.Stop() = self.SetPower 0
     
-    new (port: Motor) = new PowerMotor(port.I2CNumber)
+    new (port: IMotorPort) = new PowerMotor(port.I2CNumber)
 
     override self.Finalize() = (self :> IDisposable).Dispose()
 

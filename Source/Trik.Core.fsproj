@@ -66,9 +66,9 @@
     <None Include="App.config" />
     <Compile Include="Observable.fs" />
     <Compile Include="Helpers.fs" />
+    <Compile Include="Ports.fs" />
     <Compile Include="Collections.fs" />
     <Compile Include="Emulation.fs" />
-    <Compile Include="Ports.fs" />
     <Compile Include="StringFifoSensor.fs" />
     <Compile Include="VideoSensor.fs" />
     <Compile Include="LineSensor.fs" />

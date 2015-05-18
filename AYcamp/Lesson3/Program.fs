@@ -36,7 +36,7 @@ printfn "But A2 %d" <| robot.Sensor.[A2].Read()
 robot.Sensor.[A3].Read() |> printfn "and A3 %d"
 //Since printfn "%d" robot.Sensor.[A1].Read() won't work
 
-for motorPort in Motor.Values do // "for x in xs" is an alternative for "for i=start to finish do".
+for motorPort in Defaults.MotorPorts do // "for x in xs" is an alternative for "for i=start to finish do".
 // xs can be Array, List or another enumerable collection. [1..12] or ["2"; "3"; "5"]
     robot.Motor.[motorPort].SetPower 70 // braces for function calls can be omitted
     robot.Sleep 100

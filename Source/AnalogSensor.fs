@@ -5,7 +5,7 @@ open Trik
 type AnalogSensor(register) = 
     inherit Internals.PollingSensor<int>()
     override self.Read() = Helpers.I2C.receive register |> Helpers.limit 0 1024 
-    new (port : Sensor) = new AnalogSensor(port.I2CNumber) 
+    new (port : ISensorPort) = new AnalogSensor(port.I2CNumber) 
     interface IDisposable with
         member x.Dispose() = ()
    

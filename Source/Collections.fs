@@ -1,5 +1,6 @@
 ﻿namespace Trik.Collections
 open System
+open Trik
 open Trik.Helpers
 
 [<Struct>]
@@ -76,6 +77,11 @@ type Defaults() =
     static member val LedSripe = { Red = 0x14; Green = 0x15; Blue = 0x17; Ground = 0x16 }
 
     static member val ServoEps = 5
+    static member val EncoderPorts = [| B1; B2; B3; B4 |]
+    static member val MotorPorts = [| M1; M2; M3; M4 |]
+    static member val SensorPorts = [| A1; A2; A3; A4; A5; A6 |]
+
+
     
 
 [<RequireQualifiedAccess>]

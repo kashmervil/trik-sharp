@@ -19,8 +19,8 @@ model.ServosConfig.[E1] <- Defaults.Servo4
 
 // 2) In fact you can replace the default (E1..E3, C1..C3) servo ports. 
 //    with absolutely new ones  
-type NewServoKey = EE1 | EE2 | EE3 with
-    interface IServoKey with
+type NewServoPort = EE1 | EE2 | EE3 with
+    interface IServoPort with
         member self.Path = "Just an example"
 
 model.ServosConfig <- new Dictionary<_,_>()
