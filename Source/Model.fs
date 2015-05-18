@@ -9,9 +9,9 @@ open Trik.Helpers
 
 type Model () as model = 
 
-//    static do I2C.init "/dev/i2c-2" 0x48 1
-//              IO.File.WriteAllText("/sys/class/gpio/gpio62/value", "1")
-//              Shell.send (String.Concat(List.map (sprintf "i2cset -y 2 0x48 %d 0x1000 w; ") [0x10 .. 0x13]))
+    static do I2C.init "/dev/i2c-2" 0x48 1
+              IO.File.WriteAllText("/sys/class/gpio/gpio62/value", "1")
+              Shell.send (String.Concat(List.map (sprintf "i2cset -y 2 0x48 %d 0x1000 w; ") [0x10 .. 0x13]))
                                                 
     static let resources = new ResizeArray<_>()
     
