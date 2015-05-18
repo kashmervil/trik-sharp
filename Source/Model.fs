@@ -9,9 +9,9 @@ open Trik.Helpers
 
 type Model () as model = 
 
-    static do I2C.init "/dev/i2c-2" 0x48 1
-              IO.File.WriteAllText("/sys/class/gpio/gpio62/value", "1")
-              Shell.send (String.Concat(List.map (sprintf "i2cset -y 2 0x48 %d 0x1000 w; ") [0x10 .. 0x13]))
+//    static do I2C.init "/dev/i2c-2" 0x48 1
+//              IO.File.WriteAllText("/sys/class/gpio/gpio62/value", "1")
+//              Shell.send (String.Concat(List.map (sprintf "i2cset -y 2 0x48 %d 0x1000 w; ") [0x10 .. 0x13]))
                                                 
     static let resources = new ResizeArray<_>()
     
@@ -28,9 +28,8 @@ type Model () as model =
     let lineSensor =   lazy new LineSensor(model.LineSensorConfig)
     let objectSensor = lazy new ObjectSensor(model.ObjectSensorConfig)  
     let mxnSensor =    lazy new MXNSensor(model.MXNSensorConfig)
-
+    let battery =      lazy new Battery()
     let servo =        lazy (model.ServosConfig |> Seq.map (fun x -> (x.Key, new ServoMotor(x.Key.Path, x.Value))) |> dict)
-    
     let motor =        lazy propertyInit model.MotorsConfig        (fun cnum -> new PowerMotor(cnum))
     let encoder =      lazy propertyInit model.EncodersConfig      (fun cnum -> new Encoder(cnum))
     let analogSensor = lazy propertyInit model.AnalogSensorsConfig (fun cnum -> new AnalogSensor(cnum))
@@ -42,12 +41,12 @@ type Model () as model =
     member val LedStripeConfig =    Defaults.LedSripe with get, set
 
     member val ServosConfig: IDictionary<IServoPort,ServoKind> = 
-        [| (E1, Defaults.Servo3)
-           (E2, Defaults.Servo3)
-           (E3, Defaults.Servo3)
-           (C1, Defaults.Servo4)
-           (C2, Defaults.Servo4)
-           (C3, Defaults.Servo4) |] |> dict :?> IDictionary<IServoPort,ServoKind> with get, set
+        [| (E1 :> IServoPort, Defaults.Servo3)
+           (E2 :> IServoPort, Defaults.Servo3)
+           (E3 :> IServoPort, Defaults.Servo3)
+           (C1 :> IServoPort, Defaults.Servo4)
+           (C2 :> IServoPort, Defaults.Servo4)
+           (C3 :> IServoPort, Defaults.Servo4) |] |> Helpers.writableDict with get, set
     member val EncodersConfig: IEncoderPort [] =
         (Defaults.EncoderPorts |> Array.map (fun x -> upcast x)) with get, set
     member val MotorsConfig: IMotorPort [] = 
@@ -72,7 +71,7 @@ type Model () as model =
     member self.ObjectSensor with get() = objectSensor.Force()
     member self.MXNSensor with get() = mxnSensor.Force()
 
-    member val Battery = new Battery() 
+    member self.Battery with get() =  battery.Force()
 
     static member RegisterResource(d: IDisposable) = lock resources <| fun () -> resources.Add(d)
 
