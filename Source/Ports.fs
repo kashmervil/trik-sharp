@@ -20,8 +20,8 @@
                 match self with 
                 | M1 -> 0x14 
                 | M2 -> 0x15
-                | M3 -> 0x16
-                | M4 -> 0x17
+                | M3 -> 0x17
+                | M4 -> 0x16
     
     type IServoPort =
         abstract member Path : string
