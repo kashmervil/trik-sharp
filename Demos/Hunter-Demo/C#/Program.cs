@@ -26,14 +26,6 @@ namespace TRIK_Hunter
 
             var sensor = model.ObjectSensor;
             var sensorOutput = sensor.ToObservable();
-            var buttons = model.Buttons;
-            var exit = new EventWaitHandle(false, EventResetMode.AutoReset);
-
-            var targetStream = from data in sensorOutput
-                               where data.IsTarget
-                               select data.GetTarget;
-
-            var setterDisposable = targetStream.Subscribe(sensor.SetDetectTarget);
 
             var locationStream = from data in sensorOutput
                                  where data.IsLocation
@@ -45,7 +37,7 @@ namespace TRIK_Hunter
             //                    .Where(loc => loc.Mass > Constants.MinMass);
 
             var xPowerSetter = locationStream
-                .Select(loc => loc.X)
+                .Select(loc => -loc.X)
                 .Scan(0, (acc, x) => Helpers.Limit(-90, 90, acc) + ScaleXValue(x))
                 .Subscribe(model.Servos[ServoPort.C1]);
 
@@ -53,6 +45,16 @@ namespace TRIK_Hunter
                 .Select(loc => loc.Y)
                 .Scan(0, (acc, y) => Helpers.Limit(-90, 90, acc) + ScaleYValue(y))
                 .Subscribe(model.Servos[ServoPort.C2]);
+            
+            
+            var buttons = model.Buttons;
+            var exit = new EventWaitHandle(false, EventResetMode.AutoReset);
+
+            var targetStream = from data in sensorOutput
+                               where data.IsTarget
+                               select data.GetTarget;
+
+            var setterDisposable = targetStream.Subscribe(sensor.SetDetectTarget);
 
             var observableButtons = buttons.ToObservable();
 
