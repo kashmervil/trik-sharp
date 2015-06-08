@@ -24,7 +24,7 @@ let pink   = (100, 75, 80)
 let colors = 
     [red; green; blue; brown; orange; yellow; teal; purple; pink]
 
-let scale var border  = limit (-border) border var
+let scale var border  = Calculations.limit (-border) border var
 
 let updatePositionX x = (scale x maxAngleX) / scaleConstX
 
@@ -38,7 +38,7 @@ let colorProcessor (r, g, b) =
 
 let conversion (x : DetectTarget) = 
     let (r, g, b) = 
-        ColorSpaces.HSVtoRGB(float x.Hue, (float x.Saturation) / 100. , (float x.Value) / 100.)
+        Calculations.HSVtoRGB(float x.Hue, (float x.Saturation) / 100. , (float x.Value) / 100.)
     colorProcessor (int (r * RGBdepth), int (g * RGBdepth), int (b * RGBdepth))
 
 let exit = new EventWaitHandle(false, EventResetMode.AutoReset)

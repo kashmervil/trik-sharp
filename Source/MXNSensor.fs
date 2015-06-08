@@ -24,7 +24,7 @@ type MXNSensor(scriptPath, commandPath: string, sensorPath) =
     let cts = new CancellationTokenSource()
     let mutable (sizeM, sizeN) = (3, 3)
 
-    let parse x = fastInt32Parse x
+    let parse x = Calculations.unsafeInt32Parse x
     let script cmd = Shell.send <| scriptPath + " " + cmd
 
     //This property can be used to change amount of zones

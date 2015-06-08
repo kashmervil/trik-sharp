@@ -1,9 +1,8 @@
-﻿module Trik.Helpers
+﻿namespace Trik.Helpers
 open System
 open System.IO
 open System.Collections.Generic
 open System.Runtime.InteropServices
-open Microsoft.FSharp.Core
 
 module Shell =
     [<CompiledName("Send")>]
@@ -34,7 +33,7 @@ module Media =
         "trik-cam-" + date.ToString("yyMMdd-HHmmss.jp\g")
 
     [<CompiledName("TakePicture")>]
-    let takePicture() = "v4l2grab -d \"/dev/video2\" -H 640 -W 480 -o " + defaultPhotoName() + " 2> /dev/null"
+    let takePicture(photoName) = Shell.post <| "v4l2grab -d \"/dev/video2\" -H 640 -W 480 -o " + photoName + " 2> /dev/null"
 
     [<CompiledName("Say")>]
     let say text = Shell.post <| "espeak -v russian_test -s 100 \"" + text + "\" 2> /dev/null"
@@ -44,7 +43,7 @@ module Media =
             Shell.post <| 
             if   file.EndsWith(".wav") then "aplay --quiet &quot;" + file + "&quot; &amp;"
             elif file.EndsWith(".mp3") then "cvlc  --quiet &quot;" + file + "&quot; &amp;"
-            else invalidArg "file" "Incorrect filename"
+            else invalidArg "file" "Incorrect file format"
 
 
 module I2C =
@@ -69,7 +68,7 @@ module I2C =
     [<CompiledName("Receive")>]
     let receive (command: int) = I2CLockCall wrap_I2c_ReceiveData command
 
-module ColorSpaces =
+module Calculations =
     //Takes H from [0..359], S & V from [0..1]. Returns R, G, B from [0..1] each
     let HSVtoRGB (h, s, v) =
         if s = 0.0 then (v, v, v) 
@@ -102,25 +101,25 @@ module ColorSpaces =
             elif g = M then (posh(60.0 * (2.0 + (deltaf b r))), s, M)
             else (posh(60.0 * (4.0 + (deltaf r g))), s, M)
 
-[<CompiledName("FastInt32Parse")>]
-let fastInt32Parse (s:string) = 
-    let mutable n = 0
-    let start = if s.Chars 0 |> Char.IsDigit then 0 else 1
-    let sign = if s.Chars 0 = '-' then -1 else 1
-    let zero = int '0'
-    for i = start to s.Length - 1 do 
-        n <- n * 10 + int (s.Chars i) - zero
-    sign * n
+    [<CompiledName("UnsafeInt32Parse")>]
+    let internal unsafeInt32Parse (s:string) = 
+        let mutable n = 0
+        let start = if s.Chars 0 |> Char.IsDigit then 0 else 1
+        let sign = if s.Chars 0 = '-' then -1 else 1
+        let zero = int '0'
+        for i = start to s.Length - 1 do 
+            n <- n * 10 + int (s.Chars i) - zero
+        sign * n
 
-/// Squishes Value between lowBound and upBound
-[<CompiledName("Limit")>]
-let inline limit lowBound upBound value = if upBound < value then upBound 
-                                          elif lowBound > value then lowBound 
-                                          else value  
+    /// Squishes Value between lowBound and upBound
+    [<CompiledName("Limit")>]
+    let inline limit lowBound upBound value = if upBound < value then upBound 
+                                              elif lowBound > value then lowBound 
+                                              else value  
 
-[<CompiledName("CreateWritableDictionary")>]
-/// Creates usual writable Dictionary
-let writableDict xs = 
-    let d = new Dictionary<_,_>()
-    Array.iter d.Add xs
-    d :> IDictionary<_,_>
+    [<CompiledName("CreateWritableDictionary")>]
+    /// Creates usual writable Dictionary
+    let internal writableDict xs = 
+        let d = new Dictionary<_,_>()
+        Array.iter d.Add xs
+        d :> IDictionary<_,_>

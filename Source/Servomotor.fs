@@ -1,6 +1,7 @@
 ﻿namespace Trik.Devices
 open System
 open Trik
+open Trik.Helpers
 open Trik.Collections
 type ServoMotor(servoPath: string, kind: ServoKind) =
     let mutable isDisposed = false
@@ -16,7 +17,7 @@ type ServoMotor(servoPath: string, kind: ServoKind) =
     member self.SetPower command =  
             lock self 
             <| fun () ->
-                let v = Helpers.limit -100 100 command 
+                let v = Calculations.limit -100 100 command 
                 let range = if v < 0 then kind.zero - kind.min else kind.max - kind.zero                            
                 let duty = (kind.zero + range * v / 100)     
                 fd.Write(duty)

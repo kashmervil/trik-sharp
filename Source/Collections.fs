@@ -93,12 +93,14 @@ type PadEvent =
 [<Flags>]
 type LedColor = Green = 1 | Red = 2 | Orange = 3 | Off = 0
 
+module private M = let inline parse s = Calculations.unsafeInt32Parse s
+
 [<Struct>]
 type LineLocation(x: int, crossroad: int, mass: int) = 
     member self.X = x
     member self.Crossroad = crossroad
     member self.Mass = mass
-    new(x: string, c: string, m: string) = new LineLocation(fastInt32Parse x, fastInt32Parse c, fastInt32Parse m)
+    new(x: string, c: string, m: string) = new LineLocation(M.parse x, M.parse c, M.parse m)
     override self.ToString() = sprintf "loc: %d %d %d\n\n" self.X self.Crossroad self.Mass
 
 [<Struct>]
@@ -106,7 +108,7 @@ type ObjectLocation(x: int, y: int, mass: int) =
     member self.X = x
     member self.Y = y
     member self.Mass = mass
-    new(x: string, y: string, m: string) = new ObjectLocation(fastInt32Parse x, fastInt32Parse y, fastInt32Parse m)
+    new(x: string, y: string, m: string) = new ObjectLocation(M.parse x, M.parse y, M.parse m)
     override self.ToString() = sprintf "loc: %d %d %d\n\n" self.X self.Y self.Mass
 
 [<Struct>]
@@ -119,12 +121,12 @@ type DetectTarget(hue: int, hueTolerance: int, saturation: int, saturationTolera
     member self.ValueTolerance = valueTolerance
     new (hue: string, hueTolerance: string
         , saturation: string, saturationTolerance: string
-        , value: string, valueTolerance: string) = new DetectTarget(fastInt32Parse hue
-                                                                    , fastInt32Parse hueTolerance
-                                                                    , fastInt32Parse saturation
-                                                                    , fastInt32Parse saturationTolerance
-                                                                    , fastInt32Parse value
-                                                                    , fastInt32Parse valueTolerance)
+        , value: string, valueTolerance: string) = new DetectTarget(M.parse hue
+                                                                    , M.parse hueTolerance
+                                                                    , M.parse saturation
+                                                                    , M.parse saturationTolerance
+                                                                    , M.parse value
+                                                                    , M.parse valueTolerance)
 
     override self.ToString() = String.Format("hsv {0} {1} {2} {3} {4} {5}", hue, hueTolerance, saturation, saturationTolerance, value, valueTolerance)
 

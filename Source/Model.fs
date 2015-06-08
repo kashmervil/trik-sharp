@@ -46,7 +46,7 @@ type Model () as model =
            (E3 :> IServoPort, Defaults.Servo3)
            (C1 :> IServoPort, Defaults.Servo4)
            (C2 :> IServoPort, Defaults.Servo4)
-           (C3 :> IServoPort, Defaults.Servo4) |] |> Helpers.writableDict with get, set
+           (C3 :> IServoPort, Defaults.Servo4) |] |> Calculations.writableDict with get, set
     member val EncodersConfig: IEncoderPort [] =
         (Defaults.EncoderPorts |> Array.map (fun x -> upcast x)) with get, set
     member val MotorsConfig: IMotorPort [] = 

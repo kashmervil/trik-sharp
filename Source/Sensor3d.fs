@@ -1,6 +1,7 @@
 namespace Trik.Internals
 open System
 open Trik
+open Trik.Helpers
 open Trik.Collections
 
 type Sensor3d (min, max, devicePath) = 
@@ -15,7 +16,7 @@ type Sensor3d (min, max, devicePath) =
             let evCode = BitConverter.ToUInt16(bytes, offset + 10)
             let evValue = BitConverter.ToInt32(bytes, offset + 12)
             if evType = evAbs && evCode < 3us then 
-                last.[int evCode] <- Helpers.limit min max evValue 
+                last.[int evCode] <- Calculations.limit min max evValue 
                 None
             else
                 Some <| new Point(last.[0], last.[1], last.[2])

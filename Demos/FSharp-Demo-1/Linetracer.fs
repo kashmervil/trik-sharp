@@ -32,6 +32,16 @@ let DK = -0.009;
 let encC = 1.0 / (334.0 * 34.0); //1 : (num of points of encoder wheel * reductor ratio)
 let max_fifo_input_size = 4000
 
+let inline parse (s:string) = 
+    let mutable n = 0
+    let start = if s.Chars 0 |> Char.IsDigit then 0 else 1
+    let sign = if s.Chars 0 = '-' then -1 else 1
+    let zero = int '0'
+    for i = start to s.Length - 1 do 
+        n <- n * 10 + int (s.Chars i) - zero
+    sign * n
+
+
 type LogFifo(path:string) = 
     let sr = new StreamReader(path)
 
@@ -47,19 +57,19 @@ type LogFifo(path:string) =
             let logStruct = lines.[i].Split([| ' ' |], StringSplitOptions.RemoveEmptyEntries)
             //printfn "%s" logStruct.[0]
             if not wasLoc && logStruct.[0] = "loc:" then 
-                let x     = fastInt32Parse logStruct.[1]
-                let angle = fastInt32Parse logStruct.[2]
-                let mass  = fastInt32Parse logStruct.[3]
+                let x     = parse logStruct.[1]
+                let angle = parse logStruct.[2]
+                let mass  = parse logStruct.[3]
                 wasLoc <- true
                 lineTargetDataParsed.Trigger(x, angle, mass)
                 //printfn "ltparsed"
             elif not wasHsv && logStruct.[0] = "hsv:" then
-                let hue    = fastInt32Parse logStruct.[1]
-                let hueTol = fastInt32Parse logStruct.[2]
-                let sat    = fastInt32Parse logStruct.[3]
-                let satTol = fastInt32Parse logStruct.[4]
-                let _val   = fastInt32Parse logStruct.[5]
-                let valTol = fastInt32Parse logStruct.[6]
+                let hue    = parse logStruct.[1]
+                let hueTol = parse logStruct.[2]
+                let sat    = parse logStruct.[3]
+                let satTol = parse logStruct.[4]
+                let _val   = parse logStruct.[5]
+                let valTol = parse logStruct.[6]
                 wasHsv <- true
                 lineColorDataParsed.Trigger(hue, hueTol, sat, satTol, _val, valTol)
             else ()
@@ -142,14 +152,14 @@ type Linetracer (model: Model) =
     let conf = loadIniConf localConfPath
     let elapsed = sw.ElapsedMilliseconds
     do eprintfn "Linetracer ctor: config parsed: %A ms" elapsed 
-    let min_mass = conf.["min_mass"] |> fastInt32Parse
-    let power_base = conf.["power_base"] |> fastInt32Parse
-    let motor_sign = conf.["motor_sign"] |> fastInt32Parse
-    let rl_sign = conf.["rl_sign"] |> fastInt32Parse
+    let min_mass = conf.["min_mass"] |> parse
+    let power_base = conf.["power_base"] |> parse
+    let motor_sign = conf.["motor_sign"] |> parse
+    let rl_sign = conf.["rl_sign"] |> parse
     let div_coefL = conf.["div_coefL"] |> Double.Parse
     let div_coefR = conf.["div_coefR"] |> Double.Parse
     let on_lost_coef = conf.["on_lost_coef"] |> Double.Parse
-    let turn_mode_coef = conf.["turn_mode_coef"] |> fastInt32Parse
+    let turn_mode_coef = conf.["turn_mode_coef"] |> parse
     let elapsed = sw.ElapsedMilliseconds
     do eprintfn "Linetracer ctor: config parsed: %A ms" elapsed 
 

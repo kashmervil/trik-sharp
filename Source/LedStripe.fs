@@ -13,7 +13,7 @@ type LedStripe(ports: LedStripePorts) =
     /// <summary>Sends specified (Red, Greed, Blue) color to a stripe.
     /// Each component is squished between -100 and 100</summary>
     member x.SetPower ((r,g,b): int*int*int) = 
-        Array.iter2 (fun x v -> I2C.send x (Helpers.limit -100 100 v) 1) i2cCommandNumbers [|r; g; b|]
+        Array.iter2 (fun x v -> I2C.send x (Calculations.limit -100 100 v) 1) i2cCommandNumbers [|r; g; b|]
     /// <summary> Powers off a stripe </summary>
     member x.PowerOff() = 
         x.SetPower(0,0,0)

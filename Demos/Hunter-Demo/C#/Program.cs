@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using Trik;
+using Trik.Helpers;
 using Trik.Collections;
 using Trik.Reactive;
 
@@ -10,12 +11,12 @@ namespace TRIK_Hunter
     {
         private static int ScaleXValue(int value)
         {
-            return Helpers.Limit(-Constants.MaxAngleX, Constants.MaxAngleX, value)/Constants.ScaleConstX;
+            return Calculations.Limit(-Constants.MaxAngleX, Constants.MaxAngleX, value)/Constants.ScaleConstX;
         }
 
         private static int ScaleYValue(int value)
         {
-            return Helpers.Limit(-Constants.MaxAngleY, Constants.MaxAngleY, value)/Constants.ScaleConstY;
+            return Calculations.Limit(-Constants.MaxAngleY, Constants.MaxAngleY, value)/Constants.ScaleConstY;
         }
 
         static void Main()
@@ -38,12 +39,12 @@ namespace TRIK_Hunter
 
             var xPowerSetter = locationStream
                 .Select(loc => -loc.X)
-                .Scan(0, (acc, x) => Helpers.Limit(-90, 90, acc) + ScaleXValue(x))
+                .Scan(0, (acc, x) => Calculations.Limit(-90, 90, acc) + ScaleXValue(x))
                 .Subscribe(model.Servos[ServoPort.C1]);
 
             var yPowerSetter = locationStream
                 .Select(loc => loc.Y)
-                .Scan(0, (acc, y) => Helpers.Limit(-90, 90, acc) + ScaleYValue(y))
+                .Scan(0, (acc, y) => Calculations.Limit(-90, 90, acc) + ScaleYValue(y))
                 .Subscribe(model.Servos[ServoPort.C2]);
             
             
@@ -70,7 +71,7 @@ namespace TRIK_Hunter
 
             buttons.Start();
             sensor.Start();
-            Helpers.Shell.Send(@"v4l2-ctl -d ""/dev/video2"" --set-ctrl white_balance_temperature_auto=1");
+            Shell.Send(@"v4l2-ctl -d ""/dev/video2"" --set-ctrl white_balance_temperature_auto=1");
 
             exit.WaitOne();
         }
