@@ -2,7 +2,7 @@
 open System
 open System.IO
 open Trik
-open Trik.Collections
+open Trik.Internals
 
 type Buttons (deviceFilePath) = 
     inherit Internals.BinaryFifoSensor<ButtonEvent>(deviceFilePath, 16, 1024)

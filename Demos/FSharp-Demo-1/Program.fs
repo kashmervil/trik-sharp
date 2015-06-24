@@ -1,6 +1,6 @@
 ﻿open System
 open Trik
-open Trik.Collections
+
 
 let log s = printfn s
 

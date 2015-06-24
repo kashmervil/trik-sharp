@@ -3,7 +3,7 @@ open System
 open System.Net
 open System.Net.Sockets
 open System.Text
-open Trik.Collections
+open Trik
 
 type PadServer(?port) =
 

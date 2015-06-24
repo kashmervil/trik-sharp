@@ -16,7 +16,7 @@
       member Gyro : Sensors.Gyroscope
       member Led : Devices.Led
       member LedStripe : Devices.LedStripe
-      member LedStripeConfig : Collections.LedStripePorts with get, set
+      member LedStripeConfig : LedStripePorts with get, set
       member LineSensor : Sensors.LineSensor
       member LineSensorConfig : VideoSource with get, set
       member MXNSensor : Sensors.MXNSensor
@@ -29,6 +29,6 @@
       member PadConfigPort : int with get, set
       /// Use Servos[Servo.E1] for accessing E1 servo motor
       member Servos : IDictionary<IServoPort,Devices.ServoMotor>
-      member ServosConfig : IDictionary<IServoPort,Collections.ServoKind> with get, set
+      member ServosConfig : IDictionary<IServoPort,ServoKind> with get, set
       static member RegisterResource : d:System.IDisposable -> unit
     end

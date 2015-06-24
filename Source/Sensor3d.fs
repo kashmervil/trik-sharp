@@ -2,7 +2,7 @@ namespace Trik.Internals
 open System
 open Trik
 open Trik.Helpers
-open Trik.Collections
+
 
 type Sensor3d (min, max, devicePath) = 
     inherit BinaryFifoSensor<Point>(devicePath, 16, 1024)

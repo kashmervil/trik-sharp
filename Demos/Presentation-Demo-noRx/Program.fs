@@ -1,5 +1,5 @@
 ﻿open Trik
-open Trik.Collections
+
 open Trik.Reactive
 [<EntryPoint>]
 let main _ = 

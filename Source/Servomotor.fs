@@ -2,7 +2,7 @@
 open System
 open Trik
 open Trik.Helpers
-open Trik.Collections
+
 type ServoMotor(servoPath: string, kind: ServoKind) =
     let mutable isDisposed = false
     let setOption target v = 

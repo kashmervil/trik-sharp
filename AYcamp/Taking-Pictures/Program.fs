@@ -1,5 +1,6 @@
-﻿open Trik.Junior
-open Trik.Collections
+﻿open Trik
+open Trik.Junior
+
 
 let mutable button = ButtonEventCode.Down
 robot.Buttons.Start()

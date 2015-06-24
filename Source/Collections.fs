@@ -1,4 +1,4 @@
-﻿namespace Trik.Collections
+﻿namespace Trik
 open System
 open Trik
 open Trik.Helpers

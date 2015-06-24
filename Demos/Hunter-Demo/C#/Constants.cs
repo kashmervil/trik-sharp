@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TRIK_Hunter
+﻿namespace TRIK_Hunter
 {
     class Constants
     {

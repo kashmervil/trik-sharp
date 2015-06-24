@@ -2,7 +2,7 @@
 open System.Threading
 open Trik
 open Trik.Devices
-open Trik.Collections
+
 
 let exit = new EventWaitHandle(false, EventResetMode.AutoReset)
 

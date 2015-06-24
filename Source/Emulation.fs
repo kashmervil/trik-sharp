@@ -1,7 +1,6 @@
-﻿namespace Trik
+﻿namespace Trik.Internals
 open System
-open Trik.Collections
-
+open Trik
 module Emulations = 
     
     let private getChunk (evTime: float) (evType: uint16) (evCode: uint16) (evValue: int) = 

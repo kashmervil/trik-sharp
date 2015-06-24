@@ -1,6 +1,6 @@
 ﻿namespace Trik.Devices
 open System
-open Trik.Collections
+open Trik
 ///Type representing on-board light emitting diode
 type Led(deviceFilePath: string) =
     static let mutable isLedAlive = false

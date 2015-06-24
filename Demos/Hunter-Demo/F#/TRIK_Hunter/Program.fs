@@ -1,6 +1,6 @@
 ﻿open Trik
 open Trik.Helpers
-open Trik.Collections
+
 open Trik.Reactive
 open System.Threading
 

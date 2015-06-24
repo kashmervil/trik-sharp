@@ -1,6 +1,6 @@
 ﻿open System
 open Trik
-open Trik.Collections
+
 
 let model = new Model()
 let inline f (coord: Point) = 

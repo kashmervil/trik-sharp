@@ -1,5 +1,5 @@
 ﻿open Trik        // These namespaces and modules should be opened
-open Trik.Collections
+
 open Trik.Junior
 
 //It might be useful to take several Debug printfn's in different points of your program.

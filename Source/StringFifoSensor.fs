@@ -25,7 +25,7 @@ type StringFifoSensor<'T>(path: string) as sens =
             with e ->  System.Console.WriteLine("FifoSensor {0} {1}", path, e.Message); notifier.OnError e
                 }
 
-    abstract Parse: string -> 'T option
+    abstract  Parse: string -> 'T option
     
     member self.Read() = 
         if cts.IsCancellationRequested then invalidOp "Calling Read() before Start()"

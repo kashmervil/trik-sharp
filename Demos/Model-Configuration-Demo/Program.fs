@@ -1,7 +1,7 @@
 ﻿//this example doesn't illustrate another one library's use case
 //but the way  you can extend model class
 open Trik
-open Trik.Collections
+
 open System.Collections.Generic
 
 

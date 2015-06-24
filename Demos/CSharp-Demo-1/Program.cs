@@ -1,7 +1,8 @@
 ﻿using System;
-using Trik;
-using Trik.Collections;
 using System.Threading;
+using Trik;
+using Trik.Devices;
+using Trik.Junior;
 
 namespace CSharp_Demo_1
 {
@@ -9,10 +10,10 @@ namespace CSharp_Demo_1
     {
         static void Main(string[] args)
         {
-            var robot = new Trik.Junior.Robot();
+            var robot = new Robot();
             int counter = 0;
             Console.WriteLine(robot.Sensor[SensorPort.A1].Read()); 
-            var motor = new Trik.Devices.PowerMotor(MotorPort.M1);
+            var motor = new PowerMotor(MotorPort.M1);
             while (counter < 10)
             {
                 for (int i = 1; i < 4; i++)

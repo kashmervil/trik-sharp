@@ -5,7 +5,7 @@ open System.Threading
 open System.Collections.Generic
 open System.Reactive.Linq
 open Trik
-open Trik.Collections
+
 
 type Distance =  Far | Middle | Near
 
