@@ -2,7 +2,6 @@
 using System.Threading;
 using Trik;
 using Trik.Helpers;
-using Trik.Collections;
 using Trik.Reactive;
 
 namespace TRIK_Hunter
