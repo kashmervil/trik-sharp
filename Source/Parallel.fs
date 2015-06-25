@@ -2,7 +2,6 @@
 open System
 open System.Threading
 open Trik.Junior
-open Trik
 
 type ExecutionStatus<'T> = Normal of 'T | Break | ExitTask of int | Cancelled
 

@@ -1,5 +1,4 @@
-﻿open System
-open Trik
+﻿open Trik
 
 
 let log s = printfn s

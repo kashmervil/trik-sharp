@@ -1,5 +1,4 @@
-﻿open Trik
-open Trik.Junior
+﻿open Trik.Junior
 
 
 printfn "Press any key to start"

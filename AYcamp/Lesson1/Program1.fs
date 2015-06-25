@@ -1,6 +1,4 @@
-﻿open Trik
-//open Trik.Junior
-open Lesson1
+﻿open Lesson1
 
 
 let robot = new Robot()

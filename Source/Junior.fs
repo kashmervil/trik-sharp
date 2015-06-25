@@ -1,7 +1,6 @@
 ﻿namespace Trik.Junior
 
 open System
-open Trik
 open Trik.Network
 open Trik.Helpers
 

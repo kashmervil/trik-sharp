@@ -1,10 +1,13 @@
 ﻿namespace Trik.Helpers
 open System
-open System.IO
 open System.Collections.Generic
 open System.Runtime.InteropServices
+///Shell allows you to communicate with linux shell
 
+
+///
 module Shell =
+
     [<CompiledName("Send")>]
     let send cmd = 
         let args = sprintf "-c '%s'" cmd

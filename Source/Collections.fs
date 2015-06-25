@@ -57,7 +57,6 @@ type LedStripePorts = {
 
 [<AbstractClass;Sealed>]
 type Defaults() =
-    let observerEps = 100
     /// {stop = 0; zero = 1500000; min = 1200000; max = 1800000; period = 20000000}
     static member val Servo1 = {stop = 0; zero = 1500000; min = 1200000; max = 1800000; period = 20000000} 
     /// {stop = 1; zero = 1500000; min = 1200000; max = 1800000; period = 20000000}

@@ -1,7 +1,7 @@
 ﻿namespace Trik
 open System
 open System.Collections.Generic
-
+open System.Threading
 open Trik.Sensors
 open Trik.Devices
 open Trik.Network
@@ -23,7 +23,7 @@ type Model () as model =
     let gyro =         lazy new Gyroscope(-32767, 32767, "/dev/input/by-path/platform-spi_davinci.1-event")
     let accel =        lazy new Accelerometer(-32767, 32767, "/dev/input/event1")
     let led =          lazy new Led()
-    let pad =          lazy new PadServer(model.PadConfigPort)
+    let pad =          lazy new PadServer(model.PadConfig)
     let ledStripe =    lazy new LedStripe(model.LedStripeConfig)
     let lineSensor =   lazy new LineSensor(model.LineSensorConfig)
     let objectSensor = lazy new ObjectSensor(model.ObjectSensorConfig)  
@@ -34,7 +34,7 @@ type Model () as model =
     let encoder =      lazy propertyInit model.EncodersConfig      (fun cnum -> new Encoder(cnum))
     let analogSensor = lazy propertyInit model.AnalogSensorsConfig (fun cnum -> new AnalogSensor(cnum))
     
-    member val PadConfigPort =      4444 with get, set
+    member val PadConfig =          4444 with get, set
     member val LineSensorConfig =   VideoSource.VP2 with get, set
     member val ObjectSensorConfig = VideoSource.VP2 with get, set
     member val MXNSensorConfig =    VideoSource.VP2 with get, set
@@ -55,23 +55,23 @@ type Model () as model =
     member val AnalogSensorsConfig: ISensorPort [] = 
         (Defaults.SensorPorts |> Array.map (fun x -> upcast x)) with get, set
 
-    
-    member self.Motors with get() = motor.Force()
-    member self.Servos with get() = servo.Force()
-    member self.AnalogSensors with get() = analogSensor.Force()
-    member self.Encoders with get() = encoder.Force()
-    
-    member self.Buttons with get() = buttons.Force()
-    member self.Gyro with get() = gyro.Force()
-    member self.Accel with get() = accel.Force()
-    member self.Led with get() = led.Force()
-    member self.LedStripe with get() = ledStripe.Force()
-    member self.Pad with get() = pad.Force()
-    member self.LineSensor with get() = lineSensor.Force()
-    member self.ObjectSensor with get() = objectSensor.Force()
-    member self.MXNSensor with get() = mxnSensor.Force()
 
-    member self.Battery with get() =  battery.Force()
+    member self.Accel         with get() = accel.Force()
+    member self.AnalogSensors with get() = analogSensor.Force()
+    member self.Battery       with get() =  battery.Force()
+    member self.Buttons       with get() = buttons.Force()
+    member self.Encoders      with get() = encoder.Force()
+    member self.Gyro          with get() = gyro.Force()
+    member self.Led           with get() = led.Force()
+    member self.LedStripe     with get() = ledStripe.Force()
+    member self.LineSensor    with get() = lineSensor.Force()
+    member self.Motors        with get() = motor.Force()
+    member self.MXNSensor     with get() = mxnSensor.Force()
+    member self.ObjectSensor  with get() = objectSensor.Force()
+    member self.Pad           with get() = pad.Force()
+    member self.Servos        with get() = servo.Force()
+    
+    member self.Sleep (ms: int) = Thread.Sleep ms
 
     static member RegisterResource(d: IDisposable) = lock resources <| fun () -> resources.Add(d)
 

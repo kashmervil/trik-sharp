@@ -1,7 +1,4 @@
-﻿open System
-open System.Collections.Generic
-open Trik
-
+﻿open Trik
 open System.Threading
 
 let exit = new EventWaitHandle(false, EventResetMode.AutoReset)

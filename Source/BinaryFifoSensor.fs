@@ -1,7 +1,6 @@
 ﻿namespace Trik.Internals
 open System
 open System.Threading
-open Trik
 open Trik.Reactive
 
 [<AbstractClass>]

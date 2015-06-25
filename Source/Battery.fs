@@ -1,6 +1,5 @@
 ﻿namespace Trik.Devices
 open System
-open Trik
 open Trik.Helpers
 open Trik.Reactive
 

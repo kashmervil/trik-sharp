@@ -6,7 +6,6 @@ open Trik
 [<Sealed>]
 type ObjectSensor(scriptPath, commandPath: string, sensorPath) = 
     inherit Internals.VideoSensor<ObjectLocation>(scriptPath, commandPath, sensorPath)
-    let mutable isDisposed = false
 
     new (videoSource) = 
         let script = 

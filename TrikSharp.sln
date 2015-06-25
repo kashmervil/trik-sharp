@@ -7,34 +7,24 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Demos", "Demos", "{3A613CE4
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AYcamp", "AYcamp", "{85F10031-AB00-49AD-87EA-3F7ADDB25A84}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FSharp-Demo", "Demos\FSharp-Demo\FSharp-Demo.fsproj", "{8C089C86-79DE-42DF-BC81-A13EE42E671C}"
-	ProjectSection(ProjectDependencies) = postProject
-		{B3C7B4ED-EAD9-4044-B37B-5F5660BD6A14} = {B3C7B4ED-EAD9-4044-B37B-5F5660BD6A14}
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSharp-Demo", "Demos\CSharp-Demo\CSharp-Demo.csproj", "{80252CF2-7F82-4613-BA63-AEA4070EF8DE}"
-	ProjectSection(ProjectDependencies) = postProject
-		{B3C7B4ED-EAD9-4044-B37B-5F5660BD6A14} = {B3C7B4ED-EAD9-4044-B37B-5F5660BD6A14}
-	EndProjectSection
-EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FSharp-Demo-1", "Demos\FSharp-Demo-1\FSharp-Demo-1.fsproj", "{ACB696C8-FB71-4C1B-A2F7-6789AF0DED74}"
-EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Manipulator-Demo", "Demos\Manipulator-Demo\Manipulator-Demo.fsproj", "{809F0688-0E1E-4AFF-9707-D4180D27EB7B}"
-	ProjectSection(ProjectDependencies) = postProject
-		{B3C7B4ED-EAD9-4044-B37B-5F5660BD6A14} = {B3C7B4ED-EAD9-4044-B37B-5F5660BD6A14}
-	EndProjectSection
-EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Presentation-Demo", "Demos\Presentation-Demo\Presentation-Demo.fsproj", "{558F722A-9B6F-413B-A4EB-F5B59F78EB7A}"
-	ProjectSection(ProjectDependencies) = postProject
-		{B3C7B4ED-EAD9-4044-B37B-5F5660BD6A14} = {B3C7B4ED-EAD9-4044-B37B-5F5660BD6A14}
-	EndProjectSection
-EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Stripe-Demo", "Demos\Stripe-Demo\Stripe-Demo.fsproj", "{34AF8DF3-713B-447B-BF82-219C64A63DCE}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Empty-Demo", "Demos\Empty-Demo\Empty-Demo.fsproj", "{DCFF1F9E-250F-40A0-A1F6-338D9923EF43}"
 	ProjectSection(ProjectDependencies) = postProject
 		{B3C7B4ED-EAD9-4044-B37B-5F5660BD6A14} = {B3C7B4ED-EAD9-4044-B37B-5F5660BD6A14}
 	EndProjectSection
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Trik.Core", "Source\Trik.Core.fsproj", "{B3C7B4ED-EAD9-4044-B37B-5F5660BD6A14}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FSharp-Demo", "Demos\FSharp-Demo\FSharp-Demo.fsproj", "{8C089C86-79DE-42DF-BC81-A13EE42E671C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSharp-Demo", "Demos\CSharp-Demo\CSharp-Demo.csproj", "{80252CF2-7F82-4613-BA63-AEA4070EF8DE}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FSharp-Demo-1", "Demos\FSharp-Demo-1\FSharp-Demo-1.fsproj", "{ACB696C8-FB71-4C1B-A2F7-6789AF0DED74}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Manipulator-Demo", "Demos\Manipulator-Demo\Manipulator-Demo.fsproj", "{809F0688-0E1E-4AFF-9707-D4180D27EB7B}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Presentation-Demo", "Demos\Presentation-Demo\Presentation-Demo.fsproj", "{558F722A-9B6F-413B-A4EB-F5B59F78EB7A}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Stripe-Demo", "Demos\Stripe-Demo\Stripe-Demo.fsproj", "{34AF8DF3-713B-447B-BF82-219C64A63DCE}"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Presentation-Demo-noRx", "Demos\Presentation-Demo-noRx\Presentation-Demo-noRx.fsproj", "{89F8E448-F811-4C21-96FE-FEEEC0DE4BB6}"
 EndProject
@@ -55,8 +45,6 @@ EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Taking-Pictures", "AYcamp\Taking-Pictures\Taking-Pictures.fsproj", "{B4726C95-75C0-4B5E-AA20-650F84079C3C}"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Ftp-Demo", "AYcamp\Ftp-Demo\Ftp-Demo.fsproj", "{28AC9762-4837-4B90-A857-27CD291357A3}"
-EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Empty-Demo", "Demos\Empty-Demo\Empty-Demo.fsproj", "{DCFF1F9E-250F-40A0-A1F6-338D9923EF43}"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Segway-Demo", "Demos\Segway-Demo\Segway-Demo.fsproj", "{39B273FC-8BD0-4B5F-B2F2-5A70C276CDA1}"
 EndProject
