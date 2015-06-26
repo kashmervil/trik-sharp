@@ -37,7 +37,7 @@ type Buttons (deviceFilePath) =
     override self.Dispose() = 
         if not isDisposed then
             base.Dispose()
-            let bytes = Emulations.buttonClick ButtonEventCode.Down 
+            let bytes = Emulations.sendButtonClick ButtonEventCode.Down 
             emulatorStream.Write(bytes, 0, bytes.Length) // Hack for the last key press emulation 
             emulatorStream.Flush(true)                   // (to make the program return from the last readline call). See BinaryFifoSensor's async read loop for details
             emulatorStream.Dispose()                     // This decision was made after trying to access INOTIFY throw mono interface  

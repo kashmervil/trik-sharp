@@ -76,7 +76,7 @@
     <Compile Include="MXNSensor.fs" />
     <Compile Include="BinaryFifoSensor.fs" />
     <Compile Include="Sensor3d.fs" />
-    <Compile Include="ButtonPad.fs" />
+    <Compile Include="Buttons.fs" />
     <Compile Include="Gyroscope.fs" />
     <Compile Include="Accelerometer.fs" />
     <Compile Include="PollingSensor.fs" />
