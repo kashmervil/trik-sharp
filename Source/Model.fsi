@@ -4,6 +4,7 @@
  type Model =
     class
       interface System.IDisposable
+ /// <summary>Class representing the most equipped robot configuration. The main object for working with library component </summary>
       new : unit -> Model
       /// Class for working with TRIK accelerometer
       member Accel : Sensors.Accelerometer
@@ -12,13 +13,14 @@
       member AnalogSensorsConfig : ISensorPort [] with get, set
       /// Class for getting access to level of Battery charging royalty
       member Battery : Devices.Battery
-      /// Clasd for working with TRIK on-board Buttons
+      /// Class for working with TRIK on-board Buttons
       member Buttons : Devices.Buttons
       /// Use Encoders[Encoder.B1] for accessing B1 Encoder 
       member Encoders : IDictionary<IEncoderPort,Sensors.Encoder>
+      /// Configuration property that used with first access to encoders. You can specify new ports name and its relocations
       member EncodersConfig : IEncoderPort [] with get, set
       
-      /// 
+      /// Class for working with TRIK accelerometer
       member Gyro : Sensors.Gyroscope
       
       ///<summary>

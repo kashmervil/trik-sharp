@@ -26,7 +26,7 @@ type VideoSensor<'Parsed>(scriptPath, commandPath: string, sensorPath) =
         //notifier.OnNext <| DetectTarget(0,0,0,0,0,0)
     
     //member self.Restart() = script "restart"
-
+    ///Stops reading sensor source 
     member self.Stop() = base.Stop(); commandFifo.Close(); script "stop"
     
     ///Invokes generation of the most visible color to output

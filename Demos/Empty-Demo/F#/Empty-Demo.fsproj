@@ -48,7 +48,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Source\Trik.Core.fsproj">
+    <ProjectReference Include="..\..\..\Source\Trik.Core.fsproj">
       <Name>Trik.Core</Name>
       <Project>B3C7B4ED-EAD9-4044-B37B-5F5660BD6A14</Project>
     </ProjectReference>
@@ -70,7 +70,7 @@
   </Choose>
   <Import Project="$(FSharpTargetsPath)" />
   <PropertyGroup>
-    <PostBuildEvent>Copy "$(TargetDir)..\..\..\..\Source\BinaryComponents\libconWrap.so.1.0.0" "$(TargetDir)"</PostBuildEvent>
+    <PostBuildEvent>Copy "$(TargetDir)..\..\..\..\..\Source\BinaryComponents\libconWrap.so.1.0.0" "$(TargetDir)"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
