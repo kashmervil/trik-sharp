@@ -4,12 +4,13 @@
  type Model =
     class
       interface System.IDisposable
- /// <summary>Class representing the most equipped robot configuration. The main object for working with library component </summary>
+      /// <summary>Class representing the most equipped robot configuration. The main object for working with library component </summary>
       new : unit -> Model
       /// Class for working with TRIK accelerometer
       member Accel : Sensors.Accelerometer
       /// Use AnalogSensors[Sensor.A1] for accessing A1 Analog sensor
       member AnalogSensors : IDictionary<ISensorPort,Sensors.AnalogSensor>
+      /// Configuration property that used with first access to analog sensors. You can specify new ports name and its relocations
       member AnalogSensorsConfig : ISensorPort [] with get, set
       /// Class for getting access to level of Battery charging royalty
       member Battery : Devices.Battery
@@ -18,16 +19,11 @@
       /// Use Encoders[Encoder.B1] for accessing B1 Encoder 
       member Encoders : IDictionary<IEncoderPort,Sensors.Encoder>
       /// Configuration property that used with first access to encoders. You can specify new ports name and its relocations
-      member EncodersConfig : IEncoderPort [] with get, set
-      
-      /// Class for working with TRIK accelerometer
-      member Gyro : Sensors.Gyroscope
-      
-      ///<summary>
+      member EncodersConfig : IEncoderPort [] with get, set      
+      /// Class for working with TRIK gyroscope
+      member Gyro : Sensors.Gyroscope      
       /// Class for controlling on-board led placed at the top of a screen (has three available colors).
-      ///</summary>
       member Led : Devices.Led
-
       ///<summary>Class for controlling standard led stripe from TRIK set</summary>
       member LedStripe : Devices.LedStripe
       ///<summary>Configuration for LedStripe. Used to specify I2C ports for each color of stripe </summary>
@@ -52,10 +48,8 @@
       member PadConfig : int with get, set
       /// Use Servos[Servo.E1] for accessing E1 servo motor
       member Servos : IDictionary<IServoPort,Devices.ServoMotor>
-      
       /// <summary>Pass configuration dictionary to make sure servos work fine.</summary>
       member ServosConfig : IDictionary<IServoPort,ServoKind> with get, set
-    
       /// <summary>Synonym for Thread.Sleep, makes thread-execution stop for specified time</summary>
       /// <param name="ms">Delay time in milliseconds</param>
       member Sleep : ms:int -> unit
