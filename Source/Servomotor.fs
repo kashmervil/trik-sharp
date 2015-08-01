@@ -36,7 +36,7 @@ type ServoMotor(servoPath: string, kind: ServoKind) =
     interface IDisposable with
         member self.Dispose() =
             if not isDisposed then
-                self.Zero()
+                self.Release()
                 setOption "request" "0"
                 (fd :> IDisposable).Dispose()
             
