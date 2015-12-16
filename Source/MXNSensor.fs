@@ -63,5 +63,5 @@ type MXNSensor(scriptPath, commandPath: string, sensorPath) =
             commandFifo.Dispose()
             stream.Dispose()
             base.Dispose()
-            self.Stop()
+            script "stop"
             isDisposed <- true
