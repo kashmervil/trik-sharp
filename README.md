@@ -12,7 +12,7 @@ Main development language is F# but trik-sharp isn't just F# faced library. All 
 
 
 
-##Build tips
+## Build tips
 
 You can use library and make robots either with MacOS, Linux or Windows 
 
@@ -22,16 +22,16 @@ You can use library and make robots either with MacOS, Linux or Windows
  * Enable NuGet package restore 
 
 
-##Deploy & Run
+## Deploy & Run
 
-###Copying files
+### Copying files
 
 For file transferring with Wi-Fi connected [TRIK-controller](http://www.trikset.com)  you may use  
 
  * _SCP_ console tool
  *  _WinSCP_ if you use Windows
  
-###Deploying for the first time
+### Deploying for the first time
   
  
 
@@ -41,14 +41,14 @@ For file transferring with Wi-Fi connected [TRIK-controller](http://www.trikset.
  * Copy to a robot _**Fsharp.Core.dll**_ which can be find GAC
  
  
-###Running
+### Running
 
 After you end up with file moving. You can run your application (e.g test.exe) with Mono environment 
 ```
 root@trikboard:~/home/root/test/# mono test.exe
 ```
 
-###Future development
+### Future development
 
 For future deployment you only need to move new versions of your program. All external components will remain the same.
 
